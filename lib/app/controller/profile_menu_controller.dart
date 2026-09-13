@@ -1,0 +1,686 @@
+import 'dart:ffi';
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:ultimate_salon_owner_flutter/app/backend/api/handler.dart';
+import 'package:ultimate_salon_owner_flutter/app/backend/models/owner_reviews_model.dart';
+import 'package:ultimate_salon_owner_flutter/app/backend/parse/profile_parse.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/ads_managing_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/ads_publish_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/app_pages_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/cancellAll_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/contact_us_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/complaints_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/coupon_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/timed_offers_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/connect_links_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/facilities_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/gallary_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/holiday_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/notification_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/product_history_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/inbox_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/profile_individual_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/packages_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/premium_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/previous_appointments_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/products_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/profile_business_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/review_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/services_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/slot_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/stylist_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/withdrawal_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/helper/router.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
+
+class ProfileController extends GetxController
+    with GetTickerProviderStateMixin
+    implements GetxService {
+  final ProfileParser parser;
+
+  bool type = true;
+
+  ProfileController({required this.parser});
+
+  late TabController tabController;
+  List<OwnerReviewsModel> _ownerReviewsList = <OwnerReviewsModel>[];
+  List<OwnerReviewsModel> get ownerReviewsList => _ownerReviewsList;
+  var name = ''.obs; // Reactive observable variable for the name
+  var premium = false.obs;
+  var cover = ''.obs;
+  var uid = ''.obs;
+
+  void updateName(String newName) {
+    name.value = newName; // Update the value of name
+  }
+
+  String getName() {
+    return name.value;
+  }
+
+  void updatePremium(bool newPremium) {
+    premium.value = newPremium;
+  }
+
+  bool getPremium() {
+    return premium.value;
+  }
+
+  @override
+  void onInit() {
+    name.value = parser.getName();
+    premium.value = parser.getPremium();
+    uid.value = parser.getUID();
+    //if (parser.getType()) {
+    cover.value = parser.getCover();
+    // } else {
+    // cover.value = parser.getBackground();
+    // }
+
+    //cover.value = parser.getCover();
+    if (parser.sharedPreferencesManager.hasOwnerSession()) {
+      getMyReviews();
+    }
+
+    super.onInit();
+    type = parser.getType();
+    debugPrint('profile type is --> $type');
+    tabController = TabController(length: 3, vsync: this);
+  }
+
+  Future<void> getMyReviews() async {
+    var response = await parser.getMyReviews();
+    // apiCalled = true;
+    _ownerReviewsList = [];
+    update();
+    if (response.statusCode == 200) {
+      Map<String, dynamic> myMap = Map<String, dynamic>.from(response.body);
+      var body = myMap['data'];
+
+      body.forEach((data) {
+        OwnerReviewsModel reviews = OwnerReviewsModel.fromJson(data);
+        _ownerReviewsList.add(reviews);
+      });
+      update();
+    } else {
+      ApiChecker.checkApi(response);
+    }
+    update();
+  }
+
+  void onHistory() {
+    Get.delete<HistoryController>(force: true);
+    Get.toNamed(AppRouter.getHistoryRoute());
+  }
+
+  void onSlot() {
+    Get.delete<SlotController>(force: true);
+    Get.toNamed(AppRouter.getSlotRoute());
+  }
+
+  void onServices() {
+    Get.delete<ServicesController>(force: true);
+    Get.toNamed(AppRouter.getServicesRoute());
+  }
+
+  void onStylist() {
+    Get.delete<StylistController>(force: true);
+    Get.toNamed(AppRouter.getStylistRoute());
+  }
+
+  void onProducts() {
+    Get.delete<ProductsController>(force: true);
+    Get.toNamed(AppRouter.getProductsRoute());
+  }
+
+  void onPackages() {
+    Get.delete<PackagesController>(force: true);
+    Get.toNamed(AppRouter.getPackagesRoute());
+  }
+
+  void onEditProfile() {
+    if (type == true) {
+      Get.delete<ProfileCategoriesController>(force: true);
+      Get.toNamed(AppRouter.getProfileCategoriesRoute());
+    } else {
+      Get.delete<IndividualProfileController>(force: true);
+      Get.toNamed(AppRouter.getIndividualProfileRoute());
+    }
+  }
+
+  void onUpgradeScreen() {
+    Get.delete<PremiumController>(force: true);
+    Get.toNamed(AppRouter.getPremiumRoute());
+  }
+
+  void onAppoitmentHistory() {
+    Get.delete<PreviousAppointmentController>(force: true);
+    Get.toNamed(AppRouter.getPreviousAppointmentsRoute(),
+        arguments: ['search', 0, 0, 0]);
+  }
+
+  void onGallary() {
+    Get.delete<GallaryController>(force: true);
+    Get.toNamed(AppRouter.getGallaryRoute());
+  }
+
+  void onPremiumRequired(BuildContext context) {
+    Get.defaultDialog(
+      content: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          width: double.infinity,
+          height: 400,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Asset image at the top
+              const Text(
+                'Premium Account Required',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 209, 165, 32),
+                ),
+              ),
+              Image.asset(
+                'assets/images/icon_logo.png',
+                fit: BoxFit.contain,
+                width: 100,
+                height: 100,
+              ),
+              SizedBox(height: 10),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'You need a premium account to access this feature. Would you like to upgrade?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: Color.fromARGB(255, 209, 165, 32),
+                  ),
+                ),
+              ),
+              SizedBox(height: 20),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Get.back();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey,
+                    ),
+                    icon: Icon(Icons.cancel, color: Colors.white),
+                    label: Text('Cancel'),
+                  ),
+                  SizedBox(height: 10),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Get.back();
+                      onUpgradeScreen();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ThemeProvider.golden,
+                    ),
+                    icon: Icon(Icons.workspace_premium, color: Colors.black),
+                    label:
+                        Text('Upgrade', style: TextStyle(color: Colors.black)),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      backgroundColor: Colors.black,
+      radius: 15.0,
+      barrierDismissible: false,
+    );
+  }
+
+  void onReview() {
+    Get.delete<ReviewController>(force: true);
+    Get.toNamed(AppRouter.getReviewRoute());
+  }
+
+  void onInbox() {
+    Get.delete<InboxController>(force: true);
+    Get.toNamed(AppRouter.getInboxRoute());
+  }
+
+  void onAds() {
+    // Get.delete<AdsPublishController>(force: true);
+    // Get.toNamed(AppRouter.getAdsRoute());
+
+    Get.delete<AdsPublishController>(force: true);
+    Get.toNamed(AppRouter.getAdsRoute(), arguments: ['new']);
+  }
+
+  void onManageAds() {
+    // Get.delete<AdsPublishController>(force: true);
+    // Get.toNamed(AppRouter.getAdsRoute());
+
+    Get.delete<AdsManagingController>(force: true);
+    Get.toNamed(AppRouter.getAdsManageRoute(), arguments: ['new']);
+  }
+
+  void onWithdrawals() {
+    Get.delete<WithdrawalsController>(force: true);
+    Get.toNamed(AppRouter.getWithdrawalsRoute());
+  }
+
+  void onCancelAllAppointments() {
+    Get.delete<CancelAllAppointmentController>(force: true);
+    Get.toNamed(AppRouter.getCancelAllAppointmentsRoute());
+  }
+
+  void onCoupons() {
+    Get.delete<CouponsController>(force: true);
+    Get.toNamed(AppRouter.getCouponsRoute());
+  }
+
+  void onLimitedOffers() {
+    Get.delete<TimedOffersController>(force: true);
+    Get.toNamed(AppRouter.getTimedOffersRoute());
+  }
+
+  void onConnectLinks() {
+    Get.delete<ConnectLinksController>(force: true);
+    Get.toNamed(AppRouter.getConnectLinksRoute());
+  }
+
+  void onHolidays() {
+    Get.delete<HolidayController>(force: true);
+    Get.toNamed(AppRouter.getHolidayRoutes());
+  }
+
+  void onFacilities() {
+    Get.delete<FacilitiesController>(force: true);
+    Get.toNamed(AppRouter.getFacilities());
+  }
+
+  void onComplaints() {
+    Get.delete<ComplaintsController>(force: true);
+    Get.toNamed(AppRouter.getComplaintRoute());
+  }
+
+  void onNotifications() {
+    Get.delete<NotificationController>(force: true);
+    Get.toNamed(AppRouter.getNotifications());
+  }
+
+  void onLanguages() {
+    Get.toNamed(AppRouter.getLanguagesRoute());
+  }
+
+  void onContactUs() {
+    Get.delete<ContactUsController>(force: true);
+    Get.toNamed(AppRouter.getContactUsRoute());
+  }
+
+  void onDeleteAccount() {
+    // First confirmation dialog - Warning about consequences
+    Get.dialog(
+      AlertDialog(
+        //
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Row(
+          children: [
+            Icon(
+              Icons.warning_amber_rounded,
+              color: Colors.red[700],
+              size: 28,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              'Delete Account?'.tr,
+              style: const TextStyle(
+                fontFamily: 'bold',
+                fontSize: 20,
+                color: Colors.red,
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'This action cannot be undone. Deleting your account will:'.tr,
+              style: const TextStyle(
+                fontFamily: 'semibold',
+                fontSize: 15,
+              ),
+            ),
+            const SizedBox(height: 16),
+            _buildWarningItem(
+                'Permanently delete your profile and all data (Your account will be deleted within 30 days)'
+                    .tr),
+            _buildWarningItem('Remove all your services and appointments'.tr),
+            _buildWarningItem('Delete all your reviews and ratings'.tr),
+            _buildWarningItem('Cancel any active bookings'.tr),
+            _buildWarningItem('Remove access to your account immediately'.tr),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.red[50],
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.red[200]!),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline, color: Colors.red[700], size: 20),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'This action is permanent and cannot be reversed'.tr,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Colors.red[700],
+                        fontFamily: 'medium',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              'Cancel'.tr,
+              style: const TextStyle(
+                fontFamily: 'medium',
+                fontSize: 16,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Get.back();
+              _showFinalConfirmation();
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: Text(
+              'Continue'.tr,
+              style: const TextStyle(
+                fontFamily: 'semibold',
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  Widget _buildWarningItem(String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Icon(
+            Icons.close,
+            color: Colors.red,
+            size: 18,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              text,
+              style: const TextStyle(
+                fontSize: 14,
+                height: 1.4,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showFinalConfirmation() {
+    final TextEditingController confirmController = TextEditingController();
+
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        title: Text(
+          'Final Confirmation'.tr,
+          style: const TextStyle(
+            fontFamily: 'bold',
+            fontSize: 20,
+            color: Colors.red,
+          ),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'To confirm account deletion, please type DELETE below:'.tr,
+              style: const TextStyle(
+                fontSize: 14,
+                fontFamily: 'medium',
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: confirmController,
+              decoration: InputDecoration(
+                hintText: 'Type DELETE'.tr,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(color: Colors.red),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(color: Colors.red, width: 2),
+                ),
+              ),
+              textCapitalization: TextCapitalization.characters,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              'Cancel'.tr,
+              style: const TextStyle(
+                fontFamily: 'medium',
+                fontSize: 16,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (confirmController.text.toUpperCase() == 'DELETE') {
+                Get.back();
+                _performAccountDeletion();
+              } else {
+                Get.snackbar(
+                  'Error'.tr,
+                  'Please type DELETE to confirm'.tr,
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.red,
+                  colorText: Colors.white,
+                );
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red[700],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: Text(
+              'Delete Account'.tr,
+              style: const TextStyle(
+                fontFamily: 'semibold',
+                fontSize: 16,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  Future<void> _performAccountDeletion() async {
+    Get.dialog(
+        SimpleDialog(
+          children: [
+            Row(
+              children: [
+                const SizedBox(
+                  width: 30,
+                ),
+                const CircularProgressIndicator(
+                  color: ThemeProvider.appColor,
+                ),
+                const SizedBox(
+                  width: 30,
+                ),
+                SizedBox(
+                    child: Text(
+                  "Deleting account...".tr,
+                  style: const TextStyle(fontFamily: 'bold'),
+                )),
+              ],
+            )
+          ],
+        ),
+        barrierDismissible: false);
+
+    Response response = await parser.onDelete();
+    Get.back();
+
+    if (response.statusCode == 200) {
+      parser.clearAccount();
+      Get.dialog(
+        AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: Row(
+            children: [
+              Icon(
+                Icons.check_circle,
+                color: Colors.green[600],
+                size: 28,
+              ),
+              const SizedBox(width: 10),
+              Text(
+                'Account Deleted'.tr,
+                style: TextStyle(
+                  fontFamily: 'bold',
+                  fontSize: 20,
+                  color: Colors.green[700],
+                ),
+              ),
+            ],
+          ),
+          content: Text(
+            'Your account has been permanently deleted within 30 days. We\'re sorry to see you go.'
+                .tr,
+            style: const TextStyle(fontSize: 15),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                parser.clearAccount();
+                Get.back();
+                Get.toNamed(AppRouter.getInitialRoute());
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ThemeProvider.appColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              child: Text(
+                'OK'.tr,
+                style: const TextStyle(
+                  fontFamily: 'semibold',
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+        barrierDismissible: false,
+      );
+    } else {
+      ApiChecker.checkApi(response);
+    }
+    update();
+  }
+
+  void onAppPages(String name, String id) {
+    debugPrint('$name = $id');
+    Get.delete<AppPagesController>(force: true);
+    Get.toNamed(AppRouter.getAppPagesRoute(),
+        arguments: [name, id], preventDuplicates: false);
+  }
+
+  Future<void> onLogout() async {
+    Get.dialog(
+        SimpleDialog(
+          children: [
+            Row(
+              children: [
+                const SizedBox(
+                  width: 30,
+                ),
+                const CircularProgressIndicator(
+                  color: ThemeProvider.appColor,
+                ),
+                const SizedBox(
+                  width: 30,
+                ),
+                SizedBox(
+                    child: Text(
+                  "Please wait".tr,
+                  style: const TextStyle(fontFamily: 'bold'),
+                )),
+              ],
+            )
+          ],
+        ),
+        barrierDismissible: false);
+    Response response = await parser.logout();
+    Get.back();
+    if (response.statusCode == 200) {
+      parser.clearAccount();
+      Get.toNamed(AppRouter.getInitialRoute());
+      update();
+    } else {
+      ApiChecker.checkApi(response);
+    }
+    update();
+  }
+}

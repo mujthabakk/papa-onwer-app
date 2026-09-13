@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "442389815451",
+    "project_id": "papabear-8b9f9",
+    "storage_bucket": "papabear-8b9f9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:442389815451:android:df391aa3957c0c1408263e",
+        "android_client_info": {
+          "package_name": "com.papabear.partner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEg2nu09HpaaEjNqxsvwqCGZ2p47vYu4s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:442389815451:android:942b8dfb7fd1a4ac08263e",
+        "android_client_info": {
+          "package_name": "com.papabear.userapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAEg2nu09HpaaEjNqxsvwqCGZ2p47vYu4s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

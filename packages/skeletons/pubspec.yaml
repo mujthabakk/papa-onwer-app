@@ -1,0 +1,12 @@
+name: skeletons
+description: Local Flutter 3.x-compatible fork of skeletons 0.0.3.
+version: 0.0.4
+publish_to: none
+
+environment:
+  sdk: '>=3.5.3 <4.0.0'
+  flutter: '>=3.22.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
