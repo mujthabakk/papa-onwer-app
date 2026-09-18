@@ -103,6 +103,7 @@ class VerifyController extends GetxController implements GetxService {
                 width: MediaQuery.of(context).size.width,
                 child: Center(
                     child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       'We have sent verification code on'.tr,
@@ -117,24 +118,31 @@ class VerifyController extends GetxController implements GetxService {
                     const SizedBox(
                       height: 10,
                     ),
-                    OtpTextField(
-                      numberOfFields: 6, fieldWidth: 50,
-                      borderColor: Colors.black,
-                      disabledBorderColor: Colors.grey,
-
-                      enabledBorderColor: Colors.black,
-                      keyboardType: TextInputType.number,
-                      // cursorColor: ThemeProvider.appColor,
-                      // enabledBorderColor: ThemeProvider.appColor,
-                      focusedBorderColor: ThemeProvider.appColor,
-                      showFieldAsBox: true,
-                      onCodeChanged: (String code) {},
-                      onSubmit: (String verificationCode) {
-                        otpCode = verificationCode;
-                        onOtpSubmit(context);
-                      }, // end onSubmit
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final fieldWidth =
+                            ((constraints.maxWidth - 24) / 6).clamp(28.0, 42.0);
+                        return FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: OtpTextField(
+                            numberOfFields: 6,
+                            fieldWidth: fieldWidth,
+                            margin: const EdgeInsets.symmetric(horizontal: 2),
+                            borderColor: Colors.black,
+                            disabledBorderColor: Colors.grey,
+                            enabledBorderColor: Colors.black,
+                            keyboardType: TextInputType.number,
+                            focusedBorderColor: ThemeProvider.appColor,
+                            showFieldAsBox: true,
+                            onCodeChanged: (String code) {},
+                            onSubmit: (String verificationCode) {
+                              otpCode = verificationCode;
+                              onOtpSubmit(context);
+                            },
+                          ),
+                        );
+                      },
                     ),
-                    // OTP
                   ],
                 )),
               ),

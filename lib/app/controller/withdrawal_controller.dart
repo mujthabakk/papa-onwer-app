@@ -7,6 +7,7 @@ import 'package:ultimate_salon_owner_flutter/app/controller/services_categories_
 import 'package:ultimate_salon_owner_flutter/app/controller/services_names_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/router.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/toast.dart';
 
 class WithdrawalsController extends GetxController implements GetxService {
@@ -69,7 +70,7 @@ class WithdrawalsController extends GetxController implements GetxService {
     } else {
       // Show error message
       showToast(
-          'Insufficient balance. Available: ₹${availableForWithdrawal.toStringAsFixed(2)}');
+          'Insufficient balance. Available: ${CurrencyHelper.format(availableForWithdrawal)}');
     }
   }
 

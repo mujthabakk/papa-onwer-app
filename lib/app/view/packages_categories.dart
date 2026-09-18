@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:skeletons/skeletons.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/packages_categories_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/app_image.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 
 class PackagesCategoriesScreen extends StatefulWidget {
@@ -347,7 +348,7 @@ class _PackagesCategoriesScreen extends State<PackagesCategoriesScreen> {
       children: [
         if (service.discount > 0) ...[
           Text(
-            '₹${service.price}',
+            CurrencyHelper.format(service.price),
             style: const TextStyle(
               fontSize: 14,
               color: Colors.grey,
@@ -357,7 +358,7 @@ class _PackagesCategoriesScreen extends State<PackagesCategoriesScreen> {
           const SizedBox(width: 8),
         ],
         Text(
-          '₹${service.off}',
+          CurrencyHelper.format(service.off),
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w700,

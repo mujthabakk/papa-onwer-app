@@ -7,6 +7,7 @@ import 'package:ultimate_salon_owner_flutter/app/controller/timed_offers_control
 import 'package:ultimate_salon_owner_flutter/app/helper/shared_pref.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/app_image.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/constants.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 
 class TimedOfferDetailScreen extends StatelessWidget {
@@ -227,7 +228,7 @@ class TimedOfferDetailScreen extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        '₹${item.displayPrice}',
+                        CurrencyHelper.format(item.displayPrice),
                         style: const TextStyle(
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
@@ -237,7 +238,7 @@ class TimedOfferDetailScreen extends StatelessWidget {
                       if (item.originalPrice > item.displayPrice) ...[
                         const SizedBox(width: 8),
                         Text(
-                          '₹${item.originalPrice}',
+                          CurrencyHelper.format(item.originalPrice),
                           style: const TextStyle(
                             color: Color(0xFF9CA3AF),
                             decoration: TextDecoration.lineThrough,
@@ -345,8 +346,8 @@ class TimedOfferDetailScreen extends StatelessWidget {
                 controller: priceController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  labelText: 'Offer price (₹)'.tr,
-                  prefixIcon: const Icon(Icons.currency_rupee),
+                  labelText: 'Offer price (${CurrencyHelper.code()})'.tr,
+                  prefixIcon: const Icon(Icons.payments),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -469,11 +470,8 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
   bool get isEdit => widget.campaign.hasJoined;
 
   String get _currencySymbol {
-    if (!Get.isRegistered<SharedPreferencesManager>()) {
-      return AppConstants.defaultCurrencySymbol;
-    }
-    return Get.find<SharedPreferencesManager>().getString('currencySymbol') ??
-        AppConstants.defaultCurrencySymbol;
+    final info = CurrencyHelper.active();
+    return info.code.toUpperCase() == 'INR' ? info.symbol : info.code;
   }
 
   double get _tax {
@@ -761,7 +759,8 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
                   contentPadding: EdgeInsets.zero,
                   value: selected,
                   title: Text(service.name),
-                  subtitle: Text('₹${service.price} • ${service.duration} min'),
+                  subtitle: Text(
+                      '${CurrencyHelper.format(service.price)} • ${service.duration} min'),
                   controlAffinity: ListTileControlAffinity.leading,
                   onChanged: (checked) {
                     setState(() {

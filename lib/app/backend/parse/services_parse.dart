@@ -3,6 +3,8 @@ import 'package:ultimate_salon_owner_flutter/app/backend/api/api.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/shared_pref.dart';
 import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/constants.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
+
 
 class ServicesParser {
   final SharedPreferencesManager sharedPreferencesManager;
@@ -44,7 +46,6 @@ class ServicesParser {
   }
 
   String getCurrencySymbol() {
-    return sharedPreferencesManager.getString('currencySymbol') ??
-        AppConstants.defaultCurrencySymbol;
+    return CurrencyHelper.displaySymbol(sharedPreferencesManager);
   }
 }

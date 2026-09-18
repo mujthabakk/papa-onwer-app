@@ -1,4 +1,5 @@
 import 'package:ultimate_salon_owner_flutter/app/backend/models/coupons_model.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
 
 class TimedCampaignModel {
   final int id;
@@ -299,7 +300,7 @@ String timedDiscountLabel({required String type, required num value}) {
   final kind = type.toLowerCase().trim();
   final isFlat =
       kind == 'flat' || kind == 'amount' || kind == 'fixed' || kind == '2';
-  if (isFlat) return '₹$amount OFF';
+  if (isFlat) return '${CurrencyHelper.format(value)} OFF';
   return '$amount% OFF';
 }
 

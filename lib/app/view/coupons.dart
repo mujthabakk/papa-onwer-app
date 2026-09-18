@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/coupon_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 
 import '../backend/models/coupons_model.dart';
@@ -359,7 +360,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                           label: 'Discount'.tr,
                           value: coupon.isPercent
                               ? '${coupon.discount}%'
-                              : '₹${coupon.discount}',
+                              : CurrencyHelper.format(coupon.discount),
                           color: const Color(0xFFEF4444),
                           backgroundColor: const Color(0xFFFEF2F2),
                         ),
@@ -369,7 +370,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                         child: _buildMetricCard(
                           icon: Icons.savings_rounded,
                           label: 'Max Save'.tr,
-                          value: '₹${coupon.upto}',
+                          value: CurrencyHelper.format(coupon.upto),
                           color: const Color(0xFF10B981),
                           backgroundColor: const Color(0xFFF0FDF4),
                         ),
@@ -385,7 +386,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                         child: _buildMetricCard(
                           icon: Icons.shopping_cart_rounded,
                           label: 'Min Cart'.tr,
-                          value: '₹${coupon.minCartValue}',
+                          value: CurrencyHelper.format(coupon.minCartValue),
                           color: const Color(0xFF3B82F6),
                           backgroundColor: const Color(0xFFEFF6FF),
                         ),
@@ -1006,7 +1007,9 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
                   ),
                   items: [
                     DropdownMenuItem(value: 1, child: Text('Percentage (%)'.tr)),
-                    DropdownMenuItem(value: 2, child: Text('Flat Amount (₹)'.tr)),
+                    DropdownMenuItem(
+                        value: 2,
+                        child: Text('Flat Amount (${CurrencyHelper.code()})')),
                   ],
                   onChanged: (value) {
                     if (value != null) {
@@ -1022,7 +1025,9 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
                 children: [
                   _buildTextField(
                     controller: discountController,
-                    label: selectedType == 1 ? 'Discount (%)' : 'Discount (₹)',
+                    label: selectedType == 1
+                        ? 'Discount (%)'
+                        : 'Discount (${CurrencyHelper.code()})',
                     hint: '0'.tr,
                     icon: Icons.percent,
                     validator: 'Please enter discount',
@@ -1031,9 +1036,9 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
                   const SizedBox(width: 16),
                   _buildTextField(
                     controller: uptoController,
-                    label: 'Max Discount (₹)'.tr,
+                    label: 'Max Discount (${CurrencyHelper.code()})',
                     hint: '0'.tr,
-                    icon: Icons.currency_rupee,
+                    icon: Icons.payments,
                     validator: 'Please enter max discount',
                     isNumeric: true,
                   ),
@@ -1043,7 +1048,7 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
                 children: [
                   _buildTextField(
                     controller: minCartValueController,
-                    label: 'Min Cart Value (₹)'.tr,
+                    label: 'Min Cart Value (${CurrencyHelper.code()})',
                     hint: '0'.tr,
                     icon: Icons.shopping_cart,
                     validator: 'Please enter min cart value',
@@ -1180,7 +1185,8 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
                   contentPadding: EdgeInsets.zero,
                   value: selected,
                   title: Text(service.name),
-                  subtitle: Text('₹${service.price} • ${service.duration} min'),
+                  subtitle: Text(
+                      '${CurrencyHelper.format(service.price)} • ${service.duration} min'),
                   controlAffinity: ListTileControlAffinity.leading,
                   onChanged: (checked) {
                     setState(() {

@@ -9,6 +9,7 @@ import 'package:ultimate_salon_owner_flutter/app/controller/packages_categories_
 import 'package:ultimate_salon_owner_flutter/app/controller/packages_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/packages_specialist_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/router.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/toast.dart';
 
@@ -57,7 +58,7 @@ class AddPackagesController extends GetxController implements GetxService {
   int editType = 0;
 
   double tax = 0.0;
-  String currencySymbol = '₹';
+  String currencySymbol = CurrencyHelper.displaySymbol();
   String currencySide = 'left';
 
   String get finalPriceWithTax {

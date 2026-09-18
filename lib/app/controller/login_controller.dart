@@ -514,19 +514,29 @@ class LoginController extends GetxController implements GetxService {
                   style: const TextStyle(fontSize: 12, fontFamily: 'medium'),
                 ),
                 const SizedBox(height: 10),
-                OtpTextField(
-                  numberOfFields: 6,
-                  fieldWidth: 50,
-                  disabledBorderColor: Colors.grey,
-                  enabledBorderColor: Colors.black,
-                  borderColor: Colors.black,
-                  keyboardType: TextInputType.number,
-                  focusedBorderColor: ThemeProvider.appColor,
-                  showFieldAsBox: true,
-                  onCodeChanged: (String code) {},
-                  onSubmit: (String verificationCode) {
-                    otpCode = verificationCode;
-                    onOtpSubmit();
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final fieldWidth =
+                        ((constraints.maxWidth - 24) / 6).clamp(28.0, 42.0);
+                    return FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: OtpTextField(
+                        numberOfFields: 6,
+                        fieldWidth: fieldWidth,
+                        margin: const EdgeInsets.symmetric(horizontal: 2),
+                        disabledBorderColor: Colors.grey,
+                        enabledBorderColor: Colors.black,
+                        borderColor: Colors.black,
+                        keyboardType: TextInputType.number,
+                        focusedBorderColor: ThemeProvider.appColor,
+                        showFieldAsBox: true,
+                        onCodeChanged: (String code) {},
+                        onSubmit: (String verificationCode) {
+                          otpCode = verificationCode;
+                          onOtpSubmit();
+                        },
+                      ),
+                    );
                   },
                 ),
               ],

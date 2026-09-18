@@ -70,11 +70,13 @@ class PackagesCategoriesController extends GetxController
   void _rebuildSelectedServicePrice() {
     selectedServicePrice.clear();
     for (int serviceId in selectedServices) {
-      var service = _servicesList.firstWhere(
-        (element) => element.id == serviceId,
-        orElse: () => throw Exception('Service not found'), // Handle edge case
-      );
-      selectedServicePrice.add(double.tryParse('${service.off}') ?? 0.0);
+      final index =
+          _servicesList.indexWhere((element) => element.id == serviceId);
+      if (index == -1) {
+        continue;
+      }
+      selectedServicePrice
+          .add(double.tryParse('${_servicesList[index].off}') ?? 0.0);
     }
     debugPrint('Rebuilt selected prices: ${selectedServicePrice.toString()}');
   }

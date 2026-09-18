@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/service_cart_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/previous_appointments_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 
 class PreviousAppointmentsScreen extends StatefulWidget {
@@ -504,7 +505,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
               child: _buildInfoItem(
                 icon: Icons.attach_money,
                 label: 'Total Amount'.tr,
-                value: '₹${appointment.grandTotal ?? 'N/A'}',
+                value: CurrencyHelper.format(appointment.grandTotal ?? 0),
                 color: Colors.green,
                 isBold: true,
               ),

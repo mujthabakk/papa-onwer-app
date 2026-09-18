@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/ads_managing_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/app_image.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 import 'package:intl/intl.dart';
 
@@ -239,7 +240,7 @@ class _AdsManageScreenState extends State<AdsManageScreen> {
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Text(
-                          '₹${ad.price}',
+                          CurrencyHelper.format(ad.price),
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,

@@ -138,6 +138,9 @@ class SplashController extends GetxController implements GetxService {
               appSettingsInfo.mobile.toString(),
               appSettingsInfo.allowDistance,
               appSettingsInfo.commissionPercentage);
+          if (Get.isRegistered<LocaleController>()) {
+            Get.find<LocaleController>().applyCurrencyFromApi(myMap);
+          }
           isSuccess = true;
         } else {
           isSuccess = false;

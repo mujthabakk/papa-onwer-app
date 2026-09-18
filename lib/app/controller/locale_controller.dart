@@ -154,11 +154,20 @@ class LocaleController extends GetxController implements GetxService {
         body['currency_symbol']?.toString() ??
         data?['currencySymbol']?.toString() ??
         data?['currency_symbol']?.toString();
-    if (currency == null || currency.isEmpty) return;
-    CurrencyHelper.save(
-      prefs,
-      CurrencyHelper.fromCurrencyCode(currency, symbol: symbol),
-    );
+    if (currency != null && currency.isNotEmpty) {
+      CurrencyHelper.save(
+        prefs,
+        CurrencyHelper.fromCurrencyCode(currency, symbol: symbol),
+      );
+      return;
+    }
+    final country = body['preferred_country']?.toString() ??
+        body['selected_country']?.toString() ??
+        data?['preferred_country']?.toString() ??
+        data?['selected_country']?.toString();
+    if (country != null && country.isNotEmpty) {
+      CurrencyHelper.save(prefs, CurrencyHelper.fromCountry(name: country));
+    }
   }
 
   void _applyCountryCurrency() {
@@ -194,7 +203,7 @@ class LocaleController extends GetxController implements GetxService {
     void apply(dynamic controller) {
       if (controller == null) return;
       try {
-        controller.currencySymbol = info.symbol;
+        controller.currencySymbol = CurrencyHelper.displaySymbol(prefs);
         controller.currencySide = info.side;
         controller.update();
       } catch (_) {}

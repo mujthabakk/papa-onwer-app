@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/withdrawal_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/withdrawal_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 
 // Add these imports to the top of your withdrawals_screen.dart file
@@ -556,7 +557,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                   children: [
                     pw.Text('Total Wallet Balance:'.tr,
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                    pw.Text('INR ${totalWalletBalance.toStringAsFixed(2)}',
+                    pw.Text(CurrencyHelper.format(totalWalletBalance),
                         style: pw.TextStyle(
                             fontSize: 16,
                             fontWeight: pw.FontWeight.bold,
@@ -571,7 +572,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                   children: [
                     pw.Text(
                         'COD Commission (${_formatPercentage(codCommissionPercentage)}% Deducted):'),
-                    pw.Text('- INR ${codCommission.toStringAsFixed(2)}',
+                    pw.Text('- ${CurrencyHelper.format(codCommission)}',
                         style: pw.TextStyle(color: PdfColors.red)),
                   ],
                 ),
@@ -590,7 +591,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                   children: [
                     pw.Text('Available for Withdrawal:'.tr,
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                    pw.Text('INR ${availableBalance.toStringAsFixed(2)}',
+                    pw.Text(CurrencyHelper.format(availableBalance),
                         style: pw.TextStyle(
                             fontSize: 16,
                             fontWeight: pw.FontWeight.bold,
@@ -640,17 +641,17 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
             children: [
               pw.Expanded(
                 child: _buildSummaryCard('Total Requested',
-                    'INR ${totalRequested.toStringAsFixed(2)}', PdfColors.blue),
+                    CurrencyHelper.format(totalRequested), PdfColors.blue),
               ),
               pw.SizedBox(width: 15),
               pw.Expanded(
                 child: _buildSummaryCard('Platform Fees',
-                    'INR ${totalFees.toStringAsFixed(2)}', PdfColors.red),
+                    CurrencyHelper.format(totalFees), PdfColors.red),
               ),
               pw.SizedBox(width: 15),
               pw.Expanded(
                 child: _buildSummaryCard('Total Received',
-                    'INR ${totalReceived.toStringAsFixed(2)}', PdfColors.green),
+                    CurrencyHelper.format(totalReceived), PdfColors.green),
               ),
             ],
           ),
@@ -700,7 +701,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                   style: pw.TextStyle(fontSize: 11, color: PdfColors.amber800),
                 ),
                 pw.Text(
-                  '4. Minimum withdrawal amount is ₹ INR 500',
+                  '4. Minimum withdrawal amount is ${CurrencyHelper.format(500, decimals: 0)}',
                   style: pw.TextStyle(fontSize: 11, color: PdfColors.amber800),
                 ),
               ],
@@ -804,9 +805,9 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
             children: [
               _buildTableCell(request.id.toString()),
               _buildTableCell(request.withdrawalDate),
-              _buildTableCell('INR ${request.amount.toStringAsFixed(2)}'),
-              _buildTableCell('INR ${fee.toStringAsFixed(2)}'),
-              _buildTableCell('INR ${received.toStringAsFixed(2)}'),
+              _buildTableCell(CurrencyHelper.format(request.amount)),
+              _buildTableCell(CurrencyHelper.format(fee)),
+              _buildTableCell(CurrencyHelper.format(received)),
               _buildTableCell(request.status),
             ],
           );
@@ -853,7 +854,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                   pw.SizedBox(height: 4),
                   pw.Text('1. Platform fee of 5% is applied to all withdrawals'.tr,
                       style: const pw.TextStyle(fontSize: 10)),
-                  pw.Text('2. Minimum withdrawal amount is INR 500'.tr,
+                  pw.Text('2. Minimum withdrawal amount is ${CurrencyHelper.format(500, decimals: 0)}',
                       style: const pw.TextStyle(fontSize: 10)),
                   pw.Text('3. Processing time may vary based on payment method'.tr,
                       style: const pw.TextStyle(fontSize: 10)),
@@ -1342,7 +1343,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
             ),
             const SizedBox(height: 16),
             Text(
-              '₹${totalWalletBalance.toStringAsFixed(2)}',
+              CurrencyHelper.format(totalWalletBalance),
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 28,
@@ -1361,11 +1362,11 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
               child: Column(
                 children: [
                   _buildBalanceRow('Available for Withdrawal',
-                      '₹${availableForWithdrawal.toStringAsFixed(2)}', true),
+                      CurrencyHelper.format(availableForWithdrawal), true),
                   const SizedBox(height: 12),
                   _buildBalanceRow(
                       'COD Commission (${_formatPercentage(codCommissionPercentage)}% Deducted)',
-                      '₹${cod.toStringAsFixed(2)}',
+                      CurrencyHelper.format(cod),
                       false),
                   const SizedBox(height: 12),
                   Container(
@@ -1374,7 +1375,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Available: ₹${totalWalletBalance.toStringAsFixed(2)} - ₹${cod.toStringAsFixed(2)} = ₹${availableForWithdrawal.toStringAsFixed(2)}',
+                    'Available: ${CurrencyHelper.format(totalWalletBalance)} - ${CurrencyHelper.format(cod)} = ${CurrencyHelper.format(availableForWithdrawal)}',
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.7),
                       fontSize: 12,
@@ -1616,7 +1617,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '₹${request.amount.toStringAsFixed(2)}',
+                          CurrencyHelper.format(request.amount),
                           style: const TextStyle(
                             color: Color(0xFF1E293B),
                             fontSize: 20,
@@ -1637,7 +1638,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '₹${(request.amount - (request.amount * 0.05)).toStringAsFixed(2)}',
+                          CurrencyHelper.format(request.amount - (request.amount * 0.05)),
                           style: const TextStyle(
                             color: Color(0xFF10B981),
                             fontSize: 18,
@@ -1659,7 +1660,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Platform Fee (5%): ₹${(request.amount * 0.05).toStringAsFixed(2)}',
+                        'Platform Fee (5%): ${CurrencyHelper.format(request.amount * 0.05)}',
                         style: const TextStyle(
                           color: Color(0xFF64748B),
                           fontSize: 12,
@@ -2057,7 +2058,8 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
         double commission = 0;
         double finalAmount = 0;
         bool isAmountValid = true;
-        String helperText = "Minimum withdrawal amount\nis ₹500";
+        String helperText =
+            "Minimum withdrawal amount\nis ${CurrencyHelper.format(500, decimals: 0)}";
 
         return Dialog(
           shape:
@@ -2135,7 +2137,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                                   ),
                                 ),
                                 Text(
-                                  '₹${totalWalletBalance.toStringAsFixed(2)}',
+                                  CurrencyHelper.format(totalWalletBalance),
                                   style: const TextStyle(
                                     color: Color(0xFF1E293B),
                                     fontSize: 15,
@@ -2156,7 +2158,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                                   ),
                                 ),
                                 Text(
-                                  '- ₹${controller.codCommission.toStringAsFixed(2)}',
+                                  '- ${CurrencyHelper.format(controller.codCommission)}',
                                   style: const TextStyle(
                                     color: Color(0xFFEF4444),
                                     fontSize: 15,
@@ -2182,7 +2184,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                                   ),
                                 ),
                                 Text(
-                                  '₹${availableBalance.toStringAsFixed(2)}',
+                                  CurrencyHelper.format(availableBalance),
                                   style: const TextStyle(
                                     color: Color(0xFF10B981),
                                     fontSize: 15,
@@ -2220,7 +2222,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    '₹${commission.toStringAsFixed(2)}',
+                                    CurrencyHelper.format(commission),
                                     style: const TextStyle(
                                       color: Color(0xFFEF4444),
                                       fontSize: 16,
@@ -2241,7 +2243,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    '₹${finalAmount.toStringAsFixed(2)}',
+                                    CurrencyHelper.format(finalAmount),
                                     style: const TextStyle(
                                       color: Color(0xFF10B981),
                                       fontSize: 18,
@@ -2266,11 +2268,11 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                               if (amt < 500) {
                                 isAmountValid = false;
                                 helperText =
-                                    "Minimum withdrawal amount is ₹500";
+                                    "Minimum withdrawal amount is ${CurrencyHelper.format(500, decimals: 0)}";
                               } else if (amt > availableBalance) {
                                 isAmountValid = false;
                                 helperText =
-                                    "Amount exceeds available balance of ₹${availableBalance.toStringAsFixed(2)}";
+                                    "Amount exceeds available balance of ${CurrencyHelper.format(availableBalance)}";
                               } else {
                                 isAmountValid = true;
                                 helperText = "Amount looks good!";
@@ -2281,7 +2283,8 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                               commission = 0;
                               finalAmount = 0;
                               isAmountValid = value.isEmpty;
-                              helperText = "Minimum withdrawal amount is ₹500";
+                              helperText =
+                                  "Minimum withdrawal amount is ${CurrencyHelper.format(500, decimals: 0)}";
                             });
                           }
                         },
@@ -2330,12 +2333,12 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Icon(
-                              Icons.currency_rupee_rounded,
+                              Icons.payments_rounded,
                               color: Color(0xFF6366F1),
                               size: 20,
                             ),
                           ),
-                          suffixText: "INR",
+                          suffixText: CurrencyHelper.code(),
                           suffixStyle: const TextStyle(
                             color: Color(0xFF64748B),
                             fontWeight: FontWeight.w500,
@@ -2394,10 +2397,12 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                                     errorMessage =
                                         'Please enter a valid amount';
                                   } else if (amount < 500) {
-                                    errorMessage = 'Minimum amount is ₹500';
+                                    errorMessage =
+                                        'Minimum amount is ${CurrencyHelper.format(500, decimals: 0)}';
                                   } else if (amount > availableBalance) {
                                     errorMessage =
-                                        'Amount exceeds available balance of ₹${availableBalance.toStringAsFixed(2)}';
+                                    errorMessage =
+                                        'Amount exceeds available balance of ${CurrencyHelper.format(availableBalance)}';
                                   } else {
                                     errorMessage = 'Invalid amount';
                                   }

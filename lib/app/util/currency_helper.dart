@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/shared_pref.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/constants.dart';
 
@@ -113,5 +114,34 @@ class CurrencyHelper {
     prefs.putString('currencyCode', info.code);
     prefs.putString('currencySymbol', info.symbol);
     prefs.putString('currencySide', info.side);
+  }
+
+  static CurrencyInfo active() {
+    if (Get.isRegistered<SharedPreferencesManager>()) {
+      return current(Get.find<SharedPreferencesManager>());
+    }
+    return fromCurrencyCode(AppConstants.defaultCurrencyCode);
+  }
+
+  static String code() => active().code;
+
+  static String symbol() => active().symbol;
+
+  static String displaySymbol([SharedPreferencesManager? prefs]) {
+    final info = prefs != null ? current(prefs) : active();
+    if (info.code.toUpperCase() == 'INR') return info.symbol;
+    return info.code;
+  }
+
+  /// Same rule as Premium plans: INR uses ₹, others use code (e.g. QAR 100).
+  static String format(dynamic amount, {int? decimals}) {
+    final info = active();
+    final n = amount is num ? amount : num.tryParse('$amount') ?? 0;
+    final places = decimals ?? (n % 1 == 0 ? 0 : 2);
+    final text = n.toStringAsFixed(places);
+    if (info.code.toUpperCase() == 'INR') {
+      return '₹$text';
+    }
+    return '${info.code} $text';
   }
 }

@@ -8,6 +8,7 @@ import 'package:ultimate_salon_owner_flutter/app/controller/services_categories_
 import 'package:ultimate_salon_owner_flutter/app/controller/services_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/services_names_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/router.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/toast.dart';
 
@@ -46,7 +47,7 @@ class AddServicesController extends GetxController implements GetxService {
   String action = 'new';
 
   double tax = 0.0;
-  String currencySymbol = '₹';
+  String currencySymbol = CurrencyHelper.displaySymbol();
   String currencySide = 'left';
 
   String get finalPriceWithTax {

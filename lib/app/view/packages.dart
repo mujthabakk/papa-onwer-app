@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:skeletons/skeletons.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/packages_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/app_image.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 
 // Enum for sort options
@@ -789,7 +790,7 @@ class _PackagesScreenState extends State<PackagesScreen>
                               _parseDouble(item.price) >
                                   _parseDouble(item.off)) ...[
                             Text(
-                              '₹${item.price ?? 0}',
+                              CurrencyHelper.format(item.price ?? 0),
                               style: TextStyle(
                                 decoration: TextDecoration.lineThrough,
                                 fontSize: 14,
@@ -799,7 +800,7 @@ class _PackagesScreenState extends State<PackagesScreen>
                             const SizedBox(width: 5),
                           ],
                           Text(
-                            '₹${item.off ?? 0}',
+                            CurrencyHelper.format(item.off ?? 0),
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -1231,7 +1232,7 @@ class PackageSearchDelegate extends SearchDelegate<String> {
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
-                  '₹${item.off ?? 0}',
+                  CurrencyHelper.format(item.off ?? 0),
                   style: const TextStyle(
                     color: ThemeProvider.appColor,
                     fontWeight: FontWeight.w500,
