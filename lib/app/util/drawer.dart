@@ -25,7 +25,7 @@ class AppDrawer extends StatelessWidget {
       builder: (_) {
         return GetBuilder<ProfileController>(
       builder: (value) {
-        final isPremium = value.parser.getPremium();
+        final isPremium = value.premium.value;
         return Drawer(
           backgroundColor: Colors.white,
           child: SafeArea(
@@ -365,7 +365,11 @@ class AppDrawer extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                isPremium ? 'PREMIUM'.tr : 'STANDARD'.tr,
+                isPremium
+                    ? (value.planName.value.isNotEmpty
+                        ? value.planName.value.toUpperCase()
+                        : 'PREMIUM'.tr)
+                    : 'STANDARD'.tr,
                 style: TextStyle(
                   fontSize: 11,
                   fontFamily: 'bold',

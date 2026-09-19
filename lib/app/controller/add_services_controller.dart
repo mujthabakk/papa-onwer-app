@@ -52,8 +52,8 @@ class AddServicesController extends GetxController implements GetxService {
 
   String get finalPriceWithTax {
     if (offTextEditor.text.isNotEmpty) {
-      double sellPrice = double.tryParse(offTextEditor.text) ?? 0.0;
-      return (sellPrice + (sellPrice * tax / 100)).toStringAsFixed(2);
+      final sellPrice = double.tryParse(offTextEditor.text) ?? 0.0;
+      return CurrencyHelper.inclusiveFixed(sellPrice);
     }
     return '0.00';
   }
@@ -447,10 +447,8 @@ class AddServicesController extends GetxController implements GetxService {
   }
 
   void percentage(double percent, double total) {
-    double sum = (total * percent) / 100;
-    sum = double.parse(sum.toStringAsFixed(2));
-    debugPrint(sum.toString());
-    offTextEditor.text = (total - sum).toStringAsFixed(2);
+    offTextEditor.text =
+        CurrencyHelper.discountedPrice(total, percent).toStringAsFixed(2);
     update();
   }
 

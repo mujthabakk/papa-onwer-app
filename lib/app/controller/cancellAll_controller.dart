@@ -12,8 +12,8 @@ import 'package:ultimate_salon_owner_flutter/app/backend/parse/cancel_all_parse.
 import 'package:ultimate_salon_owner_flutter/app/controller/inbox_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/notification_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/order_details_controller.dart';
-import 'package:ultimate_salon_owner_flutter/app/controller/premium_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/router.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/app_nav.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/constants.dart';
 
 class CancelAllAppointmentController extends GetxController
@@ -105,8 +105,7 @@ class CancelAllAppointmentController extends GetxController
   }
 
   void onUpgradeScreen() {
-    Get.delete<PremiumController>(force: true);
-    Get.toNamed(AppRouter.getPremiumRoute());
+    AppNav.openPremium();
   }
 
   void onOrderDetails() {

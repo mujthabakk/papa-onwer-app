@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/api/api.dart';
+import 'package:ultimate_salon_owner_flutter/app/controller/locale_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/shared_pref.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/constants.dart';
 
@@ -20,8 +21,26 @@ class UpgradeParser {
     return sharedPreferencesManager.getString('uid') ?? '0';
   }
 
+  String _planCountry() {
+    if (Get.isRegistered<LocaleController>()) {
+      final loc = Get.find<LocaleController>();
+      final selected = loc.selectedCountry;
+      if (selected != null) {
+        if (selected.nameEn.trim().isNotEmpty) return selected.nameEn.trim();
+        if (selected.name.trim().isNotEmpty) return selected.name.trim();
+      }
+      final code = loc.countryCode.toUpperCase();
+      if (code == 'QA' || code == 'QAT') return 'Qatar';
+    }
+    return 'India';
+  }
+
   Future<Response> getUpgradePlans() async {
-    return apiService.getPublic('${AppConstants.upgradeGetPlans}?uid=$uid');
+    final body = {'uid': uid, 'country': _planCountry()};
+    if (token.isNotEmpty) {
+      return apiService.postPrivate(AppConstants.upgradePlans, body, token);
+    }
+    return apiService.postPublic(AppConstants.upgradePlans, body);
   }
 
   Future<Response> createPaymentLink({
@@ -49,7 +68,7 @@ class UpgradeParser {
       body['payment_link_id'] = paymentLinkId;
     }
     return apiService.postPrivate(
-      'api/v1/upgrade/verifyPayment',
+      AppConstants.upgradeVerifyPayment,
       body,
       token,
     );

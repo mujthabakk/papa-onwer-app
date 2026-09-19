@@ -1,9 +1,8 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/api/handler.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/owner_reviews_model.dart';
+import 'package:ultimate_salon_owner_flutter/app/backend/models/partner_plan_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/profile_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/ads_managing_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/ads_publish_controller.dart';
@@ -32,6 +31,7 @@ import 'package:ultimate_salon_owner_flutter/app/controller/slot_controller.dart
 import 'package:ultimate_salon_owner_flutter/app/controller/stylist_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/withdrawal_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/router.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/app_nav.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 
 class ProfileController extends GetxController
@@ -50,6 +50,10 @@ class ProfileController extends GetxController
   var premium = false.obs;
   var cover = ''.obs;
   var uid = ''.obs;
+  var planName = ''.obs;
+  var planExpiresAt = ''.obs;
+  var planDaysRemaining = 0.obs;
+  var planCode = ''.obs;
 
   void updateName(String newName) {
     name.value = newName; // Update the value of name
@@ -67,20 +71,48 @@ class ProfileController extends GetxController
     return premium.value;
   }
 
+  void applyPlan(PartnerPlanModel plan) {
+    plan.save(parser.sharedPreferencesManager);
+    premium.value = plan.isActivePremium;
+    planName.value = plan.displayName;
+    planExpiresAt.value = plan.upgradeExpiresAt ?? '';
+    planDaysRemaining.value = plan.daysRemaining;
+    planCode.value = plan.code ?? '';
+    update();
+  }
+
+  void loadLocalPlan() {
+    applyPlan(PartnerPlanModel.load(parser.sharedPreferencesManager));
+  }
+
+  Future<void> refreshPlan() async {
+    if (!parser.sharedPreferencesManager.hasOwnerSession()) return;
+    try {
+      var response = await parser.getProfileById();
+      if (response.statusCode != 200) {
+        response = await parser.getOwnerInfo();
+      }
+      if (response.statusCode == 200) {
+        final plan = PartnerPlanModel.extract(response.body);
+        if (plan != null) {
+          applyPlan(plan);
+          return;
+        }
+      }
+    } catch (_) {}
+    loadLocalPlan();
+  }
+
   @override
   void onInit() {
     name.value = parser.getName();
-    premium.value = parser.getPremium();
     uid.value = parser.getUID();
-    //if (parser.getType()) {
     cover.value = parser.getCover();
-    // } else {
-    // cover.value = parser.getBackground();
-    // }
+    loadLocalPlan();
 
-    //cover.value = parser.getCover();
     if (parser.sharedPreferencesManager.hasOwnerSession()) {
       getMyReviews();
+      refreshPlan();
     }
 
     super.onInit();
@@ -110,59 +142,48 @@ class ProfileController extends GetxController
   }
 
   void onHistory() {
-    Get.delete<HistoryController>(force: true);
-    Get.toNamed(AppRouter.getHistoryRoute());
+    AppNav.toNamed(AppRouter.getHistoryRoute());
   }
 
   void onSlot() {
-    Get.delete<SlotController>(force: true);
-    Get.toNamed(AppRouter.getSlotRoute());
+    AppNav.toNamed(AppRouter.getSlotRoute());
   }
 
   void onServices() {
-    Get.delete<ServicesController>(force: true);
-    Get.toNamed(AppRouter.getServicesRoute());
+    AppNav.toNamed(AppRouter.getServicesRoute());
   }
 
   void onStylist() {
-    Get.delete<StylistController>(force: true);
-    Get.toNamed(AppRouter.getStylistRoute());
+    AppNav.toNamed(AppRouter.getStylistRoute());
   }
 
   void onProducts() {
-    Get.delete<ProductsController>(force: true);
-    Get.toNamed(AppRouter.getProductsRoute());
+    AppNav.toNamed(AppRouter.getProductsRoute());
   }
 
   void onPackages() {
-    Get.delete<PackagesController>(force: true);
-    Get.toNamed(AppRouter.getPackagesRoute());
+    AppNav.toNamed(AppRouter.getPackagesRoute());
   }
 
   void onEditProfile() {
     if (type == true) {
-      Get.delete<ProfileCategoriesController>(force: true);
-      Get.toNamed(AppRouter.getProfileCategoriesRoute());
+      AppNav.toNamed(AppRouter.getProfileCategoriesRoute());
     } else {
-      Get.delete<IndividualProfileController>(force: true);
-      Get.toNamed(AppRouter.getIndividualProfileRoute());
+      AppNav.toNamed(AppRouter.getIndividualProfileRoute());
     }
   }
 
   void onUpgradeScreen() {
-    Get.delete<PremiumController>(force: true);
-    Get.toNamed(AppRouter.getPremiumRoute());
+    AppNav.toNamed(AppRouter.getPremiumRoute());
   }
 
   void onAppoitmentHistory() {
-    Get.delete<PreviousAppointmentController>(force: true);
-    Get.toNamed(AppRouter.getPreviousAppointmentsRoute(),
+    AppNav.toNamed(AppRouter.getPreviousAppointmentsRoute(),
         arguments: ['search', 0, 0, 0]);
   }
 
   void onGallary() {
-    Get.delete<GallaryController>(force: true);
-    Get.toNamed(AppRouter.getGallaryRoute());
+    AppNav.toNamed(AppRouter.getGallaryRoute());
   }
 
   void onPremiumRequired(BuildContext context) {
@@ -243,74 +264,61 @@ class ProfileController extends GetxController
   }
 
   void onReview() {
-    Get.delete<ReviewController>(force: true);
-    Get.toNamed(AppRouter.getReviewRoute());
+    AppNav.toNamed(AppRouter.getReviewRoute());
   }
 
   void onInbox() {
-    Get.delete<InboxController>(force: true);
-    Get.toNamed(AppRouter.getInboxRoute());
+    AppNav.toNamed(AppRouter.getInboxRoute());
   }
 
   void onAds() {
     // Get.delete<AdsPublishController>(force: true);
     // Get.toNamed(AppRouter.getAdsRoute());
 
-    Get.delete<AdsPublishController>(force: true);
-    Get.toNamed(AppRouter.getAdsRoute(), arguments: ['new']);
+    AppNav.toNamed(AppRouter.getAdsRoute(), arguments: ['new']);
   }
 
   void onManageAds() {
     // Get.delete<AdsPublishController>(force: true);
     // Get.toNamed(AppRouter.getAdsRoute());
 
-    Get.delete<AdsManagingController>(force: true);
-    Get.toNamed(AppRouter.getAdsManageRoute(), arguments: ['new']);
+    AppNav.toNamed(AppRouter.getAdsManageRoute(), arguments: ['new']);
   }
 
   void onWithdrawals() {
-    Get.delete<WithdrawalsController>(force: true);
-    Get.toNamed(AppRouter.getWithdrawalsRoute());
+    AppNav.toNamed(AppRouter.getWithdrawalsRoute());
   }
 
   void onCancelAllAppointments() {
-    Get.delete<CancelAllAppointmentController>(force: true);
-    Get.toNamed(AppRouter.getCancelAllAppointmentsRoute());
+    AppNav.toNamed(AppRouter.getCancelAllAppointmentsRoute());
   }
 
   void onCoupons() {
-    Get.delete<CouponsController>(force: true);
-    Get.toNamed(AppRouter.getCouponsRoute());
+    AppNav.toNamed(AppRouter.getCouponsRoute());
   }
 
   void onLimitedOffers() {
-    Get.delete<TimedOffersController>(force: true);
-    Get.toNamed(AppRouter.getTimedOffersRoute());
+    AppNav.toNamed(AppRouter.getTimedOffersRoute());
   }
 
   void onConnectLinks() {
-    Get.delete<ConnectLinksController>(force: true);
-    Get.toNamed(AppRouter.getConnectLinksRoute());
+    AppNav.toNamed(AppRouter.getConnectLinksRoute());
   }
 
   void onHolidays() {
-    Get.delete<HolidayController>(force: true);
-    Get.toNamed(AppRouter.getHolidayRoutes());
+    AppNav.toNamed(AppRouter.getHolidayRoutes());
   }
 
   void onFacilities() {
-    Get.delete<FacilitiesController>(force: true);
-    Get.toNamed(AppRouter.getFacilities());
+    AppNav.toNamed(AppRouter.getFacilities());
   }
 
   void onComplaints() {
-    Get.delete<ComplaintsController>(force: true);
-    Get.toNamed(AppRouter.getComplaintRoute());
+    AppNav.toNamed(AppRouter.getComplaintRoute());
   }
 
   void onNotifications() {
-    Get.delete<NotificationController>(force: true);
-    Get.toNamed(AppRouter.getNotifications());
+    AppNav.toNamed(AppRouter.getNotifications());
   }
 
   void onLanguages() {
@@ -318,8 +326,7 @@ class ProfileController extends GetxController
   }
 
   void onContactUs() {
-    Get.delete<ContactUsController>(force: true);
-    Get.toNamed(AppRouter.getContactUsRoute());
+    AppNav.toNamed(AppRouter.getContactUsRoute());
   }
 
   void onDeleteAccount() {
@@ -642,8 +649,7 @@ class ProfileController extends GetxController
 
   void onAppPages(String name, String id) {
     debugPrint('$name = $id');
-    Get.delete<AppPagesController>(force: true);
-    Get.toNamed(AppRouter.getAppPagesRoute(),
+    AppNav.toNamed(AppRouter.getAppPagesRoute(),
         arguments: [name, id], preventDuplicates: false);
   }
 

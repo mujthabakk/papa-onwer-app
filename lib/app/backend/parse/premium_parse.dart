@@ -35,8 +35,24 @@ class PremiumParser {
     return sharedPreferencesManager.getString('uid') ?? '0';
   }
 
+  String _planCountry() {
+    return sharedPreferencesManager.getString('country') ?? 'IN';
+  }
+
   Future<Response> getUpgradePlans() async {
-    return apiService.getPublic('${AppConstants.upgradeGetPlans}?uid=$uid');
+    final country = _planCountry();
+    String countryName = country;
+    if (country.toUpperCase() == 'QA' || country.toUpperCase() == 'QAT') {
+      countryName = 'Qatar';
+    } else if (country.toUpperCase() == 'IN' ||
+        country.toUpperCase() == 'IND') {
+      countryName = 'India';
+    }
+    final body = {'uid': uid, 'country': countryName};
+    if (token.isNotEmpty) {
+      return apiService.postPrivate(AppConstants.upgradePlans, body, token);
+    }
+    return apiService.postPublic(AppConstants.upgradePlans, body);
   }
 
   Future<Response> createPaymentLink({

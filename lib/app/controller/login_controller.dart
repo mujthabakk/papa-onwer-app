@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/api/handler.dart';
+import 'package:ultimate_salon_owner_flutter/app/backend/models/partner_plan_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/login_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/analytics_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/appointment_controller.dart';
@@ -96,6 +97,15 @@ class LoginController extends GetxController implements GetxService {
       user['mobile'].toString(),
       user['type'].toString(),
     );
+
+    final plan = PartnerPlanModel.extract(myMap) ??
+        PartnerPlanModel.extract({'plan': user['plan']});
+    if (plan != null) {
+      plan.save(parser.sharedPreferencesManager);
+      if (Get.isRegistered<ProfileController>()) {
+        Get.find<ProfileController>().applyPlan(plan);
+      }
+    }
 
     // Cache credentials for next open.
     if (emailTextEditor.text.trim().isNotEmpty &&

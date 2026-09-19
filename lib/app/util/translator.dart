@@ -534,7 +534,7 @@ class LocaleString extends Translations {
           "Please wait...": "Please wait...",
         
           "Connection Failed": "Connection Failed",
-},
+        },
         "hi_IN": {
           "Add Packages": "पैकेज जोड़ें",
           "Choose From": "से चुनें",
@@ -1061,7 +1061,7 @@ class LocaleString extends Translations {
           "Please wait...": "Please wait...",
         
           "RETRY": "पुनः प्रयास करें",
-},
+        },
         "es_DE": {
           "Add Packages": "Agregar paquetes",
           "Choose From": "Escoge de",
@@ -1591,7 +1591,7 @@ class LocaleString extends Translations {
           "Please wait...": "Please wait...",
         
           "RETRY": "REINTENTAR",
-},
+        },
         "ar_AE": {
           "Add Packages": "إضافة الحزم",
           "Choose From": "اختر من",
@@ -2115,6 +2115,6 @@ class LocaleString extends Translations {
           "Please wait...": "يرجى الانتظار...",
         
           "RETRY": "إعادة المحاولة",
-},
+        },
       };
 }

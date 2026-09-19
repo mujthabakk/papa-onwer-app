@@ -151,16 +151,18 @@ class MyApp extends StatelessWidget {
       navigatorKey: Get.key,
       initialRoute: AppRouter.splash,
       getPages: AppRouter.routes,
-      defaultTransition: Transition.native,
       translations: AppTranslations(),
       fallbackLocale: const Locale('en', 'US'),
       locale: LocaleHelper.toFlutterLocale(lang),
-      builder: (context, child) {
-        return Directionality(
-          textDirection: TextDirection.ltr,
-          child: EasyLoading.init()(context, child),
-        );
+      defaultTransition: Transition.cupertino,
+      transitionDuration: const Duration(milliseconds: 220),
+      smartManagement: SmartManagement.onlyBuilder,
+      routingCallback: (routing) {
+        if (EasyLoading.isShow) {
+          EasyLoading.dismiss();
+        }
       },
+      builder: EasyLoading.init(),
     );
   }
 }

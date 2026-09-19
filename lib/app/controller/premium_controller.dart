@@ -4,6 +4,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/api/handler.dart';
+import 'package:ultimate_salon_owner_flutter/app/backend/models/partner_plan_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/upgrade_plan_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/premium_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/upgrade_parse.dart';
@@ -56,7 +57,18 @@ class PremiumController extends GetxController implements GetxService {
             list = body['data'] as List;
           } else if (body['plans'] is List) {
             list = body['plans'] as List;
+          } else if (body['data'] is Map) {
+            final data = Map<String, dynamic>.from(body['data'] as Map);
+            if (data['plans'] is List) {
+              list = data['plans'] as List;
+            } else if (data['data'] is List) {
+              list = data['data'] as List;
+            }
           }
+        }
+        final plan = PartnerPlanModel.extract(body);
+        if (plan != null && Get.isRegistered<ProfileController>()) {
+          Get.find<ProfileController>().applyPlan(plan);
         }
         if (list != null) {
           plans.value = list
@@ -159,6 +171,9 @@ class PremiumController extends GetxController implements GetxService {
         expiresAt: result.upgradeExpiresAt,
         showDialog: showSuccessDialog,
       );
+      if (Get.isRegistered<ProfileController>()) {
+        await Get.find<ProfileController>().refreshPlan();
+      }
       return true;
     }
 

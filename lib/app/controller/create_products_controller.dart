@@ -12,6 +12,7 @@ import 'package:ultimate_salon_owner_flutter/app/controller/products_controller.
 import 'package:ultimate_salon_owner_flutter/app/controller/shop_categories_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/shop_subcategories_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/router.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/toast.dart';
 
@@ -62,8 +63,8 @@ class CreateProductsController extends GetxController implements GetxService {
 
   String get finalPriceWithTax {
     if (sellPriceTextEditor.text.isNotEmpty) {
-      double sellPrice = double.tryParse(sellPriceTextEditor.text) ?? 0.0;
-      return (sellPrice + (sellPrice * tax / 100)).toStringAsFixed(2);
+      final sellPrice = double.tryParse(sellPriceTextEditor.text) ?? 0.0;
+      return CurrencyHelper.inclusiveFixed(sellPrice);
     }
     return '0.00';
   }
@@ -637,10 +638,8 @@ class CreateProductsController extends GetxController implements GetxService {
   }
 
   void percentage(double percent, double total) {
-    double sum = (total * percent) / 100;
-    sum = double.parse((sum).toStringAsFixed(2));
-    debugPrint(sum.toString());
-    sellPriceTextEditor.text = (total - sum).toStringAsFixed(2);
+    sellPriceTextEditor.text =
+        CurrencyHelper.discountedPrice(total, percent).toStringAsFixed(2);
     update();
   }
 

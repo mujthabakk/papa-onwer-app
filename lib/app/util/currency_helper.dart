@@ -133,6 +133,25 @@ class CurrencyHelper {
     return info.code;
   }
 
+  /// Half-up to 2 decimals so 9.975 becomes 9.98 (not 9.97 from float).
+  static double round2(double value) => (value * 100).round() / 100;
+
+  static double discountedPrice(double original, double percent) {
+    final cut = round2(original * percent / 100);
+    return round2(original - cut);
+  }
+
+  static double withTax(double amount, double taxPercent) {
+    final tax = round2(amount * taxPercent / 100);
+    return round2(amount + tax);
+  }
+
+  /// Sell / discounted price is already tax-inclusive. Do not add tax again.
+  static String inclusiveFixed(double amount) => round2(amount).toStringAsFixed(2);
+
+  static String withTaxFixed(double amount, double taxPercent) =>
+      withTax(amount, taxPercent).toStringAsFixed(2);
+
   /// Same rule as Premium plans: INR uses ₹, others use code (e.g. QAR 100).
   static String format(dynamic amount, {int? decimals}) {
     final info = active();

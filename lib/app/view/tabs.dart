@@ -35,7 +35,7 @@ class _TabScreenState extends State<TabScreen> {
     ];
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (Get.isRegistered<LocaleController>()) {
-        Get.find<LocaleController>().bootstrap(force: true, applyLocale: false);
+        Get.find<LocaleController>().bootstrap(force: false, applyLocale: false);
       }
     });
   }
@@ -82,22 +82,22 @@ class _TabScreenState extends State<TabScreen> {
         ? getResponsiveSize(context, 10.0)
         : getResponsiveSize(context, 5.0);
 
-    return GetBuilder<LocaleController>(builder: (_) {
-      return GetBuilder<TabsController>(builder: (value) {
-        return Scaffold(
-            key: value.scaffoldKey,
-            backgroundColor: Colors.white,
-            drawer: const AppDrawer(),
-            bottomNavigationBar: SafeArea(
-              bottom: true,
-              child: Container(
-                color: Colors.white,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                      vertical: containerVerticalPadding,
-                      horizontal: containerHorizontalPadding),
-                  child: InkWell(
-                    child: GNav(
+    return GetBuilder<TabsController>(builder: (value) {
+      return Scaffold(
+        key: value.scaffoldKey,
+        backgroundColor: Colors.white,
+        drawer: const AppDrawer(),
+        bottomNavigationBar: SafeArea(
+          bottom: true,
+          child: Container(
+            color: Colors.white,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                  vertical: containerVerticalPadding,
+                  horizontal: containerHorizontalPadding),
+              child: GetBuilder<LocaleController>(
+                builder: (_) {
+                  return GNav(
                       rippleColor: ThemeProvider.appColor,
                       hoverColor: ThemeProvider.appColor,
                       haptic: false,
@@ -147,17 +147,17 @@ class _TabScreenState extends State<TabScreen> {
                       onTabChange: (index) {
                         value.updateTabId(index);
                       },
-                    ),
-                  ),
-                ),
+                    );
+                },
               ),
             ),
-            body: IndexedStack(
-              index: value.tabId,
-              children: _pages,
-            ),
-        );
-      });
+          ),
+        ),
+        body: IndexedStack(
+          index: value.tabId,
+          children: _pages,
+        ),
+      );
     });
   }
 }

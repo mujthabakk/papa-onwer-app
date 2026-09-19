@@ -473,6 +473,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
     });
   }
 
+  String _planExpiryLine(ProfileController value) {
+    final parts = <String>[];
+    if (value.planExpiresAt.value.isNotEmpty) {
+      parts.add('Expires ${value.planExpiresAt.value}');
+    }
+    if (value.planDaysRemaining.value > 0) {
+      parts.add('${value.planDaysRemaining.value} days left');
+    }
+    if (parts.isEmpty) {
+      return 'You have access to all premium features';
+    }
+    return parts.join(' · ');
+  }
+
   Widget _buildProBanner(ProfileController value) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
@@ -514,12 +528,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 Row(
                   children: [
-                    const Text(
-                      'Premium Account',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                    Flexible(
+                      child: Text(
+                        value.planName.value.isNotEmpty
+                            ? value.planName.value
+                            : 'Premium Account',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -530,9 +548,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Text(
-                        'PRO',
-                        style: TextStyle(
+                      child: Text(
+                        (value.planCode.value.isNotEmpty
+                                ? value.planCode.value
+                                : 'PRO')
+                            .toUpperCase(),
+                        style: const TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                           color: Color.fromARGB(255, 27, 143, 194),
@@ -541,9 +562,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ],
                 ),
-                const Text(
-                  'You have access to all premium features',
-                  style: TextStyle(
+                Text(
+                  _planExpiryLine(value),
+                  style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 12,
                   ),

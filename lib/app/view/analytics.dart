@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/analytics_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
+import 'package:ultimate_salon_owner_flutter/app/view/widgets/simple_bar_chart.dart';
 
 class AnalyticScreen extends StatefulWidget {
   const AnalyticScreen({super.key});
@@ -14,19 +14,11 @@ class AnalyticScreen extends StatefulWidget {
 
 class _AnalyticScreenState extends State<AnalyticScreen>
     with AutomaticKeepAliveClientMixin {
-  TooltipBehavior? _tooltipBehavior;
   final ScrollController _scrollControllerAppointments = ScrollController();
   final ScrollController _scrollControllerProducts = ScrollController();
 
   @override
   bool get wantKeepAlive => true;
-
-  @override
-  void initState() {
-    _tooltipBehavior =
-        TooltipBehavior(enable: true, header: '', canShowMarker: false);
-    super.initState();
-  }
 
   @override
   void dispose() {
@@ -224,23 +216,7 @@ class _AnalyticScreenState extends State<AnalyticScreen>
                     const SizedBox(height: 20),
                     SizedBox(
                       height: 260,
-                      child: IndexedStack(
-                        index: value.segmentedControlGroupValue.clamp(0, 2),
-                        children: [
-                          _stableChart(
-                            ready: value.dailyApiCalled,
-                            chart: _buildChart(),
-                          ),
-                          _stableChart(
-                            ready: value.monthlyApiCalled,
-                            chart: _buildChartForMonths(),
-                          ),
-                          _stableChart(
-                            ready: value.yearlyApiCalled,
-                            chart: _buildChartForYearly(),
-                          ),
-                        ],
-                      ),
+                      child: _periodChart(value),
                     ),
                     const SizedBox(height: 20),
                     value.segmentedControlGroupValue == 0
@@ -1439,12 +1415,54 @@ class _AnalyticScreenState extends State<AnalyticScreen>
     });
   }
 
-  Widget _stableChart({required bool ready, required Widget chart}) {
+  Widget _periodChart(AnalyticsController value) {
+    late final List<SimpleBarPoint> points;
+    late final String title;
+    var ready = value.dailyApiCalled;
+    switch (value.segmentedControlGroupValue) {
+      case 1:
+        ready = value.monthlyApiCalled;
+        title =
+            '${'Total number of bookings'.tr} ${value.currenyYear}';
+        points = [
+          for (final item in value.monthList)
+            SimpleBarPoint(
+              label: _monthLabel(value, item.dayName),
+              value: (item.total ?? 0).toDouble(),
+            ),
+        ];
+        break;
+      case 2:
+        ready = value.yearlyApiCalled;
+        title = 'Total number of bookings'.tr;
+        points = [
+          for (final item in value.yearlyList)
+            SimpleBarPoint(
+              label: item.dayName.toString(),
+              value: (item.total ?? 0).toDouble(),
+            ),
+        ];
+        break;
+      default:
+        title = '${'Total number of bookings'.tr} ${value.getName()}';
+        points = [
+          for (final item in value.list)
+            SimpleBarPoint(
+              label: (item.dayName ?? '').split(',').first,
+              value: (item.total ?? 0).toDouble(),
+            ),
+        ];
+    }
+
     return Stack(
       fit: StackFit.expand,
       alignment: Alignment.center,
       children: [
-        RepaintBoundary(child: chart),
+        SimpleBarChart(
+          title: title,
+          valueSuffix: value.currencySymbol,
+          points: points,
+        ),
         if (!ready)
           const Center(
             child: CircularProgressIndicator(
@@ -1455,313 +1473,11 @@ class _AnalyticScreenState extends State<AnalyticScreen>
     );
   }
 
-  SfCartesianChart _buildChart() {
-    return SfCartesianChart(
-      key: const ValueKey('analytics-daily-chart'),
-      plotAreaBorderWidth: 0,
-      enableAxisAnimation: false,
-      title: ChartTitle(
-          text:
-              '${'Total number of bookings'.tr} ${Get.find<AnalyticsController>().getName()}',
-          textStyle: const TextStyle(fontSize: 10)),
-      primaryXAxis: CategoryAxis(
-        majorGridLines: const MajorGridLines(width: 0),
-      ),
-      primaryYAxis: NumericAxis(
-          axisLine: const AxisLine(width: 0),
-          labelFormat:
-              '{value}${Get.find<AnalyticsController>().currencySymbol}',
-          majorTickLines: const MajorTickLines(size: 0)),
-      series: _getWeekData(),
-      tooltipBehavior: _tooltipBehavior,
-    );
+  String _monthLabel(AnalyticsController value, int? dayName) {
+    if (dayName == null || dayName < 1) return '';
+    final names = value.monthsListNames;
+    if (dayName > names.length) return dayName.toString();
+    final name = names[dayName - 1];
+    return name.length <= 3 ? name : name.substring(0, 3);
   }
-
-  SfCartesianChart _buildChartProducts() {
-    return SfCartesianChart(
-      plotAreaBorderWidth: 0,
-      enableAxisAnimation: false,
-      title: ChartTitle(
-          text:
-              '${'Total number of orders'.tr} ${Get.find<AnalyticsController>().getName()}',
-          textStyle: const TextStyle(fontSize: 10)),
-      primaryXAxis: CategoryAxis(
-        majorGridLines: const MajorGridLines(width: 0),
-      ),
-      primaryYAxis: NumericAxis(
-          axisLine: const AxisLine(width: 0),
-          labelFormat:
-              '{value}${Get.find<AnalyticsController>().currencySymbol}',
-          majorTickLines: const MajorTickLines(size: 0)),
-      series: _getWeekDataProducts(),
-      tooltipBehavior: _tooltipBehavior,
-    );
-  }
-
-  SfCartesianChart _buildChartForMonths() {
-    return SfCartesianChart(
-      key: const ValueKey('analytics-monthly-chart'),
-      plotAreaBorderWidth: 0,
-      enableAxisAnimation: false,
-      title: ChartTitle(
-          text:
-              '${'Total number of bookings'.tr} ${Get.find<AnalyticsController>().currenyYear}',
-          textStyle: const TextStyle(fontSize: 10)),
-      primaryXAxis: CategoryAxis(
-        majorGridLines: const MajorGridLines(width: 0),
-      ),
-      primaryYAxis: NumericAxis(
-          axisLine: const AxisLine(width: 0),
-          labelFormat:
-              '{value}${Get.find<AnalyticsController>().currencySymbol}',
-          majorTickLines: const MajorTickLines(size: 0)),
-      series: _getMonthsData(),
-      tooltipBehavior: _tooltipBehavior,
-    );
-  }
-
-  SfCartesianChart _buildChartForMonthsProducts() {
-    return SfCartesianChart(
-      plotAreaBorderWidth: 0,
-      enableAxisAnimation: false,
-      title: ChartTitle(
-          text:
-              '${'Total number of orders'.tr} ${Get.find<AnalyticsController>().currenyYear}',
-          textStyle: const TextStyle(fontSize: 10)),
-      primaryXAxis: CategoryAxis(
-        majorGridLines: const MajorGridLines(width: 0),
-      ),
-      primaryYAxis: NumericAxis(
-          axisLine: const AxisLine(width: 0),
-          labelFormat:
-              '{value}${Get.find<AnalyticsController>().currencySymbol}',
-          majorTickLines: const MajorTickLines(size: 0)),
-      series: _getMonthsDataProducts(),
-      tooltipBehavior: _tooltipBehavior,
-    );
-  }
-
-  SfCartesianChart _buildChartForYearly() {
-    return SfCartesianChart(
-      key: const ValueKey('analytics-yearly-chart'),
-      plotAreaBorderWidth: 0,
-      enableAxisAnimation: false,
-      title: ChartTitle(
-          text: 'Total number of bookings'.tr,
-          textStyle: const TextStyle(fontSize: 10)),
-      primaryXAxis: CategoryAxis(
-        majorGridLines: const MajorGridLines(width: 0),
-      ),
-      primaryYAxis: NumericAxis(
-          axisLine: const AxisLine(width: 0),
-          labelFormat:
-              '{value}${Get.find<AnalyticsController>().currencySymbol}',
-          majorTickLines: const MajorTickLines(size: 0)),
-      series: _getYearlyData(),
-      tooltipBehavior: _tooltipBehavior,
-    );
-  }
-
-  SfCartesianChart _buildChartForYearlyProducts() {
-    return SfCartesianChart(
-      plotAreaBorderWidth: 0,
-      enableAxisAnimation: false,
-      title: ChartTitle(
-          text: 'Total number of orders'.tr,
-          textStyle: const TextStyle(fontSize: 10)),
-      primaryXAxis: CategoryAxis(
-        majorGridLines: const MajorGridLines(width: 0),
-      ),
-      primaryYAxis: NumericAxis(
-          axisLine: const AxisLine(width: 0),
-          labelFormat:
-              '{value}${Get.find<AnalyticsController>().currencySymbol}',
-          majorTickLines: const MajorTickLines(size: 0)),
-      series: _getYearlyDataProducts(),
-      tooltipBehavior: _tooltipBehavior,
-    );
-  }
-
-  List<ColumnSeries<ChartSampleData, String>> _getWeekData() {
-    return <ColumnSeries<ChartSampleData, String>>[
-      ColumnSeries<ChartSampleData, String>(
-        animationDuration: 0,
-        dataSource: <ChartSampleData>[
-          for (var item in Get.find<AnalyticsController>().list)
-            ChartSampleData(
-                x: item.dayName,
-                y: item.total,
-                pointColor: ThemeProvider.appColor),
-        ],
-        xValueMapper: (ChartSampleData sales, _) => sales.x as String,
-        yValueMapper: (ChartSampleData sales, _) => sales.y,
-        pointColorMapper: (ChartSampleData sales, _) => sales.pointColor,
-        dataLabelSettings: const DataLabelSettings(
-            isVisible: true, textStyle: TextStyle(fontSize: 10)),
-      )
-    ];
-  }
-
-  List<ColumnSeries<ChartSampleData, String>> _getWeekDataProducts() {
-    return <ColumnSeries<ChartSampleData, String>>[
-      ColumnSeries<ChartSampleData, String>(
-        animationDuration: 0,
-        dataSource: <ChartSampleData>[
-          for (var item in Get.find<AnalyticsController>().listProducts)
-            ChartSampleData(
-                x: item.dayName,
-                y: item.total,
-                pointColor: ThemeProvider.appColor),
-        ],
-        xValueMapper: (ChartSampleData sales, _) => sales.x as String,
-        yValueMapper: (ChartSampleData sales, _) => sales.y,
-        pointColorMapper: (ChartSampleData sales, _) => sales.pointColor,
-        dataLabelSettings: const DataLabelSettings(
-            isVisible: true, textStyle: TextStyle(fontSize: 10)),
-      )
-    ];
-  }
-
-  List<ColumnSeries<ChartSampleData, String>> _getMonthsData() {
-    return <ColumnSeries<ChartSampleData, String>>[
-      ColumnSeries<ChartSampleData, String>(
-        animationDuration: 0,
-        dataSource: <ChartSampleData>[
-          for (var item in Get.find<AnalyticsController>().monthList)
-            ChartSampleData(
-                x: Get.find<AnalyticsController>().monthsListNames[
-                    (item.dayName as int) - 1], // Subtract 1 here
-                y: item.total,
-                pointColor: ThemeProvider.appColor),
-        ],
-        xValueMapper: (ChartSampleData sales, _) => sales.x as String,
-        yValueMapper: (ChartSampleData sales, _) => sales.y,
-        pointColorMapper: (ChartSampleData sales, _) => sales.pointColor,
-        dataLabelSettings: const DataLabelSettings(
-            isVisible: true, textStyle: TextStyle(fontSize: 10)),
-      )
-    ];
-  }
-
-  List<ColumnSeries<ChartSampleData, String>> _getMonthsDataProducts() {
-    return <ColumnSeries<ChartSampleData, String>>[
-      ColumnSeries<ChartSampleData, String>(
-        animationDuration: 0,
-        dataSource: <ChartSampleData>[
-          for (var item in Get.find<AnalyticsController>().monthListProducts)
-            ChartSampleData(
-                x: Get.find<AnalyticsController>().monthsListNames[
-                    (item.dayName as int) - 1], // Subtract 1 here
-                y: item.total,
-                pointColor: ThemeProvider.appColor),
-        ],
-        xValueMapper: (ChartSampleData sales, _) => sales.x as String,
-        yValueMapper: (ChartSampleData sales, _) => sales.y,
-        pointColorMapper: (ChartSampleData sales, _) => sales.pointColor,
-        dataLabelSettings: const DataLabelSettings(
-            isVisible: true, textStyle: TextStyle(fontSize: 10)),
-      )
-    ];
-  }
-
-  List<ColumnSeries<ChartSampleData, String>> _getYearlyData() {
-    return <ColumnSeries<ChartSampleData, String>>[
-      ColumnSeries<ChartSampleData, String>(
-        animationDuration: 0,
-        dataSource: <ChartSampleData>[
-          for (var item in Get.find<AnalyticsController>().yearlyList)
-            ChartSampleData(
-                x: item.dayName.toString(),
-                y: item.total,
-                pointColor: ThemeProvider.appColor),
-        ],
-        xValueMapper: (ChartSampleData sales, _) => sales.x as String,
-        yValueMapper: (ChartSampleData sales, _) => sales.y,
-        pointColorMapper: (ChartSampleData sales, _) => sales.pointColor,
-        dataLabelSettings: const DataLabelSettings(
-            isVisible: true, textStyle: TextStyle(fontSize: 10)),
-      )
-    ];
-  }
-
-  List<ColumnSeries<ChartSampleData, String>> _getYearlyDataProducts() {
-    return <ColumnSeries<ChartSampleData, String>>[
-      ColumnSeries<ChartSampleData, String>(
-        animationDuration: 0,
-        dataSource: <ChartSampleData>[
-          for (var item in Get.find<AnalyticsController>().yearlyListProducts)
-            ChartSampleData(
-                x: item.dayName.toString(),
-                y: item.total,
-                pointColor: ThemeProvider.appColor),
-        ],
-        xValueMapper: (ChartSampleData sales, _) => sales.x as String,
-        yValueMapper: (ChartSampleData sales, _) => sales.y,
-        pointColorMapper: (ChartSampleData sales, _) => sales.pointColor,
-        dataLabelSettings: const DataLabelSettings(
-            isVisible: true, textStyle: TextStyle(fontSize: 10)),
-      )
-    ];
-  }
-}
-
-class ChartSampleData {
-  /// Holds the datapoint values like x, y, etc.,
-  ChartSampleData(
-      {this.x,
-      this.y,
-      this.xValue,
-      this.yValue,
-      this.secondSeriesYValue,
-      this.thirdSeriesYValue,
-      this.pointColor,
-      this.size,
-      this.text,
-      this.open,
-      this.close,
-      this.low,
-      this.high,
-      this.volume});
-
-  /// Holds x value of the datapoint
-  final dynamic x;
-
-  /// Holds y value of the datapoint
-  final num? y;
-
-  /// Holds x value of the datapoint
-  final dynamic xValue;
-
-  /// Holds y value of the datapoint
-  final num? yValue;
-
-  /// Holds y value of the datapoint(for 2nd series)
-  final num? secondSeriesYValue;
-
-  /// Holds y value of the datapoint(for 3nd series)
-  final num? thirdSeriesYValue;
-
-  /// Holds point color of the datapoint
-  final Color? pointColor;
-
-  /// Holds size of the datapoint
-  final num? size;
-
-  /// Holds datalabel/text value mapper of the datapoint
-  final String? text;
-
-  /// Holds open value of the datapoint
-  final num? open;
-
-  /// Holds close value of the datapoint
-  final num? close;
-
-  /// Holds low value of the datapoint
-  final num? low;
-
-  /// Holds high value of the datapoint
-  final num? high;
-
-  /// Holds open value of the datapoint
-  final num? volume;
 }

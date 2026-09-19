@@ -102,6 +102,12 @@ class AnalyticsController extends GetxController implements GetxService {
 
   int currenyYear = Jiffy.now().year;
 
+  @override
+  void update([List<Object>? ids, bool condition = true]) {
+    if (isClosed) return;
+    super.update(ids, condition);
+  }
+
   int currenyYearProducts = Jiffy.now().year; // products
 
   List<String> monthsListNames = [

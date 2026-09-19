@@ -73,9 +73,12 @@ class AppConstants {
   static const String upgradeSalon = 'api/v1/salon/upgrade';
   static const String upgradeFreelancer = 'api/v1/individual/upgrade';
   static const String upgradeGetPlans = 'api/v1/upgrade/getPlans';
+  static const String upgradePlans = 'api/v1/upgrade/plans';
   static const String upgradeCreatePaymentLink =
       'api/v1/upgrade/generatePaymentUrl';
   static const String upgradeVerifyPayment = 'api/v1/upgrade/verifyPayment';
+  static const String profileGetById = 'api/v1/profile/getByID';
+  static const String profileGetOwnerInfo = 'api/v1/profile/getOwnerInfo';
 
   static const String getAppSettings = 'api/v1/settings/getDefault';
   static const String onLogin = 'api/v1/auth/login';

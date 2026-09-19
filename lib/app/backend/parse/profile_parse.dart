@@ -1,4 +1,5 @@
 import 'package:ultimate_salon_owner_flutter/app/backend/api/api.dart';
+import 'package:ultimate_salon_owner_flutter/app/backend/models/partner_plan_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/shared_pref.dart';
 import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/constants.dart';
@@ -19,8 +20,26 @@ class ProfileParser {
         AppConstants.logout, sharedPreferencesManager.getString('token') ?? '');
   }
 
+  String get token => sharedPreferencesManager.getString('token') ?? '';
+
   bool getPremium() {
-    return sharedPreferencesManager.getBool('premium');
+    return PartnerPlanModel.load(sharedPreferencesManager).isActivePremium;
+  }
+
+  Future<Response> getProfileById() async {
+    return apiService.postPrivate(
+      AppConstants.profileGetById,
+      {'id': int.tryParse(getUID()) ?? getUID()},
+      token,
+    );
+  }
+
+  Future<Response> getOwnerInfo() async {
+    return apiService.postPrivate(
+      AppConstants.profileGetOwnerInfo,
+      {'id': int.tryParse(getUID()) ?? getUID()},
+      token,
+    );
   }
 
   Future<Response> getMyReviews() async {
@@ -49,6 +68,7 @@ class ProfileParser {
     sharedPreferencesManager.clearKey('totalRating');
     sharedPreferencesManager.clearKey('phone');
     sharedPreferencesManager.clearKey('type');
+    PartnerPlanModel.clear(sharedPreferencesManager);
   }
 
   String getName() {
