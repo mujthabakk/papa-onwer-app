@@ -34,6 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   LocalePickerBar(
                     foregroundColor: Colors.white,
                     compact: true,
+                    showCountry: true,
                   ),
                   SizedBox(width: 8),
                 ],
@@ -217,6 +218,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           //     onTap: () => value.onUpgradeScreen(),
                           //     isPremium: true,
                           //   ),
+                          _buildMenuItem(
+                            icon: Icons.public_outlined,
+                            title: 'Country'.tr,
+                            subtitle: _countrySubtitle(),
+                            onTap: () => LocalePickerBar.showPicker(
+                              context,
+                              initialTab: 1,
+                              showCountry: true,
+                            ),
+                          ),
                           _buildMenuItem(
                             icon: Icons.history_toggle_off,
                             title: 'Appointment History'.tr,
@@ -590,11 +601,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildPremiumBanner(ProfileController value) {
+    final currentName = value.planName.value.isNotEmpty
+        ? value.planName.value
+        : 'Free';
+    final currentCode = (value.planCode.value.isNotEmpty
+            ? value.planCode.value
+            : 'free')
+        .toUpperCase();
+    final plans = value.availablePlans;
+    final planNames = plans
+        .map((p) => p.name.isNotEmpty ? p.name : p.title)
+        .where((n) => n.trim().isNotEmpty)
+        .toList();
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [
             Color.fromARGB(255, 109, 137, 223),
             Color.fromARGB(255, 169, 105, 237),
@@ -603,57 +627,178 @@ class _ProfileScreenState extends State<ProfileScreen> {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Color.fromARGB(255, 144, 62, 232).withOpacity(0.3),
+            color: const Color.fromARGB(255, 144, 62, 232).withOpacity(0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
         ],
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
-            Icons.workspace_premium,
-            color: Colors.white,
-            size: 32,
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Upgrade to Premium'.tr,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.workspace_premium,
+                  color: Colors.white,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            currentName,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            currentCode,
+                            style: const TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 109, 137, 223),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      planNames.isNotEmpty
+                          ? 'Upgrade to ${planNames.join(' · ')}'
+                          : 'Unlock all features and grow your business'.tr,
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              TextButton(
+                onPressed: () => value.onUpgradeScreen(),
+                style: TextButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color.fromARGB(255, 46, 46, 46),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                Text(
-                  'Unlock all features and grow your business'.tr,
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
+                child: Text('Upgrade'.tr),
+              ),
+            ],
           ),
-          TextButton(
-            onPressed: () => value.onUpgradeScreen(),
-            style: TextButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: Color.fromARGB(255, 46, 46, 46),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
+          if (plans.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            SizedBox(
+              height: 72,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: plans.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 8),
+                itemBuilder: (context, index) {
+                  final plan = plans[index];
+                  final title =
+                      plan.name.isNotEmpty ? plan.name : plan.title;
+                  return InkWell(
+                    onTap: () => value.onUpgradeScreen(selected: plan),
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      width: 118,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.18),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.white24),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                              if ((plan.badge ?? '').isNotEmpty) ...[
+                                const SizedBox(width: 4),
+                                Text(
+                                  plan.badge!,
+                                  style: const TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            plan.priceLabel,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
-            child: Text('Upgrade'.tr),
-          ),
+          ],
         ],
       ),
     );
+  }
+
+  String _countrySubtitle() {
+    if (!Get.isRegistered<LocaleController>()) return '';
+    final loc = Get.find<LocaleController>();
+    final country = loc.selectedCountry;
+    if (country != null) {
+      if (country.nameEn.trim().isNotEmpty) return country.nameEn;
+      if (country.name.trim().isNotEmpty) return country.name;
+    }
+    return loc.selectedCountryLabel;
   }
 
   Widget _buildMenuSection({
@@ -709,6 +854,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required IconData icon,
     required String title,
     required VoidCallback onTap,
+    String? subtitle,
     bool requiresPremium = false,
     bool isPremium = false,
     bool isDestructive = false,
@@ -753,13 +899,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(width: 12),
             Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: isDestructive ? Colors.red.shade600 : Colors.black87,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color:
+                          isDestructive ? Colors.red.shade600 : Colors.black87,
+                    ),
+                  ),
+                  if (subtitle != null && subtitle.trim().isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 2),
+                      child: Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
             if (requiresPremium)

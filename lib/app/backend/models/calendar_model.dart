@@ -8,10 +8,10 @@ class CalendarModel {
   CalendarModel({this.count, this.dayName, this.day, this.total});
 
   CalendarModel.fromJson(Map<String, dynamic> json) {
-    count = int.parse(json['count'].toString());
-    dayName = json['day_name'].toString();
-    day = json['day'].toString();
-    total = double.parse(json['total'].toString());
+    count = int.tryParse('${json['count'] ?? 0}') ?? 0;
+    dayName = json['day_name']?.toString() ?? json['dayName']?.toString();
+    day = json['day']?.toString();
+    total = double.tryParse('${json['total'] ?? 0}') ?? 0;
   }
 
   Map<String, dynamic> toJson() {

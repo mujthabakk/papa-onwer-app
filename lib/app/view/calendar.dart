@@ -154,9 +154,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
             bottom: value.apiCalled == true
                 ? PreferredSize(
                     preferredSize: const Size.fromHeight(300),
-                    child: Container(
-                        child: _getAgendaViewCalendar(
-                            value.events, _onViewChanged, _calendarController)))
+                    child: _getAgendaViewCalendar(
+                        value.events, _onViewChanged, _calendarController))
                 : null,
           ),
           body: value.apiCalled == false

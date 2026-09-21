@@ -17,9 +17,10 @@ class OfferServiceModel {
   final int uid;
   final int serviceId;
   final String name;
-  final int price;
-  final int duration;
-  final int discount;
+  final double price;
+  final double off;
+  final double duration;
+  final double discount;
   final int status;
   final int cateId;
   final String cover;
@@ -30,6 +31,7 @@ class OfferServiceModel {
     this.serviceId = 0,
     required this.name,
     this.price = 0,
+    this.off = 0,
     this.duration = 0,
     this.discount = 0,
     this.status = 1,
@@ -37,15 +39,28 @@ class OfferServiceModel {
     this.cover = '',
   });
 
+  /// Discounted / offer price from API (`off`), else price after % discount.
+  double get offerPrice {
+    if (off > 0) return off;
+    if (discount > 0 && price > 0) {
+      return price - ((price * discount) / 100);
+    }
+    return price;
+  }
+
+  bool get hasDiscount =>
+      discount > 0 || (off > 0 && off < price);
+
   factory OfferServiceModel.fromJson(Map<String, dynamic> json) {
     return OfferServiceModel(
       id: _toInt(json['id']),
       uid: _toInt(json['uid']),
       serviceId: _toInt(json['service_id']),
       name: json['name']?.toString() ?? '',
-      price: _toInt(json['price']),
-      duration: _toInt(json['duration']),
-      discount: _toInt(json['discount']),
+      price: _toDouble(json['price']),
+      off: _toDouble(json['off']),
+      duration: _toDouble(json['duration']),
+      discount: _toDouble(json['discount']),
       status: _toInt(json['status'], 1),
       cateId: _toInt(json['cate_id']),
       cover: json['cover']?.toString() ?? '',
@@ -172,7 +187,15 @@ class CouponModel {
 int _toInt(dynamic value, [int fallback = 0]) {
   if (value == null) return fallback;
   if (value is int) return value;
+  if (value is num) return value.toInt();
   return int.tryParse(value.toString()) ?? fallback;
+}
+
+double _toDouble(dynamic value, [double fallback = 0]) {
+  if (value == null || value == '' || value == 'null') return fallback;
+  if (value is double) return value;
+  if (value is num) return value.toDouble();
+  return double.tryParse(value.toString()) ?? fallback;
 }
 
 List<int> _parseServiceIds(dynamic value) {

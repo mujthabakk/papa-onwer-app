@@ -21,7 +21,7 @@ class CalendarsController extends GetxController implements GetxService {
   bool calendarListCalled = true;
   List<CalendarModel> _list = <CalendarModel>[];
   List<CalendarModel> get list => _list;
-  late MeetingDataSource events;
+  MeetingDataSource events = MeetingDataSource(<Meeting>[]);
 
   String currencySide = AppConstants.defaultCurrencySide;
   String currencySymbol = AppConstants.defaultCurrencySymbol;
@@ -35,7 +35,11 @@ class CalendarsController extends GetxController implements GetxService {
     super.onInit();
     currencySide = parser.getCurrencySide();
     currencySymbol = parser.getCurrencySymbol();
-    if (!parser.sharedPreferencesManager.hasOwnerSession()) return;
+    if (!parser.sharedPreferencesManager.hasOwnerSession()) {
+      apiCalled = true;
+      events = MeetingDataSource(<Meeting>[]);
+      return;
+    }
     getCalendarView();
   }
 
@@ -118,53 +122,68 @@ class CalendarsController extends GetxController implements GetxService {
   }
 
   Future<void> getCalendarView() async {
-    Response response = await parser.getCalendarView();
-    apiCalled = true;
-    _list = [];
-    if (response.statusCode == 200) {
-      Map<String, dynamic> myMap = Map<String, dynamic>.from(response.body);
-      dynamic body = myMap["data"];
-      body.forEach((element) {
-        CalendarModel data = CalendarModel.fromJson(element);
-        _list.add(data);
-      });
-      final List<Color> colorCollection = <Color>[];
-      colorCollection.add(const Color(0xFF0F8644));
-      colorCollection.add(const Color(0xFF8B1FA9));
-      colorCollection.add(const Color(0xFFD20100));
-      colorCollection.add(const Color(0xFFFC571D));
-      colorCollection.add(const Color(0xFF36B37B));
-      colorCollection.add(const Color(0xFF01A1EF));
-      colorCollection.add(const Color(0xFF3D4FB5));
-      colorCollection.add(const Color(0xFFE47C73));
-      colorCollection.add(const Color(0xFF636363));
-      colorCollection.add(const Color(0xFF0A8043));
+    try {
+      Response response = await parser.getCalendarView();
+      _list = [];
       final List<Meeting> meetings = <Meeting>[];
-      final Random random = Random();
-      for (var element in _list) {
-        debugPrint(element.day);
-        final DateTime startDate = DateTime.parse(element.day.toString());
-        int limit = int.parse(element.count.toString());
-        for (int i = 0; i < limit; i++) {
-          meetings.add(Meeting(
-              '',
-              '',
-              '',
-              null,
-              startDate,
-              startDate.add(Duration(hours: random.nextInt(3))),
-              colorCollection[random.nextInt(9)],
-              false,
-              '',
-              '',
-              ''));
+      if (response.statusCode == 200) {
+        final myMap = response.body is Map
+            ? Map<String, dynamic>.from(response.body)
+            : <String, dynamic>{};
+        final body = myMap['data'];
+        final rows = body is List ? body : const [];
+        final List<Color> colorCollection = <Color>[
+          const Color(0xFF0F8644),
+          const Color(0xFF8B1FA9),
+          const Color(0xFFD20100),
+          const Color(0xFFFC571D),
+          const Color(0xFF36B37B),
+          const Color(0xFF01A1EF),
+          const Color(0xFF3D4FB5),
+          const Color(0xFFE47C73),
+          const Color(0xFF636363),
+          const Color(0xFF0A8043),
+        ];
+        final Random random = Random();
+        for (final element in rows) {
+          if (element is! Map) continue;
+          try {
+            final data =
+                CalendarModel.fromJson(Map<String, dynamic>.from(element));
+            _list.add(data);
+            final day = data.day;
+            if (day == null || day.isEmpty) continue;
+            final DateTime startDate = DateTime.parse(day);
+            final int limit = data.count ?? 0;
+            for (int i = 0; i < limit; i++) {
+              meetings.add(Meeting(
+                  '',
+                  '',
+                  '',
+                  null,
+                  startDate,
+                  startDate.add(Duration(hours: random.nextInt(3))),
+                  colorCollection[random.nextInt(9)],
+                  false,
+                  '',
+                  '',
+                  ''));
+            }
+          } catch (e) {
+            debugPrint('skip calendar row: $e');
+          }
         }
+      } else {
+        ApiChecker.checkApi(response);
       }
       events = MeetingDataSource(meetings);
-    } else {
-      ApiChecker.checkApi(response);
+    } catch (e) {
+      debugPrint('getCalendarView: $e');
+      events = MeetingDataSource(<Meeting>[]);
+    } finally {
+      apiCalled = true;
+      update();
     }
-    update();
   }
 
   void onOrderDetails() {
@@ -174,26 +193,39 @@ class CalendarsController extends GetxController implements GetxService {
   Future<void> getByDate(var date) async {
     calendarListCalled = false;
     _appointmentList = [];
-    print(date);
     update();
-    var param = {"id": parser.getUID(), "date": date, "type": parser.getType()};
-    // print(date);
-    // print(parser.getType());
-    Response response = await parser.getByDate(param);
-    calendarListCalled = true;
-    if (response.statusCode == 200) {
-      Map<String, dynamic> myMap = Map<String, dynamic>.from(response.body);
-      dynamic body = myMap["data"];
-      _appointmentList = [];
-      body.forEach((data) {
-        AppointmentModel appointment = AppointmentModel.fromJson(data);
-        _appointmentList.add(appointment);
-      });
-      debugPrint(appointmentList.length.toString());
-    } else {
-      ApiChecker.checkApi(response);
+    try {
+      var param = {
+        "id": parser.getUID(),
+        "date": date,
+        "type": parser.getType()
+      };
+      Response response = await parser.getByDate(param);
+      if (response.statusCode == 200) {
+        final myMap = response.body is Map
+            ? Map<String, dynamic>.from(response.body)
+            : <String, dynamic>{};
+        final body = myMap['data'];
+        final rows = body is List ? body : const [];
+        _appointmentList = [];
+        for (final data in rows) {
+          if (data is! Map) continue;
+          try {
+            _appointmentList.add(
+                AppointmentModel.fromJson(Map<String, dynamic>.from(data)));
+          } catch (e) {
+            debugPrint('skip calendar appointment: $e');
+          }
+        }
+      } else {
+        ApiChecker.checkApi(response);
+      }
+    } catch (e) {
+      debugPrint('getByDate: $e');
+    } finally {
+      calendarListCalled = true;
+      update();
     }
-    update();
   }
 
   void onAppointment(int id) {

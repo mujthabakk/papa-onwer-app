@@ -662,7 +662,7 @@ IN WITNESS WHEREOF, the Parties have accepted and agreed to the terms and condit
         .where((element) => element.isChecked == true)
         .map((element) => element.id.toString())
         .toList();
-    return savedList.isEmpty ? '1' : savedList.join(',');
+    return savedList.join(',');
   }
 
   Map<String, dynamic> _buildRegisterBody() {
@@ -1446,6 +1446,24 @@ IN WITNESS WHEREOF, the Parties have accepted and agreed to the terms and condit
     }
     if (passwordTextEditor.text != confirmPasswordTextEditor.text) {
       showValidationDialog('Password does not match'.tr);
+      return;
+    }
+    if (id_proof.isEmpty) {
+      showValidationDialog('ID proof is required'.tr);
+      return;
+    }
+    final latValue = lat.text.trim();
+    final lngValue = lng.text.trim();
+    if (latValue.isEmpty ||
+        lngValue.isEmpty ||
+        latValue == '0' ||
+        lngValue == '0') {
+      showValidationDialog('Please get your shop coordinates'.tr);
+      return;
+    }
+    final hasCategory = servedCategoriesList.any((e) => e.isChecked == true);
+    if (!hasCategory) {
+      showValidationDialog('Please select at least one category'.tr);
       return;
     }
 

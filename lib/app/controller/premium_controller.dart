@@ -41,25 +41,42 @@ class PremiumController extends GetxController implements GetxService {
   @override
   void onInit() {
     super.onInit();
+    if (Get.isRegistered<ProfileController>()) {
+      seedPlans(Get.find<ProfileController>().availablePlans);
+    }
     fetchPlans();
   }
 
-  Future<void> fetchPlans() async {
-    isLoadingPlans.value = true;
+  void seedPlans(List<UpgradePlanModel> list) {
+    if (list.isEmpty) return;
+    plans.assignAll(List<UpgradePlanModel>.from(list)
+      ..sort((a, b) => a.sortOrder.compareTo(b.sortOrder)));
+    isLoadingPlans.value = false;
     update();
+  }
+
+  Future<void> fetchPlans() async {
+    if (plans.isEmpty) {
+      isLoadingPlans.value = true;
+      update();
+    }
     try {
       final response = await upgradeParser.getUpgradePlans();
       if (response.statusCode == 200) {
         final body = response.body;
         List? list;
         if (body is Map) {
-          if (body['data'] is List) {
+          if (body['available_plans'] is List) {
+            list = body['available_plans'] as List;
+          } else if (body['data'] is List) {
             list = body['data'] as List;
           } else if (body['plans'] is List) {
             list = body['plans'] as List;
           } else if (body['data'] is Map) {
             final data = Map<String, dynamic>.from(body['data'] as Map);
-            if (data['plans'] is List) {
+            if (data['available_plans'] is List) {
+              list = data['available_plans'] as List;
+            } else if (data['plans'] is List) {
               list = data['plans'] as List;
             } else if (data['data'] is List) {
               list = data['data'] as List;

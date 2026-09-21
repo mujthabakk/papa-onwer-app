@@ -64,62 +64,37 @@ class AppointmentModel {
       this.userInfo});
 
   AppointmentModel.fromJson(Map<String, dynamic> json) {
-    id = int.parse(json['id'].toString());
-    uid = int.parse(json['uid'].toString());
-    freelancerId = int.parse(json['freelancer_id'].toString());
-    salonId = int.parse(json['salon_id'].toString());
-    specialistId = int.parse(json['specialist_id'].toString());
-    appointmentsTo = int.parse(json['appointments_to'].toString());
-    if (int.parse(json['appointments_to'].toString()) == 1) {
-      AddressModel addressInfo =
-          AddressModel.fromJson(jsonDecode(json['address']));
-      address = addressInfo;
-    } else {
-      address = AddressModel();
-    }
-    if (json.containsKey('items') &&
-        json['items'] != null &&
-        json['items'] != '') {
-      var listItems = jsonDecode(json['items']);
-      ServiceCartModel datas = ServiceCartModel.fromJson(listItems);
-      items = datas;
-    } else {
-      items = ServiceCartModel();
-    }
-    couponId = int.parse(json['coupon_id'].toString());
-    coupon = json['coupon'];
-    discount = double.parse(json['discount'].toString());
-    distanceCost = double.parse(json['distance_cost'].toString());
-    total = double.parse(json['total'].toString());
-    serviceTax = double.parse(json['serviceTax'].toString());
-    grandTotal = double.parse(json['grand_total'].toString());
-    payMethod = int.parse(json['pay_method'].toString());
-    paid = json['paid'];
-    saveDate = Jiffy.parse(json['save_date']).yMMMMd;
-    slot = json['slot'];
-    walletUsed = int.parse(json['wallet_used'].toString());
-    walletPrice = double.parse(json['wallet_price'].toString());
-    notes = json['notes'];
-    extraField = json['extra_field'];
-    status = int.parse(json['status'].toString());
-    createdAt = json['created_at'];
-    if (json.containsKey('salonInfo')) {
-      salonInfo = json['salonInfo'] != null
-          ? SalonInfo.fromJson(json['salonInfo'])
-          : null;
-    }
-
-    if (json.containsKey('individualInfo')) {
-      individualInfo = json['individualInfo'] != null
-          ? IndividualInfo.fromJson(json['individualInfo'])
-          : null;
-    }
-
-    if (json.containsKey('userInfo')) {
-      userInfo = json['userInfo'] != null
-          ? UserModel.fromJson(json['userInfo'])
-          : null;
-    }
+    id = _toInt(json['id']);
+    uid = _toInt(json['uid']);
+    freelancerId = _toInt(json['freelancer_id'] ?? json['freelancerId']);
+    salonId = _toInt(json['salon_id'] ?? json['salonId']);
+    specialistId = _toInt(json['specialist_id'] ?? json['specialistId']);
+    appointmentsTo = _toInt(json['appointments_to'] ?? json['appointmentsTo']);
+    address = _parseAddress(json['address']);
+    items = _parseItems(json['items']);
+    couponId = _toInt(json['coupon_id'] ?? json['couponId']);
+    coupon = _toStr(json['coupon']);
+    discount = _toDouble(json['discount']);
+    distanceCost = _toDouble(json['distance_cost'] ?? json['distanceCost']);
+    total = _toDouble(json['total']);
+    serviceTax = _toDouble(
+        json['serviceTax'] ?? json['service_tax'] ?? json['tax']);
+    grandTotal = _toDouble(json['grand_total'] ?? json['grandTotal']);
+    payMethod = _toInt(json['pay_method'] ?? json['payMethod']);
+    paid = _toStr(json['paid']);
+    saveDate = _formatDate(json['save_date'] ?? json['saveDate']);
+    slot = _toStr(json['slot']);
+    walletUsed = _toInt(json['wallet_used'] ?? json['walletUsed']);
+    walletPrice = _toDouble(json['wallet_price'] ?? json['walletPrice']);
+    notes = _toStr(json['notes']);
+    extraField = _toStr(json['extra_field'] ?? json['extraField']);
+    status = _toInt(json['status']) ?? 0;
+    createdAt = _toStr(json['created_at'] ?? json['createdAt']);
+    salonInfo = _parseSalonInfo(
+        json['salonInfo'] ?? json['salon_info'] ?? json['salon']);
+    individualInfo = _parseIndividualInfo(
+        json['individualInfo'] ?? json['individual_info']);
+    userInfo = _parseUserInfo(json['userInfo'] ?? json['user_info'] ?? json['user']);
   }
 
   Map<String, dynamic> toJson() {
@@ -209,30 +184,30 @@ class SalonInfo {
       this.status});
 
   SalonInfo.fromJson(Map<String, dynamic> json) {
-    id = int.parse(json['id'].toString());
-    uid = int.parse(json['uid'].toString());
-    name = json['name'];
-    cover = json['cover'];
-    categories = json['categories'];
-    address = json['address'];
-    lat = json['lat'];
-    lng = json['lng'];
-    cid = int.parse(json['cid'].toString());
-    about = json['about'];
-    rating = double.parse(json['rating'].toString());
-    totalRating = int.parse(json['total_rating'].toString());
-    website = json['website'];
-    timing = json['timing'];
-    images = json['images'];
-    zipcode = json['zipcode'];
-    serviceAtHome = int.parse(json['service_at_home'].toString());
-    verified = int.parse(json['verified'].toString());
-    inHome = int.parse(json['in_home'].toString());
-    popular = int.parse(json['popular'].toString());
-    haveShop = int.parse(json['have_shop'].toString());
-    haveStylist = int.parse(json['have_stylist'].toString());
-    extraField = json['extra_field'];
-    status = int.parse(json['status'].toString());
+    id = _toInt(json['id']);
+    uid = _toInt(json['uid']);
+    name = _toStr(json['name']);
+    cover = _toStr(json['cover']);
+    categories = _toStr(json['categories']);
+    address = _toStr(json['address']);
+    lat = _toStr(json['lat']);
+    lng = _toStr(json['lng']);
+    cid = _toInt(json['cid']);
+    about = _toStr(json['about']);
+    rating = _toDouble(json['rating']);
+    totalRating = _toInt(json['total_rating'] ?? json['totalRating']);
+    website = _toStr(json['website']);
+    timing = _toStr(json['timing']);
+    images = _toStr(json['images']);
+    zipcode = _toStr(json['zipcode']);
+    serviceAtHome = _toInt(json['service_at_home']);
+    verified = _toInt(json['verified']);
+    inHome = _toInt(json['in_home']);
+    popular = _toInt(json['popular']);
+    haveShop = _toInt(json['have_shop']);
+    haveStylist = _toInt(json['have_stylist']);
+    extraField = _toStr(json['extra_field']);
+    status = _toInt(json['status']);
   }
 
   Map<String, dynamic> toJson() {
@@ -322,32 +297,32 @@ class IndividualInfo {
       this.lastName});
 
   IndividualInfo.fromJson(Map<String, dynamic> json) {
-    id = int.parse(json['id'].toString());
-    uid = int.parse(json['uid'].toString());
-    background = json['background'];
-    categories = json['categories'];
-    address = json['address'];
-    lat = json['lat'];
-    lng = json['lng'];
-    cid = json['cid'];
-    about = json['about'];
-    rating = double.parse(json['rating'].toString());
-    feeStart = double.parse(json['fee_start'].toString());
-    totalRating = int.parse(json['total_rating'].toString());
-    website = json['website'];
-    timing = json['timing'];
-    images = json['images'];
-    zipcode = json['zipcode'];
-    verified = int.parse(json['verified'].toString());
-    inHome = int.parse(json['in_home'].toString());
-    popular = int.parse(json['popular'].toString());
-    haveShop = int.parse(json['have_shop'].toString());
-    extraField = json['extra_field'];
-    status = int.parse(json['status'].toString());
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-    firstName = json['first_name'];
-    lastName = json['last_name'];
+    id = _toInt(json['id']);
+    uid = _toInt(json['uid']);
+    background = _toStr(json['background']);
+    categories = _toStr(json['categories']);
+    address = _toStr(json['address']);
+    lat = _toStr(json['lat']);
+    lng = _toStr(json['lng']);
+    cid = _toStr(json['cid']);
+    about = _toStr(json['about']);
+    rating = _toDouble(json['rating']);
+    feeStart = _toDouble(json['fee_start']);
+    totalRating = _toInt(json['total_rating']);
+    website = _toStr(json['website']);
+    timing = _toStr(json['timing']);
+    images = _toStr(json['images']);
+    zipcode = _toStr(json['zipcode']);
+    verified = _toInt(json['verified']);
+    inHome = _toInt(json['in_home']);
+    popular = _toInt(json['popular']);
+    haveShop = _toInt(json['have_shop']);
+    extraField = _toStr(json['extra_field']);
+    status = _toInt(json['status']);
+    createdAt = _toStr(json['created_at']);
+    updatedAt = _toStr(json['updated_at']);
+    firstName = _toStr(json['first_name'] ?? json['firstName']);
+    lastName = _toStr(json['last_name'] ?? json['lastName']);
   }
 
   Map<String, dynamic> toJson() {
@@ -391,10 +366,10 @@ class UserModel {
   UserModel({this.id, this.firstName, this.lastName, this.cover});
 
   UserModel.fromJson(Map<String, dynamic> json) {
-    id = int.parse(json['id'].toString());
-    firstName = json['first_name'];
-    lastName = json['last_name'];
-    cover = json['cover'];
+    id = _toInt(json['id']);
+    firstName = _toStr(json['first_name'] ?? json['firstName']);
+    lastName = _toStr(json['last_name'] ?? json['lastName']);
+    cover = _toStr(json['cover']);
   }
 
   Map<String, dynamic> toJson() {
@@ -404,5 +379,104 @@ class UserModel {
     data['last_name'] = lastName;
     data['cover'] = cover;
     return data;
+  }
+}
+
+int? _toInt(dynamic value) {
+  if (value == null || value == '' || value == 'null') return null;
+  if (value is int) return value;
+  if (value is num) return value.toInt();
+  return int.tryParse(value.toString());
+}
+
+double? _toDouble(dynamic value) {
+  if (value == null || value == '' || value == 'null') return null;
+  if (value is double) return value;
+  if (value is num) return value.toDouble();
+  return double.tryParse(value.toString());
+}
+
+String? _toStr(dynamic value) {
+  if (value == null || value == 'null') return null;
+  final text = value.toString();
+  return text.isEmpty ? null : text;
+}
+
+dynamic _decodeMaybeJson(dynamic value) {
+  if (value == null || value == '' || value == 'null') return null;
+  if (value is Map || value is List) return value;
+  if (value is String) {
+    try {
+      return jsonDecode(value);
+    } catch (_) {
+      return value;
+    }
+  }
+  return value;
+}
+
+Map<String, dynamic>? _asMap(dynamic value) {
+  final decoded = _decodeMaybeJson(value);
+  if (decoded is Map) return Map<String, dynamic>.from(decoded);
+  return null;
+}
+
+String? _formatDate(dynamic value) {
+  final raw = _toStr(value);
+  if (raw == null) return null;
+  try {
+    return Jiffy.parse(raw).yMMMMd;
+  } catch (_) {
+    return raw;
+  }
+}
+
+AddressModel _parseAddress(dynamic value) {
+  final map = _asMap(value);
+  if (map == null) return AddressModel();
+  try {
+    return AddressModel.fromJson(map);
+  } catch (_) {
+    return AddressModel();
+  }
+}
+
+ServiceCartModel _parseItems(dynamic value) {
+  final map = _asMap(value);
+  if (map == null) return ServiceCartModel();
+  try {
+    return ServiceCartModel.fromJson(map);
+  } catch (_) {
+    return ServiceCartModel();
+  }
+}
+
+SalonInfo? _parseSalonInfo(dynamic value) {
+  final map = _asMap(value);
+  if (map == null) return null;
+  try {
+    return SalonInfo.fromJson(map);
+  } catch (_) {
+    return null;
+  }
+}
+
+IndividualInfo? _parseIndividualInfo(dynamic value) {
+  final map = _asMap(value);
+  if (map == null) return null;
+  try {
+    return IndividualInfo.fromJson(map);
+  } catch (_) {
+    return null;
+  }
+}
+
+UserModel? _parseUserInfo(dynamic value) {
+  final map = _asMap(value);
+  if (map == null) return null;
+  try {
+    return UserModel.fromJson(map);
+  } catch (_) {
+    return null;
   }
 }

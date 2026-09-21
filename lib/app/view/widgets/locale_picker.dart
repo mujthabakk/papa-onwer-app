@@ -17,6 +17,21 @@ class LocalePickerBar extends StatelessWidget {
     this.showCountry,
   }) : super(key: key);
 
+  static Future<void> showPicker(
+    BuildContext context, {
+    int initialTab = 0,
+    bool showCountry = true,
+  }) async {
+    if (!Get.isRegistered<LocaleController>()) return;
+    const picker = LocalePickerBar(showCountry: true);
+    await picker._openPicker(
+      context,
+      Get.find<LocaleController>(),
+      initialTab: initialTab,
+      showCountry: showCountry,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<LocaleController>(

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:skeletons/skeletons.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/services_names_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
+import 'package:ultimate_salon_owner_flutter/app/view/widgets/list_search_field.dart';
 
 class ServiceNamesScreen extends StatefulWidget {
   const ServiceNamesScreen({Key? key}) : super(key: key);
@@ -12,6 +13,15 @@ class ServiceNamesScreen extends StatefulWidget {
 }
 
 class _ServiceNamesScreenState extends State<ServiceNamesScreen> {
+  final _searchController = TextEditingController();
+  String _query = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ServicesNamesController>(
@@ -39,17 +49,7 @@ class _ServiceNamesScreenState extends State<ServiceNamesScreen> {
                 Get.back();
               },
             ),
-            actions: [
-              IconButton(
-                icon: const Icon(
-                  Icons.search,
-                  color: ThemeProvider.whiteColor,
-                ),
-                onPressed: () {
-                  _showSearchDialog(context, value);
-                },
-              ),
-            ],
+            actions: const [],
           ),
           body: value.apiCalled == false
               ? _buildLoadingSkeleton()
@@ -170,6 +170,11 @@ class _ServiceNamesScreenState extends State<ServiceNamesScreen> {
   }
 
   Widget _buildServiceList(ServicesNamesController value) {
+    final filtered = filterByName(
+      value.serviceList,
+      _query,
+      (item) => item.name?.toString() ?? '',
+    );
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -190,7 +195,7 @@ class _ServiceNamesScreenState extends State<ServiceNamesScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 20, 16, 16),
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -209,8 +214,8 @@ class _ServiceNamesScreenState extends State<ServiceNamesScreen> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    '${value.serviceList.length} Services'.tr,
-                    style: TextStyle(
+                    '${filtered.length} ${'Services'.tr}',
+                    style: const TextStyle(
                       color: ThemeProvider.appColor,
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
@@ -220,21 +225,33 @@ class _ServiceNamesScreenState extends State<ServiceNamesScreen> {
               ],
             ),
           ),
+          ListSearchField(
+            controller: _searchController,
+            hint: 'Search service...'.tr,
+            onChanged: (query) => setState(() => _query = query),
+          ),
           Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.zero,
-              itemCount: value.serviceList.length,
-              itemBuilder: (context, i) => _buildServiceItem(value, i),
-            ),
+            child: filtered.isEmpty
+                ? Center(
+                    child: Text(
+                      'No services found'.tr,
+                      style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                    ),
+                  )
+                : ListView.builder(
+                    padding: EdgeInsets.zero,
+                    itemCount: filtered.length,
+                    itemBuilder: (context, i) =>
+                        _buildServiceItem(value, filtered[i]),
+                  ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildServiceItem(ServicesNamesController value, int index) {
-    final isSelected =
-        value.selectedService == value.serviceList[index].id.toString();
+  Widget _buildServiceItem(ServicesNamesController value, dynamic service) {
+    final isSelected = value.selectedService == service.id.toString();
 
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
@@ -250,7 +267,7 @@ class _ServiceNamesScreenState extends State<ServiceNamesScreen> {
       ),
       child: InkWell(
         onTap: () {
-          value.saveServicesNames(value.serviceList[index].id.toString());
+          value.saveServicesNames(service.id.toString());
         },
         borderRadius: BorderRadius.circular(12),
         child: Padding(
@@ -284,7 +301,7 @@ class _ServiceNamesScreenState extends State<ServiceNamesScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      value.serviceList[index].name.toString(),
+                      service.name.toString(),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight:
@@ -379,137 +396,6 @@ class _ServiceNamesScreenState extends State<ServiceNamesScreen> {
           ],
         ),
       ),
-    );
-  }
-
-  void _showSearchDialog(
-      BuildContext context, ServicesNamesController controller) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        final searchController = TextEditingController();
-        List<dynamic> filteredList = List.from(controller.serviceList);
-
-        return StatefulBuilder(
-          builder: (context, setState) {
-            void filterList(String query) {
-              if (query.isEmpty) {
-                setState(() {
-                  filteredList = List.from(controller.serviceList);
-                });
-              } else {
-                setState(() {
-                  filteredList = controller.serviceList
-                      .where((service) => service.name
-                          .toString()
-                          .toLowerCase()
-                          .contains(query.toLowerCase()))
-                      .toList();
-                });
-              }
-            }
-
-            return AlertDialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              title: Text(
-                'Search Services'.tr,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-              content: SizedBox(
-                width: double.maxFinite,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Search Input
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      child: TextField(
-                        controller: searchController,
-                        onChanged: filterList,
-                        decoration: InputDecoration(
-                          hintText: 'Search by name...'.tr,
-                          prefixIcon: const Icon(Icons.search,
-                              color: ThemeProvider.appColor),
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 14),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
-                    // Results List
-                    Container(
-                      constraints: BoxConstraints(
-                        maxHeight: MediaQuery.of(context).size.height * 0.4,
-                      ),
-                      child: filteredList.isEmpty
-                          ? Center(
-                              child: Padding(
-                                padding: const EdgeInsets.all(20),
-                                child: Text(
-                                  'No services found'.tr,
-                                  style: TextStyle(
-                                    color: Colors.grey[600],
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ),
-                            )
-                          : ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: filteredList.length,
-                              itemBuilder: (context, index) {
-                                return ListTile(
-                                  title: Text(
-                                    filteredList[index].name.toString(),
-                                    style: const TextStyle(fontSize: 15),
-                                  ),
-                                  trailing: controller.selectedService ==
-                                          filteredList[index].id.toString()
-                                      ? const Icon(
-                                          Icons.check_circle,
-                                          color: ThemeProvider.appColor,
-                                        )
-                                      : null,
-                                  onTap: () {
-                                    controller.saveServicesNames(
-                                        filteredList[index].id.toString());
-                                    Navigator.pop(context);
-                                  },
-                                );
-                              },
-                            ),
-                    ),
-                  ],
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text(
-                    'Close'.tr,
-                    style: const TextStyle(
-                      color: ThemeProvider.appColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
     );
   }
 }

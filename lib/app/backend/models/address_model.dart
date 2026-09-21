@@ -26,17 +26,17 @@ class AddressModel {
       this.status});
 
   AddressModel.fromJson(Map<String, dynamic> json) {
-    id = int.parse(json['id'].toString());
-    uid = int.parse(json['uid'].toString());
-    title = int.parse(json['title'].toString());
-    address = json['address'];
-    house = json['house'];
-    landmark = json['landmark'];
-    pincode = json['pincode'];
-    lat = json['lat'];
-    lng = json['lng'];
-    extraField = json['extra_field'];
-    status = int.parse(json['status'].toString());
+    id = int.tryParse('${json['id'] ?? ''}');
+    uid = int.tryParse('${json['uid'] ?? ''}');
+    title = int.tryParse('${json['title'] ?? ''}');
+    address = json['address']?.toString();
+    house = json['house']?.toString();
+    landmark = json['landmark']?.toString();
+    pincode = json['pincode']?.toString();
+    lat = json['lat']?.toString();
+    lng = json['lng']?.toString();
+    extraField = json['extra_field']?.toString();
+    status = int.tryParse('${json['status'] ?? ''}');
   }
 
   Map<String, dynamic> toJson() {

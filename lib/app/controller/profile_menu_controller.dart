@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/api/handler.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/owner_reviews_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/partner_plan_model.dart';
+import 'package:ultimate_salon_owner_flutter/app/backend/models/upgrade_plan_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/profile_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/ads_managing_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/ads_publish_controller.dart';
@@ -54,6 +55,7 @@ class ProfileController extends GetxController
   var planExpiresAt = ''.obs;
   var planDaysRemaining = 0.obs;
   var planCode = ''.obs;
+  final availablePlans = <UpgradePlanModel>[].obs;
 
   void updateName(String newName) {
     name.value = newName; // Update the value of name
@@ -93,6 +95,13 @@ class ProfileController extends GetxController
         response = await parser.getOwnerInfo();
       }
       if (response.statusCode == 200) {
+        availablePlans.assignAll(
+          UpgradePlanModel.extractAvailablePlans(response.body),
+        );
+        if (Get.isRegistered<PremiumController>() &&
+            availablePlans.isNotEmpty) {
+          Get.find<PremiumController>().seedPlans(availablePlans);
+        }
         final plan = PartnerPlanModel.extract(response.body);
         if (plan != null) {
           applyPlan(plan);
@@ -173,8 +182,11 @@ class ProfileController extends GetxController
     }
   }
 
-  void onUpgradeScreen() {
-    AppNav.toNamed(AppRouter.getPremiumRoute());
+  void onUpgradeScreen({UpgradePlanModel? selected}) {
+    if (Get.isRegistered<PremiumController>() && availablePlans.isNotEmpty) {
+      Get.find<PremiumController>().seedPlans(availablePlans);
+    }
+    AppNav.toNamed(AppRouter.getPremiumRoute(), arguments: selected);
   }
 
   void onAppoitmentHistory() {

@@ -924,14 +924,23 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
   final TextEditingController expireController = TextEditingController();
   final TextEditingController maxUsageController = TextEditingController();
   final TextEditingController minCartValueController = TextEditingController();
+  final TextEditingController originalAmountController = TextEditingController();
+  final TextEditingController discountedAmountController = TextEditingController();
   int selectedType = 1;
   bool applyAllServices = false;
   final Set<int> selectedServiceIds = {};
+  bool _recalcLock = false;
 
   @override
   void initState() {
     super.initState();
-    _controller.fetchPartnerServices();
+    discountController.addListener(_recalculateAmounts);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _controller.fetchPartnerServices();
+      if (!mounted) return;
+      _syncOriginalFromServices();
+      _recalculateAmounts();
+    });
     if (widget.coupon != null) {
       nameController.text = widget.coupon!.name;
       descriptionController.text = widget.coupon!.shortDescription;
@@ -946,6 +955,39 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
       applyAllServices = widget.coupon!.applyAllServices;
       selectedServiceIds.addAll(widget.coupon!.serviceIds);
     }
+  }
+
+  double _selectedServicesTotal() {
+    final services = applyAllServices
+        ? _controller.partnerServices
+        : _controller.partnerServices
+            .where((service) => selectedServiceIds.contains(service.id));
+    return services.fold<double>(0, (sum, service) => sum + service.price);
+  }
+
+  void _syncOriginalFromServices() {
+    final total = _selectedServicesTotal();
+    _recalcLock = true;
+    originalAmountController.text =
+        total > 0 ? total.toStringAsFixed(2) : '0.00';
+    _recalcLock = false;
+  }
+
+  void _recalculateAmounts() {
+    if (_recalcLock) return;
+    _recalcLock = true;
+    final original = double.tryParse(originalAmountController.text) ?? 0;
+    final discount = double.tryParse(discountController.text) ?? 0;
+    double discounted = original;
+    if (selectedType == 1) {
+      discounted = original - ((original * discount) / 100);
+    } else {
+      discounted = original - discount;
+    }
+    if (discounted < 0) discounted = 0;
+    discountedAmountController.text = discounted.toStringAsFixed(2);
+    _recalcLock = false;
+    if (mounted) setState(() {});
   }
 
   @override
@@ -969,6 +1011,10 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
+            _buildFormCard([
+              _buildServicePicker(),
+            ]),
+            const SizedBox(height: 20),
             _buildFormCard([
               _buildTextField(
                 controller: nameController,
@@ -1014,6 +1060,7 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
                   onChanged: (value) {
                     if (value != null) {
                       setState(() => selectedType = value);
+                      _recalculateAmounts();
                     }
                   },
                 ),
@@ -1021,49 +1068,57 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
             ]),
             const SizedBox(height: 20),
             _buildFormCard([
-              Column(
-                children: [
-                  _buildTextField(
-                    controller: discountController,
-                    label: selectedType == 1
-                        ? 'Discount (%)'
-                        : 'Discount (${CurrencyHelper.code()})',
-                    hint: '0'.tr,
-                    icon: Icons.percent,
-                    validator: 'Please enter discount',
-                    isNumeric: true,
-                  ),
-                  const SizedBox(width: 16),
-                  _buildTextField(
-                    controller: uptoController,
-                    label: 'Max Discount (${CurrencyHelper.code()})',
-                    hint: '0'.tr,
-                    icon: Icons.payments,
-                    validator: 'Please enter max discount',
-                    isNumeric: true,
-                  ),
-                ],
+              _buildTextField(
+                controller: originalAmountController,
+                label: 'Original Amount (${CurrencyHelper.code()})'.tr,
+                hint: '0.00'.tr,
+                icon: Icons.payments_outlined,
+                isNumeric: true,
+                readOnly: true,
+                validator: '',
               ),
-              Column(
-                children: [
-                  _buildTextField(
-                    controller: minCartValueController,
-                    label: 'Min Cart Value (${CurrencyHelper.code()})',
-                    hint: '0'.tr,
-                    icon: Icons.shopping_cart,
-                    validator: 'Please enter min cart value',
-                    isNumeric: true,
-                  ),
-                  const SizedBox(width: 16),
-                  _buildTextField(
-                    controller: maxUsageController,
-                    label: 'Max Usage'.tr,
-                    hint: '0'.tr,
-                    icon: Icons.repeat,
-                    validator: 'Please enter max usage',
-                    isNumeric: true,
-                  ),
-                ],
+              _buildTextField(
+                controller: discountController,
+                label: selectedType == 1
+                    ? 'Discount (%)'
+                    : 'Discount (${CurrencyHelper.code()})',
+                hint: '0'.tr,
+                icon: Icons.percent,
+                validator: 'Please enter discount',
+                isNumeric: true,
+              ),
+              _buildTextField(
+                controller: discountedAmountController,
+                label: 'Discounted Amount (${CurrencyHelper.code()})'.tr,
+                hint: '0.00'.tr,
+                icon: Icons.sell_outlined,
+                isNumeric: true,
+                readOnly: true,
+                validator: '',
+              ),
+              _buildTextField(
+                controller: uptoController,
+                label: 'Max Discount (${CurrencyHelper.code()})',
+                hint: '0'.tr,
+                icon: Icons.payments,
+                validator: 'Please enter max discount',
+                isNumeric: true,
+              ),
+              _buildTextField(
+                controller: minCartValueController,
+                label: 'Min Cart Value (${CurrencyHelper.code()})',
+                hint: '0'.tr,
+                icon: Icons.shopping_cart,
+                validator: 'Please enter min cart value',
+                isNumeric: true,
+              ),
+              _buildTextField(
+                controller: maxUsageController,
+                label: 'Max Usage'.tr,
+                hint: '0'.tr,
+                icon: Icons.repeat,
+                validator: 'Please enter max usage',
+                isNumeric: true,
               ),
               _buildDateField(
                 controller: startDateController,
@@ -1079,10 +1134,6 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
                 icon: Icons.calendar_today,
                 validator: 'Please select expiry date',
               ),
-            ]),
-            const SizedBox(height: 20),
-            _buildFormCard([
-              _buildServicePicker(),
             ]),
             const SizedBox(height: 32),
             ElevatedButton(
@@ -1168,6 +1219,8 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
                   selectedServiceIds.clear();
                 }
               });
+              _syncOriginalFromServices();
+              _recalculateAmounts();
             },
           ),
           if (!applyAllServices) ...[
@@ -1184,9 +1237,11 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
                 return CheckboxListTile(
                   contentPadding: EdgeInsets.zero,
                   value: selected,
-                  title: Text(service.name),
-                  subtitle: Text(
-                      '${CurrencyHelper.format(service.price)} • ${service.duration} min'),
+                  title: Text(
+                    service.name,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: _servicePriceSubtitle(service, selected: selected),
                   controlAffinity: ListTileControlAffinity.leading,
                   onChanged: (checked) {
                     setState(() {
@@ -1196,6 +1251,8 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
                         selectedServiceIds.remove(service.id);
                       }
                     });
+                    _syncOriginalFromServices();
+                    _recalculateAmounts();
                   },
                 );
               }),
@@ -1203,6 +1260,78 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
         ],
       );
     });
+  }
+
+  Widget _servicePriceSubtitle(OfferServiceModel service,
+      {required bool selected}) {
+    final original = CurrencyHelper.format(service.price, decimals: 2);
+    final offer = CurrencyHelper.format(service.offerPrice, decimals: 2);
+    final mins = service.duration % 1 == 0
+        ? service.duration.toInt().toString()
+        : service.duration.toStringAsFixed(1);
+    final showDiscount = selected && service.hasDiscount;
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 4,
+            children: [
+              if (showDiscount) ...[
+                Text(
+                  original,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF9CA3AF),
+                    decoration: TextDecoration.lineThrough,
+                  ),
+                ),
+                Text(
+                  offer,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF059669),
+                  ),
+                ),
+                if (service.discount > 0)
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEF3C7),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      '${service.discount % 1 == 0 ? service.discount.toInt() : service.discount}% OFF',
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFFB45309),
+                      ),
+                    ),
+                  ),
+              ] else
+                Text(
+                  original,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF374151),
+                  ),
+                ),
+              Text(
+                '• $mins min',
+                style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280)),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildTextField({
@@ -1213,12 +1342,14 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
     required String validator,
     bool isNumeric = false,
     int maxLines = 1,
+    bool readOnly = false,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextFormField(
         controller: controller,
         maxLines: maxLines,
+        readOnly: readOnly,
         keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
         decoration: InputDecoration(
           labelText: label,
@@ -1237,9 +1368,10 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
             borderSide: const BorderSide(color: Color(0xFF6C5CE7), width: 2),
           ),
           filled: true,
-          fillColor: Colors.grey[50],
+          fillColor: readOnly ? Colors.grey[100] : Colors.grey[50],
         ),
         validator: (value) {
+          if (validator.isEmpty) return null;
           if (value == null || value.isEmpty) {
             return validator;
           }
@@ -1356,6 +1488,7 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
 
   @override
   void dispose() {
+    discountController.removeListener(_recalculateAmounts);
     nameController.dispose();
     descriptionController.dispose();
     codeController.dispose();
@@ -1365,6 +1498,8 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
     expireController.dispose();
     maxUsageController.dispose();
     minCartValueController.dispose();
+    originalAmountController.dispose();
+    discountedAmountController.dispose();
     super.dispose();
   }
 }

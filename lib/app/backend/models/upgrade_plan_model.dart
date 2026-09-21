@@ -58,6 +58,7 @@ class UpgradePlanModel {
   final String description;
   final num amount;
   final String currency;
+  final String currencySymbol;
   final String billingPeriod;
   final int durationDays;
   final List<String> features;
@@ -75,6 +76,7 @@ class UpgradePlanModel {
     this.description = '',
     this.amount = 0,
     this.currency = 'INR',
+    this.currencySymbol = '',
     this.billingPeriod = '',
     this.durationDays = 0,
     this.features = const [],
@@ -98,10 +100,11 @@ class UpgradePlanModel {
   }
 
   String get priceLabel {
-    if (currency.toUpperCase() == 'INR') {
-      return '₹${amount.toStringAsFixed(amount % 1 == 0 ? 0 : 2)}';
-    }
-    return '$currency ${amount.toStringAsFixed(amount % 1 == 0 ? 0 : 2)}';
+    final formatted = amount.toStringAsFixed(amount % 1 == 0 ? 0 : 2);
+    final symbol = currencySymbol.trim();
+    if (symbol.isNotEmpty) return '$symbol $formatted';
+    if (currency.toUpperCase() == 'INR') return '₹$formatted';
+    return '$currency $formatted';
   }
 
   String get validityLabel {
@@ -157,6 +160,9 @@ class UpgradePlanModel {
       description: json['description']?.toString() ?? '',
       amount: _toNum(json['amount']),
       currency: json['currency']?.toString() ?? 'INR',
+      currencySymbol: json['currencySymbol']?.toString() ??
+          json['currency_symbol']?.toString() ??
+          '',
       billingPeriod: json['billing_period']?.toString() ?? '',
       durationDays: _toInt(json['duration_days']),
       features: legacyFeatures,
@@ -166,6 +172,27 @@ class UpgradePlanModel {
       badge: json['badge']?.toString(),
       sortOrder: _toInt(json['sort_order']),
     );
+  }
+
+  static List<UpgradePlanModel> extractAvailablePlans(dynamic body) {
+    if (body is! Map) return const [];
+    final map = Map<String, dynamic>.from(body);
+    List? list;
+    if (map['available_plans'] is List) {
+      list = map['available_plans'] as List;
+    } else if (map['data'] is Map) {
+      final data = Map<String, dynamic>.from(map['data'] as Map);
+      if (data['available_plans'] is List) {
+        list = data['available_plans'] as List;
+      }
+    }
+    if (list == null) return const [];
+    return list
+        .whereType<Map>()
+        .map((item) =>
+            UpgradePlanModel.fromJson(Map<String, dynamic>.from(item)))
+        .toList()
+      ..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
   }
 }
 

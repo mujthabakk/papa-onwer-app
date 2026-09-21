@@ -1312,63 +1312,78 @@ class AppointmentController extends GetxController
   }
 
   Future<void> getSalonAppointmentById() async {
-    Response response = await parser.getSalonList();
-    apiCalled = true;
-    if (response.statusCode == 200) {
-      Map<String, dynamic> myMap = Map<String, dynamic>.from(response.body);
-      var body = myMap['data'];
-      _appointmentList = [];
-      _appointmentListOld = [];
-
-      body.forEach((data) {
-        AppointmentModel appointment = AppointmentModel.fromJson(data);
-        final salonName = appointment.salonInfo?.name?.toString().trim() ?? '';
-        if (salonName.isNotEmpty) {
-          name = salonName;
-        } else if (name.isEmpty) {
-          name = parser.getName();
-        }
-        if (appointment.status == 0) {
-          _appointmentList.add(appointment);
-        } else {
-          _appointmentListOld.add(appointment);
-        }
-      });
-    } else {
-      ApiChecker.checkApi(response);
+    try {
+      final response = await parser.getSalonList();
+      _applyAppointmentResponse(response, isSalon: true);
+    } catch (e) {
+      debugPrint('getSalonAppointmentById: $e');
+    } finally {
+      apiCalled = true;
+      update();
     }
-    update();
   }
 
   Future<void> getIndividualAppointmentsById() async {
-    Response response = await parser.getIndividualAppointmentsList();
-    apiCalled = true;
-    if (response.statusCode == 200) {
-      Map<String, dynamic> myMap = Map<String, dynamic>.from(response.body);
-      var body = myMap['data'];
-      _appointmentList = [];
-      _appointmentListOld = [];
-      body.forEach((data) {
-        AppointmentModel appointment = AppointmentModel.fromJson(data);
-        final first = appointment.individualInfo?.firstName?.toString().trim() ?? '';
-        final last = appointment.individualInfo?.lastName?.toString().trim() ?? '';
-        final fullName = '$first $last'.trim();
-        if (fullName.isNotEmpty) {
-          name = fullName;
-        } else if (name.isEmpty) {
-          name = parser.getName();
-        }
+    try {
+      final response = await parser.getIndividualAppointmentsList();
+      _applyAppointmentResponse(response, isSalon: false);
+    } catch (e) {
+      debugPrint('getIndividualAppointmentsById: $e');
+    } finally {
+      apiCalled = true;
+      update();
+    }
+  }
 
+  void _applyAppointmentResponse(Response response, {required bool isSalon}) {
+    if (response.statusCode != 200) {
+      ApiChecker.checkApi(response);
+      return;
+    }
+    final body = response.body is Map
+        ? Map<String, dynamic>.from(response.body)
+        : <String, dynamic>{};
+    final raw = body['data'] ?? body['appointments'];
+    final list = raw is List
+        ? raw
+        : (raw is Map && raw['data'] is List ? raw['data'] as List : const []);
+
+    _appointmentList = [];
+    _appointmentListOld = [];
+
+    for (final data in list) {
+      if (data is! Map) continue;
+      try {
+        final appointment =
+            AppointmentModel.fromJson(Map<String, dynamic>.from(data));
+        if (isSalon) {
+          final salonName = appointment.salonInfo?.name?.toString().trim() ?? '';
+          if (salonName.isNotEmpty) {
+            name = salonName;
+          } else if (name.isEmpty) {
+            name = parser.getName();
+          }
+        } else {
+          final first =
+              appointment.individualInfo?.firstName?.toString().trim() ?? '';
+          final last =
+              appointment.individualInfo?.lastName?.toString().trim() ?? '';
+          final fullName = '$first $last'.trim();
+          if (fullName.isNotEmpty) {
+            name = fullName;
+          } else if (name.isEmpty) {
+            name = parser.getName();
+          }
+        }
         if (appointment.status == 0) {
           _appointmentList.add(appointment);
         } else {
           _appointmentListOld.add(appointment);
         }
-      });
-    } else {
-      ApiChecker.checkApi(response);
+      } catch (e) {
+        debugPrint('skip appointment row: $e');
+      }
     }
-    update();
   }
 
   void onAppointment(int id) {

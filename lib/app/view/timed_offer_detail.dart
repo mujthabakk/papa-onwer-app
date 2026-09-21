@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:ultimate_salon_owner_flutter/app/backend/models/coupons_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/timed_offer_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/timed_offers_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/shared_pref.dart';
@@ -588,6 +589,8 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
           children: [
             _infoBanner(),
             const SizedBox(height: 16),
+            _buildFormCard([_buildServicePicker()]),
+            const SizedBox(height: 20),
             _buildFormCard([
               _buildTextField(
                 controller: nameController,
@@ -633,8 +636,6 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
                 icon: Icons.calendar_today,
               ),
             ]),
-            const SizedBox(height: 20),
-            _buildFormCard([_buildServicePicker()]),
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: _submitForm,
@@ -754,13 +755,16 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
               )
             else
               ...services.map((service) {
-                final selected = selectedServiceIds.contains(service.id);
+                final selected =
+                    applyAllServices || selectedServiceIds.contains(service.id);
                 return CheckboxListTile(
                   contentPadding: EdgeInsets.zero,
-                  value: selected,
-                  title: Text(service.name),
-                  subtitle: Text(
-                      '${CurrencyHelper.format(service.price)} • ${service.duration} min'),
+                  value: selectedServiceIds.contains(service.id),
+                  title: Text(
+                    service.name,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: _servicePriceSubtitle(service, selected: selected),
                   controlAffinity: ListTileControlAffinity.leading,
                   onChanged: (checked) {
                     setState(() {
@@ -779,6 +783,72 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
         ],
       );
     });
+  }
+
+  Widget _servicePriceSubtitle(OfferServiceModel service,
+      {required bool selected}) {
+    final original = CurrencyHelper.format(service.price, decimals: 2);
+    final offer = CurrencyHelper.format(service.offerPrice, decimals: 2);
+    final mins = service.duration % 1 == 0
+        ? service.duration.toInt().toString()
+        : service.duration.toStringAsFixed(1);
+    final showDiscount = selected && service.hasDiscount;
+    return Padding(
+      padding: const EdgeInsets.only(top: 4),
+      child: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: 8,
+        runSpacing: 4,
+        children: [
+          if (showDiscount) ...[
+            Text(
+              original,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Color(0xFF9CA3AF),
+                decoration: TextDecoration.lineThrough,
+              ),
+            ),
+            Text(
+              offer,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF059669),
+              ),
+            ),
+            if (service.discount > 0)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFEF3C7),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: Text(
+                  '${service.discount % 1 == 0 ? service.discount.toInt() : service.discount}% OFF',
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFFB45309),
+                  ),
+                ),
+              ),
+          ] else
+            Text(
+              original,
+              style: const TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF374151),
+              ),
+            ),
+          Text(
+            '• $mins min',
+            style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280)),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildDiscountTypeDropdown() {

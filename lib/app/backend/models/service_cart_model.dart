@@ -8,18 +8,27 @@ class ServiceCartModel {
   ServiceCartModel({this.services, this.packages});
 
   ServiceCartModel.fromJson(Map<String, dynamic> json) {
-    if (json['services'] != null) {
-      services = <ServicesModel>[];
-      json['services'].forEach((v) {
-        services!.add(ServicesModel.fromJson(v));
-      });
+    services = <ServicesModel>[];
+    final rawServices = json['services'];
+    if (rawServices is List) {
+      for (final v in rawServices) {
+        if (v is! Map) continue;
+        try {
+          services!.add(ServicesModel.fromJson(Map<String, dynamic>.from(v)));
+        } catch (_) {}
+      }
     }
 
-    if (json['packages'] != null) {
-      packages = <PackagesDetailsModel>[];
-      json['packages'].forEach((v) {
-        packages!.add(PackagesDetailsModel.fromJson(v));
-      });
+    packages = <PackagesDetailsModel>[];
+    final rawPackages = json['packages'];
+    if (rawPackages is List) {
+      for (final v in rawPackages) {
+        if (v is! Map) continue;
+        try {
+          packages!
+              .add(PackagesDetailsModel.fromJson(Map<String, dynamic>.from(v)));
+        } catch (_) {}
+      }
     }
   }
 

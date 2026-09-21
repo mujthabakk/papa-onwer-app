@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:skeletons/skeletons.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/services_categories_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
+import 'package:ultimate_salon_owner_flutter/app/view/widgets/list_search_field.dart';
 
 class ServiceCategoriesScreen extends StatefulWidget {
   const ServiceCategoriesScreen({Key? key}) : super(key: key);
@@ -13,10 +14,17 @@ class ServiceCategoriesScreen extends StatefulWidget {
 }
 
 class _ServiceCategoriesScreenState extends State<ServiceCategoriesScreen> {
+  String _query = '';
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ServicesCategoriesController>(
       builder: (value) {
+        final filtered = filterByName(
+          value.serviceList,
+          _query,
+          (item) => item.name?.toString() ?? '',
+        );
         return Scaffold(
           backgroundColor: ThemeProvider.whiteColor,
           appBar: AppBar(
@@ -34,40 +42,41 @@ class _ServiceCategoriesScreenState extends State<ServiceCategoriesScreen> {
           ),
           body: value.apiCalled == false
               ? SkeletonListView()
-              : SingleChildScrollView(
-                  child: Padding(
-                    padding: const EdgeInsets.all(6.0),
-                    child: Column(
-                      children: [
-                        ListView.builder(
-                          padding: EdgeInsets.zero,
-                          itemCount: value.serviceList.length,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, i) => Column(
-                            children: [
-                              ListTile(
-                                visualDensity:
-                                    const VisualDensity(vertical: -4),
-                                horizontalTitleGap: 0,
-                                leading: Radio(
-                                  activeColor: ThemeProvider.appColor,
-                                  value: value.serviceList[i].id.toString(),
-                                  groupValue: value.selectedService,
-                                  onChanged: (data) {
-                                    value.saveServices(data.toString());
-                                  },
-                                ),
-                                title:
-                                    Text(value.serviceList[i].name.toString()),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 100),
-                      ],
+              : Column(
+                  children: [
+                    const SizedBox(height: 12),
+                    ListSearchField(
+                      hint: 'Search category...'.tr,
+                      onChanged: (query) => setState(() => _query = query),
                     ),
-                  ),
+                    Expanded(
+                      child: filtered.isEmpty
+                          ? Center(child: Text('No results found'.tr))
+                          : ListView.builder(
+                              padding: const EdgeInsets.fromLTRB(6, 0, 6, 100),
+                              itemCount: filtered.length,
+                              itemBuilder: (context, i) {
+                                final item = filtered[i];
+                                return ListTile(
+                                  visualDensity:
+                                      const VisualDensity(vertical: -4),
+                                  horizontalTitleGap: 0,
+                                  leading: Radio(
+                                    activeColor: ThemeProvider.appColor,
+                                    value: item.id.toString(),
+                                    groupValue: value.selectedService,
+                                    onChanged: (data) {
+                                      value.saveServices(data.toString());
+                                    },
+                                  ),
+                                  title: Text(item.name.toString()),
+                                  onTap: () =>
+                                      value.saveServices(item.id.toString()),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
                 ),
           bottomNavigationBar: SafeArea(
             bottom: true,

@@ -4,7 +4,9 @@ import 'package:ultimate_salon_owner_flutter/app/backend/api/handler.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/coupons_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/timed_offer_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/timed_offers_parse.dart';
+import 'package:ultimate_salon_owner_flutter/app/helper/shared_pref.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/app_loader.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/toast.dart';
 
 class TimedOffersController extends GetxController implements GetxService {
@@ -62,13 +64,27 @@ class TimedOffersController extends GetxController implements GetxService {
     loadingServices.value = true;
     try {
       final response = await parser.getPartnerServices();
-      if (response.statusCode == 200 && response.body['data'] is List) {
-        partnerServices.value = (response.body['data'] as List)
-            .whereType<Map>()
-            .map((item) =>
-                OfferServiceModel.fromJson(Map<String, dynamic>.from(item)))
-            .where((service) => service.status == 1)
-            .toList();
+      if (response.statusCode == 200 && response.body is Map) {
+        final body = Map<String, dynamic>.from(response.body);
+        final code = body['currencyCode']?.toString() ??
+            body['currency']?.toString();
+        final symbol = body['currencySymbol']?.toString();
+        if (code != null &&
+            code.isNotEmpty &&
+            Get.isRegistered<SharedPreferencesManager>()) {
+          CurrencyHelper.save(
+            Get.find<SharedPreferencesManager>(),
+            CurrencyHelper.fromCurrencyCode(code, symbol: symbol),
+          );
+        }
+        if (body['data'] is List) {
+          partnerServices.value = (body['data'] as List)
+              .whereType<Map>()
+              .map((item) =>
+                  OfferServiceModel.fromJson(Map<String, dynamic>.from(item)))
+              .where((service) => service.status == 1)
+              .toList();
+        }
       }
     } catch (_) {
       partnerServices.clear();
@@ -104,11 +120,11 @@ class TimedOffersController extends GetxController implements GetxService {
             .map((service) => TimedOfferItemModel(
                   id: service.id,
                   name: service.name,
-                  image: '',
-                  duration: service.duration,
+                  image: service.cover,
+                  duration: service.duration.round(),
                   originalPrice: service.price,
-                  offerPrice: service.price,
-                  amount: service.price,
+                  offerPrice: service.offerPrice,
+                  amount: service.offerPrice,
                 ))
             .toList();
       }

@@ -114,7 +114,86 @@ class _LoginScreenState extends State<LoginScreen> {
                                 fontSize: 14,
                               ),
                             ),
-                            const SizedBox(height: 30),
+                            const SizedBox(height: 20),
+                            Container(
+                              width: double.infinity,
+                              padding:
+                                  const EdgeInsets.fromLTRB(14, 16, 14, 14),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withOpacity(0.92),
+                                borderRadius: BorderRadius.circular(18),
+                                border: Border.all(
+                                  color: ThemeProvider.golden,
+                                  width: 1.5,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color:
+                                        ThemeProvider.golden.withOpacity(0.28),
+                                    blurRadius: 16,
+                                    offset: const Offset(0, 6),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'New to PapaBear?'.tr,
+                                    style: const TextStyle(
+                                      color: ThemeProvider.blackColor,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: ThemeProvider.golden,
+                                        foregroundColor:
+                                            ThemeProvider.blackColor,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 16),
+                                        elevation: 0,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(14),
+                                        ),
+                                      ),
+                                      onPressed: value.onSignUp,
+                                      child: Text(
+                                        'Create Account'.tr,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w800,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 18),
+                            Row(
+                              children: [
+                                const Expanded(child: Divider()),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  child: Text(
+                                    'LOG IN'.tr,
+                                    style: const TextStyle(
+                                      color: ThemeProvider.greyColor,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                const Expanded(child: Divider()),
+                              ],
+                            ),
+                            const SizedBox(height: 18),
 
                             // Content based on login version
                             if (value.loginVersion == 0) ...[
@@ -381,42 +460,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                             ],
-
-                            const SizedBox(height: 30),
-                            const Divider(),
-                            const SizedBox(height: 15),
-                            // Prominent Signup Area
-                            Text(
-                              'New to PapaBear?'.tr,
-                              style: const TextStyle(
-                                color: Color.fromARGB(255, 69, 69, 69),
-                                fontSize: 14,
-                              ),
-                            ),
-                            const SizedBox(height: 10),
-                            SizedBox(
-                              width: double.infinity,
-                              child: OutlinedButton(
-                                style: OutlinedButton.styleFrom(
-                                  side: const BorderSide(
-                                      color: ThemeProvider.appColor, width: 2),
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 16),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                ),
-                                onPressed: value.onSignUp,
-                                child: Text(
-                                  'Create Account'.tr,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    color: ThemeProvider.appColor,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
                           ],
                         ),
                       ),
