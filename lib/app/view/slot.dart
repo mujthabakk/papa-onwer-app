@@ -255,7 +255,10 @@ class _SlotScreenState extends State<SlotScreen> {
                                                 backgroundColor: ThemeProvider
                                                     .backgroundColor,
                                                 label: Text(
-                                                  '${value.slotList[index].slots![subIndex].startTime} to ${value.slotList[index].slots![subIndex].endTime} - available: ${value.slotList[index].slots![subIndex].available} ',
+                                                  value
+                                                      .slotList[index]
+                                                      .slots![subIndex]
+                                                      .displayLabel,
                                                   style: const TextStyle(
                                                       fontFamily: 'regular'),
                                                 ),

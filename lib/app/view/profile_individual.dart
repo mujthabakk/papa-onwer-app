@@ -437,7 +437,7 @@ class _IndividualProfileScreenState extends State<IndividualProfileScreen> {
                                           Expanded(
                                             flex: 3,
                                             child: Text(
-                                              '${value.timesList[index].openTime} - ${value.timesList[index].closeTime}',
+                                              '${value.timesList[index].displayRange}',
                                               style: const TextStyle(
                                                 color: Colors.black87,
                                                 fontSize: 14,

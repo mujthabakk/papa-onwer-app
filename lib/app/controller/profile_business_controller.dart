@@ -434,7 +434,9 @@ class ProfileCategoriesController extends GetxController
       "have_stylist": haveStylist == true ? 1 : 0,
       "have_shop": haveShop == true ? 1 : 0,
       "service_at_home": haveHome == true ? 1 : 0,
-      "timing": _timesList.isNotEmpty ? jsonEncode(timesList) : 'NA',
+      "timing": _timesList.isNotEmpty
+          ? jsonEncode(_timesList.map((e) => e.toJson()).toList())
+          : 'NA',
       "bank_name": bankNameTextEditor.text,
       "bank_account_number": accNoTextEditor.text,
       "bank_customer_name": bankCNameTextEditor.text,

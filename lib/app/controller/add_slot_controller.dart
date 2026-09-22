@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/api/handler.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/individual_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/profile_model.dart';
@@ -10,26 +9,28 @@ import 'package:ultimate_salon_owner_flutter/app/backend/models/slots_model.dart
 import 'package:ultimate_salon_owner_flutter/app/backend/models/timing_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/add_slot_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/slot_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/slot_time.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/toast.dart';
 
 class AddSlotController extends GetxController implements GetxService {
   final AddSlotParser parser;
 
-  String dayName = 'Sunday'.tr;
+  String dayName = 'Sunday';
   List<TimingModel> _timesList = <TimingModel>[];
   IndividualInfoModel _individualInfo = IndividualInfoModel();
   IndividualInfoModel get individualInfo => _individualInfo;
   ProfileModel _profileInfo = ProfileModel();
   ProfileModel get profileInfo => _profileInfo;
-  List<String> dayList = [
-    'Sunday'.tr,
-    'Monday'.tr,
-    'Tuesday'.tr,
-    'Wednesday'.tr,
-    'Thursday'.tr,
-    'Friday'.tr,
-    'Saturday'.tr
+  /// Stable English keys — never store translated labels as values.
+  final List<String> dayList = const [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
   ];
   String openTime = '';
   String closeTime = '';
@@ -56,7 +57,6 @@ class AddSlotController extends GetxController implements GetxService {
     action = Get.arguments[0];
     if (action == 'update') {
       slotId = Get.arguments[1];
-      disabled = true;
       getSlotData();
     } else {
       apiCalled = true;
@@ -68,52 +68,30 @@ class AddSlotController extends GetxController implements GetxService {
     } else {
       getCateByIdFreelancer();
     }
-    _slotList = [];
+    if (action != 'update') {
+      _slotList = [];
+    }
   }
 
   // Helper method to convert time string to minutes for easier comparison
   int _timeToMinutes(String timeString, {bool is24HourFormat = false}) {
     try {
       if (is24HourFormat) {
-        // Handle 24-hour format from API (e.g., "0:14", "10:00", "20:34")
-        List<String> parts = timeString.split(':');
-        int hour = int.parse(parts[0]);
-        int minute = int.parse(parts[1]);
+        final parts = timeString.split(':');
+        if (parts.length < 2) return 0;
+        final hour = int.parse(parts[0]);
+        final minute = int.parse(parts[1].split(' ').first);
         return hour * 60 + minute;
-      } else {
-        // Handle 12-hour format from UI (e.g., "10:30 AM", "08:15 PM")
-        DateTime dateTime = Jiffy.parse(timeString, pattern: "hh:mm a").dateTime;
-        return dateTime.hour * 60 + dateTime.minute;
       }
+      return SlotTime.toMinutes(timeString) ?? 0;
     } catch (e) {
       debugPrint('Error parsing time: $timeString - $e');
       return 0;
     }
   }
 
-  // Helper method to convert 12-hour format to 24-hour format
-  String _convertTo24Hour(String time12Hour) {
-    try {
-      DateTime dateTime = Jiffy.parse(time12Hour, pattern: "hh:mm a").dateTime;
-      return "${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}";
-    } catch (e) {
-      debugPrint('Error converting to 24-hour format: $time12Hour - $e');
-      return "00:00";
-    }
-  }
-
-  // Helper method to convert 24-hour format to 12-hour format
   String _convertTo12Hour(String time24Hour) {
-    try {
-      List<String> parts = time24Hour.split(':');
-      int hour = int.parse(parts[0]);
-      int minute = int.parse(parts[1]);
-      DateTime dateTime = DateTime(2020, 1, 1, hour, minute);
-      return Jiffy.parseFromDateTime(dateTime).format(pattern: "hh:mm a");
-    } catch (e) {
-      debugPrint('Error converting to 12-hour format: $time24Hour - $e');
-      return "12:00 AM";
-    }
+    return SlotTime.to12Hour(time24Hour);
   }
 
   // Helper method to check if two time slots overlap
@@ -163,10 +141,10 @@ class AddSlotController extends GetxController implements GetxService {
   bool _isSlotWithinWorkingHours(
       String slotStart, String slotEnd, String workStart, String workEnd) {
     try {
-      int slotStartMinutes = _timeToMinutes(slotStart, is24HourFormat: false);
-      int slotEndMinutes = _timeToMinutes(slotEnd, is24HourFormat: false);
-      int workStartMinutes = _timeToMinutes(workStart, is24HourFormat: true);
-      int workEndMinutes = _timeToMinutes(workEnd, is24HourFormat: true);
+      final slotStartMinutes = SlotTime.toMinutes(slotStart) ?? 0;
+      var slotEndMinutes = SlotTime.toMinutes(slotEnd) ?? 0;
+      final workStartMinutes = SlotTime.toMinutes(workStart) ?? 0;
+      var workEndMinutes = SlotTime.toMinutes(workEnd) ?? 0;
 
       // Handle overnight working hours
       if (workEndMinutes <= workStartMinutes) {
@@ -198,7 +176,13 @@ class AddSlotController extends GetxController implements GetxService {
       SlotListModel slotInfo = SlotListModel.fromJson(data);
       _slotData = slotInfo;
       dayName = dayList[_slotData.weekId as int];
-      _slotList = _slotData.slots as List<SlotsModel>;
+      _slotList = (_slotData.slots as List<SlotsModel>)
+          .map((slot) => SlotsModel(
+                startTime: SlotTime.to12Hour(slot.startTime),
+                endTime: SlotTime.to12Hour(slot.endTime),
+                available: slot.available,
+              ))
+          .toList();
       update();
     } else {
       ApiChecker.checkApi(response);
@@ -210,17 +194,28 @@ class AddSlotController extends GetxController implements GetxService {
     try {
       var context = Get.context as BuildContext;
       TimeOfDay initialTime = TimeOfDay.now();
+      final openMins = SlotTime.toMinutes(openTime);
+      if (openMins != null) {
+        initialTime = TimeOfDay(hour: openMins ~/ 60, minute: openMins % 60);
+      }
       TimeOfDay? pickedTime = await showTimePicker(
           context: context,
           initialTime: initialTime,
-          initialEntryMode: TimePickerEntryMode.input,
+          initialEntryMode: TimePickerEntryMode.dial,
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(alwaysUse24HourFormat: false),
+              child: child ?? const SizedBox.shrink(),
+            );
+          },
           helpText: 'Select Opening Time',
           cancelText: 'Cancel',
           confirmText: 'Select');
 
       if (pickedTime != null) {
-        DateTime dateTime = DateTime(2020, 10, 19, pickedTime.hour, pickedTime.minute);
-        openTime = Jiffy.parseFromDateTime(dateTime).format(pattern: "hh:mm a");
+        openTime = SlotTime.fromTimeOfDay(
+            hour24: pickedTime.hour, minute: pickedTime.minute);
         update();
       }
     } catch (e) {
@@ -254,17 +249,28 @@ class AddSlotController extends GetxController implements GetxService {
     try {
       var context = Get.context as BuildContext;
       TimeOfDay initialTime = TimeOfDay.now();
+      final closeMins = SlotTime.toMinutes(closeTime);
+      if (closeMins != null) {
+        initialTime = TimeOfDay(hour: closeMins ~/ 60, minute: closeMins % 60);
+      }
       TimeOfDay? pickedTime = await showTimePicker(
           context: context,
           initialTime: initialTime,
-          initialEntryMode: TimePickerEntryMode.input,
+          initialEntryMode: TimePickerEntryMode.dial,
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(context)
+                  .copyWith(alwaysUse24HourFormat: false),
+              child: child ?? const SizedBox.shrink(),
+            );
+          },
           helpText: 'Select Closing Time',
           cancelText: 'Cancel',
           confirmText: 'Select');
 
       if (pickedTime != null) {
-        DateTime dateTime = DateTime(2020, 10, 19, pickedTime.hour, pickedTime.minute);
-        closeTime = Jiffy.parseFromDateTime(dateTime).format(pattern: "hh:mm a");
+        closeTime = SlotTime.fromTimeOfDay(
+            hour24: pickedTime.hour, minute: pickedTime.minute);
         update();
       }
     } catch (e) {
@@ -330,20 +336,7 @@ class AddSlotController extends GetxController implements GetxService {
       _showDialog(
           title: 'Invalid Slot',
           message:
-              'Slot must be at least 15 minutes long and closing time should be after opening time.');
-      return;
-    }
-
-    // Check if the day exists in the timing list
-    int currentDayIndex = dayList.indexOf(dayName);
-    TimingModel? selectedDayTiming = _timesList
-        .firstWhereOrNull((element) => element.day == currentDayIndex);
-
-    if (selectedDayTiming == null) {
-      _showDialog(
-          title: 'Unavailable',
-          message:
-              'Selected day is not available for adding slots. Please check your working hours configuration.');
+              'Closing time should be after opening time.');
       return;
     }
 
@@ -371,21 +364,6 @@ class AddSlotController extends GetxController implements GetxService {
     }
 
     try {
-      // Check if the selected times are within the day's working hours
-      // selectedDayTiming has openTime and closeTime in 24-hour format
-      // openTime and closeTime are in 12-hour format
-      if (!_isSlotWithinWorkingHours(openTime, closeTime,
-          selectedDayTiming.openTime!, selectedDayTiming.closeTime!)) {
-        String workStart12Hour = _convertTo12Hour(selectedDayTiming.openTime!);
-        String workEnd12Hour = _convertTo12Hour(selectedDayTiming.closeTime!);
-
-        _showDialog(
-            title: 'Invalid Slot',
-            message:
-                'Slot time must be within the working hours: $workStart12Hour - $workEnd12Hour');
-        return;
-      }
-
       // Check for overlapping slots with existing slots
       for (int i = 0; i < _slotList.length; i++) {
         SlotsModel existingSlot = _slotList[i];
@@ -413,22 +391,17 @@ class AddSlotController extends GetxController implements GetxService {
         return;
       }
 
-      // Add the new slot
+      // Add the new slot (always store 12-hour clock)
+      final start12 = SlotTime.to12Hour(openTime);
+      final end12 = SlotTime.to12Hour(closeTime);
       var param = {
-        "start_time": openTime,
-        "end_time": closeTime,
+        "start_time": start12,
+        "end_time": end12,
         "available": available
       };
 
       SlotsModel newSlot = SlotsModel.fromJson(param);
       _slotList.add(newSlot);
-
-      // Sort slots by start time for better organization
-      // _slotList.sort((a, b) {
-      //   int aMinutes = _timeToMinutes(a.startTime!, is24HourFormat: false);
-      //   int bMinutes = _timeToMinutes(b.startTime!, is24HourFormat: false);
-      //   return aMinutes.compareTo(bMinutes);
-      // });
 
       // Clear the input fields
       openTime = '';
@@ -501,7 +474,7 @@ class AddSlotController extends GetxController implements GetxService {
       var param = {
         "uid": parser.getUID(),
         "week_id": dayList.indexOf(dayName),
-        "slots": jsonEncode(slotList)
+        "slots": jsonEncode(_slotList.map((e) => e.toJson()).toList())
       };
 
       Response response = await parser.onCreateTimeSlot(param);
@@ -568,7 +541,7 @@ class AddSlotController extends GetxController implements GetxService {
       var param = {
         "id": slotId,
         "week_id": dayList.indexOf(dayName),
-        "slots": jsonEncode(slotList)
+        "slots": jsonEncode(_slotList.map((e) => e.toJson()).toList())
       };
 
       Response response = await parser.onUpdateSlots(param);

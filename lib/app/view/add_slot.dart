@@ -55,36 +55,28 @@ class _AddSlotScreenState extends State<AddSlotScreen> {
                                     color: ThemeProvider.appColor,
                                     style: BorderStyle.solid),
                               ),
-                              child: IgnorePointer(
-                                ignoring: value.disabled,
-                                child: DropdownButton<String>(
-                                  value: value.dayName,
-                                  isExpanded: true,
-                                  icon: const Icon(Icons.expand_more),
-                                  elevation: 16,
-                                  style: const TextStyle(
-                                      color: ThemeProvider.appColor),
-                                  underline: const SizedBox(),
-                                  onChanged: (String? newValue) {
-                                    debugPrint(newValue);
-                                    value.onUpdateDayName(newValue.toString());
-                                  },
-                                  items: <String>[
-                                    'Sunday'.tr,
-                                    'Monday'.tr,
-                                    'Tuesday'.tr,
-                                    'Wednesday'.tr,
-                                    'Thursday'.tr,
-                                    'Friday'.tr,
-                                    'Saturday'.tr
-                                  ].map<DropdownMenuItem<String>>(
-                                      (String selected) {
-                                    return DropdownMenuItem<String>(
-                                      value: selected,
-                                      child: Text(selected),
-                                    );
-                                  }).toList(),
-                                ),
+                              child: DropdownButton<String>(
+                                value: value.dayList.contains(value.dayName)
+                                    ? value.dayName
+                                    : value.dayList.first,
+                                isExpanded: true,
+                                icon: const Icon(Icons.expand_more),
+                                elevation: 16,
+                                style: const TextStyle(
+                                    color: ThemeProvider.appColor),
+                                underline: const SizedBox(),
+                                onChanged: (String? newValue) {
+                                  if (newValue == null) return;
+                                  value.onUpdateDayName(newValue);
+                                },
+                                items: value.dayList
+                                    .map<DropdownMenuItem<String>>(
+                                        (String dayKey) {
+                                  return DropdownMenuItem<String>(
+                                    value: dayKey,
+                                    child: Text(dayKey.tr),
+                                  );
+                                }).toList(),
                               )),
                           GestureDetector(
                             onTap: () {
@@ -197,7 +189,7 @@ class _AddSlotScreenState extends State<AddSlotScreen> {
                                       backgroundColor:
                                           ThemeProvider.backgroundColor,
                                       label: Text(
-                                        '${value.slotList[index].startTime} to ${value.slotList[index].endTime} - available: ${value.slotList[index].available}',
+                                        value.slotList[index].displayLabel,
                                         style: const TextStyle(
                                             fontFamily: 'regular'),
                                       ),

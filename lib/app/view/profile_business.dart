@@ -527,7 +527,7 @@ class _ProfileCategoriesState extends State<ProfileCategoriesScreen> {
                                             Expanded(
                                               flex: 3,
                                               child: Text(
-                                                '${value.timesList[index].openTime} - ${value.timesList[index].closeTime}',
+                                                '${value.timesList[index].displayRange}',
                                                 style: const TextStyle(
                                                   color: Colors.black87,
                                                   fontSize: 14,

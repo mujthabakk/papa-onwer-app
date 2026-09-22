@@ -93,7 +93,8 @@ class SlotController extends GetxController implements GetxService {
     var param = {
       "id": _slotList[index].id,
       "week_id": _slotList[index].weekId,
-      "slots": jsonEncode(_slotList[index].slots)
+      "slots": jsonEncode(
+          (_slotList[index].slots ?? []).map((e) => e.toJson()).toList())
     };
     Response response = await parser.onUpdateSlots(param);
     Get.back();

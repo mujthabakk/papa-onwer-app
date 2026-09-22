@@ -400,7 +400,9 @@ class IndividualProfileController extends GetxController
       "popular": havePopular == true ? 1 : 0,
       "have_shop": haveShop == true ? 1 : 0,
       "in_home": haveHome == true ? 1 : 0,
-      "timing": _timesList.isNotEmpty ? jsonEncode(timesList) : 'NA'
+      "timing": _timesList.isNotEmpty
+          ? jsonEncode(_timesList.map((e) => e.toJson()).toList())
+          : 'NA'
     };
 
     debugPrint(body.toString());

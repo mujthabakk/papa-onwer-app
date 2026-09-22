@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:jiffy/jiffy.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/add_timing_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/profile_individual_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/profile_business_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/slot_time.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/toast.dart';
 
 class AddTimingController extends GetxController implements GetxService {
@@ -36,8 +36,8 @@ class AddTimingController extends GetxController implements GetxService {
     action = Get.arguments[0];
     if (action == 'edit') {
       dayName = Get.arguments[1];
-      openTime = Get.arguments[2];
-      closeTime = Get.arguments[3];
+      openTime = SlotTime.to12Hour(Get.arguments[2]?.toString());
+      closeTime = SlotTime.to12Hour(Get.arguments[3]?.toString());
       update();
     }
   }
@@ -45,24 +45,48 @@ class AddTimingController extends GetxController implements GetxService {
   Future<void> openTimePicker() async {
     var context = Get.context as BuildContext;
     TimeOfDay initialTime = TimeOfDay.now();
+    final openMins = SlotTime.toMinutes(openTime);
+    if (openMins != null) {
+      initialTime = TimeOfDay(hour: openMins ~/ 60, minute: openMins % 60);
+    }
     TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: initialTime,
-        initialEntryMode: TimePickerEntryMode.input);
-    DateTime dateTime = DateTime(2020, 10, 19, pickedTime!.hour, pickedTime.minute);
-    openTime = Jiffy.parseFromDateTime(dateTime).format(pattern: "H:mm");
+      context: context,
+      initialTime: initialTime,
+      initialEntryMode: TimePickerEntryMode.dial,
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
+    );
+    if (pickedTime == null) return;
+    openTime = SlotTime.fromTimeOfDay(
+        hour24: pickedTime.hour, minute: pickedTime.minute);
     update();
   }
 
   Future<void> closeTimePicker() async {
     var context = Get.context as BuildContext;
     TimeOfDay initialTime = TimeOfDay.now();
+    final closeMins = SlotTime.toMinutes(closeTime);
+    if (closeMins != null) {
+      initialTime = TimeOfDay(hour: closeMins ~/ 60, minute: closeMins % 60);
+    }
     TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: initialTime,
-        initialEntryMode: TimePickerEntryMode.input);
-    DateTime dateTime = DateTime(2020, 10, 19, pickedTime!.hour, pickedTime.minute);
-    closeTime = Jiffy.parseFromDateTime(dateTime).format(pattern: "H:mm");
+      context: context,
+      initialTime: initialTime,
+      initialEntryMode: TimePickerEntryMode.dial,
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
+    );
+    if (pickedTime == null) return;
+    closeTime = SlotTime.fromTimeOfDay(
+        hour24: pickedTime.hour, minute: pickedTime.minute);
     update();
   }
 
@@ -80,8 +104,8 @@ class AddTimingController extends GetxController implements GetxService {
       if (exist.isNotEmpty) {
         showToast('Already added');
       } else {
-        Get.find<ProfileCategoriesController>()
-            .onSaveTime(index, openTime, closeTime);
+        Get.find<ProfileCategoriesController>().onSaveTime(
+            index, SlotTime.to12Hour(openTime), SlotTime.to12Hour(closeTime));
         onBack();
       }
     } else {
@@ -97,8 +121,8 @@ class AddTimingController extends GetxController implements GetxService {
       if (exist.isNotEmpty) {
         showToast('Already added');
       } else {
-        Get.find<IndividualProfileController>()
-            .onSaveTime(index, openTime, closeTime);
+        Get.find<IndividualProfileController>().onSaveTime(
+            index, SlotTime.to12Hour(openTime), SlotTime.to12Hour(closeTime));
         onBack();
       }
     }
@@ -144,8 +168,8 @@ class AddTimingController extends GetxController implements GetxService {
       }
       var index = dayList.indexOf(dayName);
 
-      Get.find<ProfileCategoriesController>()
-          .updateTime(index, openTime, closeTime);
+      Get.find<ProfileCategoriesController>().updateTime(
+          index, SlotTime.to12Hour(openTime), SlotTime.to12Hour(closeTime));
       onBack();
     } else {
       debugPrint('for individual');
@@ -155,8 +179,8 @@ class AddTimingController extends GetxController implements GetxService {
       }
       var index = dayList.indexOf(dayName);
 
-      Get.find<IndividualProfileController>()
-          .updateTime(index, openTime, closeTime);
+      Get.find<IndividualProfileController>().updateTime(
+          index, SlotTime.to12Hour(openTime), SlotTime.to12Hour(closeTime));
       onBack();
     }
   }
