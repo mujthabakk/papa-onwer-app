@@ -14,6 +14,7 @@ import 'package:ultimate_salon_owner_flutter/app/helper/router.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/locale_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/locale_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/constants.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/tax_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/toast.dart';
 import 'package:flutter_otp_text_field/flutter_otp_text_field.dart';
@@ -168,6 +169,9 @@ class LoginController extends GetxController implements GetxService {
         responseBody: myMap,
       );
     }
+
+    TaxHelper.applyFromBody(myMap);
+    await TaxHelper.refresh(uid: user['id']);
 
     await onNavigate();
   }

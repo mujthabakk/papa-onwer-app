@@ -36,6 +36,11 @@ class _ServicesScreenState extends State<ServicesScreen>
   void initState() {
     super.initState();
     _tabController = TabController(length: _tabs.length, vsync: this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Get.isRegistered<ServicesController>()) {
+        Get.find<ServicesController>().getServices();
+      }
+    });
   }
 
   @override
@@ -723,62 +728,74 @@ class _ServicesScreenState extends State<ServicesScreen>
   }
 
   Widget _buildEmptyState() {
-    return Container(
-      color: Colors.white,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/images/no_data.png', // Make sure this asset exists
-              height: 120,
-              fit: BoxFit.contain,
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'No Services Found'.tr,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
-              child: Text(
-                'Add your first service by tapping the button below'.tr,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[600],
+    return RefreshIndicator(
+      color: ThemeProvider.appColor,
+      onRefresh: () => Get.find<ServicesController>().getServices(),
+      child: ListView(
+        physics: const AlwaysScrollableScrollPhysics(),
+        children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.2),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/images/no_data.png', // Make sure this asset exists
+                  height: 120,
+                  fit: BoxFit.contain,
                 ),
-              ),
-            ),
-            const SizedBox(height: 30),
-            ElevatedButton.icon(
-              onPressed: () => Get.find<ServicesController>().onAddNew(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ThemeProvider.appColor,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+                const SizedBox(height: 20),
+                Text(
+                  'No Services Found'.tr,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              icon: const Icon(Icons.add),
-              label: Text('Create Service'.tr),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 30),
+                  child: Text(
+                    'Add your first service by tapping the button below'.tr,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 30),
+                ElevatedButton.icon(
+                  onPressed: () => Get.find<ServicesController>().onAddNew(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ThemeProvider.appColor,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  icon: const Icon(Icons.add),
+                  label: Text('Create Service'.tr),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildServicesList(List services) {
-    return services.isEmpty
-        ? Container(
-            color: Colors.white,
-            child: Center(
+    if (services.isEmpty) {
+      return RefreshIndicator(
+        color: ThemeProvider.appColor,
+        onRefresh: () => Get.find<ServicesController>().getServices(),
+        child: ListView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.height * 0.25),
+            Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -799,19 +816,25 @@ class _ServicesScreenState extends State<ServicesScreen>
                 ],
               ),
             ),
-          )
-        : Container(
-            color: Colors.white,
-            child: ListView.builder(
-              padding: const EdgeInsets.only(
-                  left: 15, right: 15, top: 15, bottom: 140),
-              itemCount: services.length,
-              itemBuilder: (context, index) {
-                var item = services[index];
-                return _buildServiceCard(item, context);
-              },
-            ),
-          );
+          ],
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      color: ThemeProvider.appColor,
+      onRefresh: () => Get.find<ServicesController>().getServices(),
+      child: ListView.builder(
+        physics: const AlwaysScrollableScrollPhysics(),
+        padding:
+            const EdgeInsets.only(left: 15, right: 15, top: 15, bottom: 140),
+        itemCount: services.length,
+        itemBuilder: (context, index) {
+          var item = services[index];
+          return _buildServiceCard(item, context);
+        },
+      ),
+    );
   }
 
   Widget _buildServiceCard(dynamic item, BuildContext context) {

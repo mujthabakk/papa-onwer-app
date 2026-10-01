@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/product_order_details_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/app_image.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/tax_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 
 class ProductOrderDetailScreen extends StatefulWidget {
@@ -653,8 +654,9 @@ class _ProductOrderDetailScreenState extends State<ProductOrderDetailScreen> {
               'Delivery Charge'.tr,
               controller.productOrderDetails.deliveryCharge.toString(),
               controller),
-          _buildPricingRow('Service Tax (18%)'.tr,
-              controller.productOrderDetails.tax.toString(), controller),
+          if (TaxHelper.isAvailable)
+            _buildPricingRow('Service Tax (18%)'.tr,
+                controller.productOrderDetails.tax.toString(), controller),
           _buildPricingRow('Total'.tr,
               controller.productOrderDetails.total.toString(), controller),
           _buildPricingRow(

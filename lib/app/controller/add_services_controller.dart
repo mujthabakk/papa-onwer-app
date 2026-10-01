@@ -9,6 +9,7 @@ import 'package:ultimate_salon_owner_flutter/app/controller/services_controller.
 import 'package:ultimate_salon_owner_flutter/app/controller/services_names_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/router.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/tax_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/toast.dart';
 
@@ -111,7 +112,7 @@ class AddServicesController extends GetxController implements GetxService {
   @override
   void onInit() {
     super.onInit();
-    tax = parser.getTax();
+    tax = TaxHelper.isAvailable ? parser.getTax() : 0.0;
     currencySymbol = parser.getCurrencySymbol();
     currencySide = parser.getCurrencySide();
     // catId = Get.arguments[1] as int;

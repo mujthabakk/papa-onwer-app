@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/order_details_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/app_image.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/tax_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 
 class AppointmentsHistoryScreen extends StatefulWidget {
@@ -802,8 +803,9 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
               controller.appointmentInfo.walletPrice.toString(), controller),
           _buildPricingRow('Distance Cost'.tr,
               controller.appointmentInfo.distanceCost.toString(), controller),
-          _buildPricingRow('Service Tax'.tr,
-              controller.appointmentInfo.serviceTax.toString(), controller),
+          if (TaxHelper.isAvailable)
+            _buildPricingRow('Service Tax'.tr,
+                controller.appointmentInfo.serviceTax.toString(), controller),
           _buildPricingRow('Total'.tr,
               controller.appointmentInfo.total.toString(), controller),
           _buildPricingRow(

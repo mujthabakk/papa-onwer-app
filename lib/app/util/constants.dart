@@ -79,6 +79,7 @@ class AppConstants {
   static const String upgradeVerifyPayment = 'api/v1/upgrade/verifyPayment';
   static const String profileGetById = 'api/v1/profile/getByID';
   static const String profileGetOwnerInfo = 'api/v1/profile/getOwnerInfo';
+  static const String getTaxAvailability = 'api/v1/pricing/getTaxAvailability';
 
   static const String getAppSettings = 'api/v1/settings/getDefault';
   static const String onLogin = 'api/v1/auth/login';

@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:skeletons/skeletons.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/add_services_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/app_image.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/tax_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 
 class AddServicesScreen extends StatefulWidget {
@@ -475,7 +476,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
           fillColor: Colors.grey[100],
           prefixText: '${value.currencySymbol} ',
         ),
-        if (value.offTextEditor.text.isNotEmpty)
+        if (TaxHelper.isAvailable && value.offTextEditor.text.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(top: 12.0, left: 4.0),
             child: Text(

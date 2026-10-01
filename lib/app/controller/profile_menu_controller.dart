@@ -33,6 +33,7 @@ import 'package:ultimate_salon_owner_flutter/app/controller/stylist_controller.d
 import 'package:ultimate_salon_owner_flutter/app/controller/withdrawal_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/router.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/app_nav.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/tax_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 
 class ProfileController extends GetxController
@@ -95,6 +96,7 @@ class ProfileController extends GetxController
         response = await parser.getOwnerInfo();
       }
       if (response.statusCode == 200) {
+        TaxHelper.applyFromBody(response.body);
         availablePlans.assignAll(
           UpgradePlanModel.extractAvailablePlans(response.body),
         );
@@ -105,11 +107,13 @@ class ProfileController extends GetxController
         final plan = PartnerPlanModel.extract(response.body);
         if (plan != null) {
           applyPlan(plan);
+          await TaxHelper.refresh();
           return;
         }
       }
     } catch (_) {}
     loadLocalPlan();
+    await TaxHelper.refresh();
   }
 
   @override

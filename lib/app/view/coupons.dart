@@ -938,6 +938,13 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _controller.fetchPartnerServices();
       if (!mounted) return;
+      setState(() {
+        _syncAllServicesFromSelection(_controller.partnerServices);
+        if (applyAllServices && selectedServiceIds.isEmpty) {
+          selectedServiceIds
+              .addAll(_controller.partnerServices.map((s) => s.id));
+        }
+      });
       _syncOriginalFromServices();
       _recalculateAmounts();
     });
@@ -955,6 +962,16 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
       applyAllServices = widget.coupon!.applyAllServices;
       selectedServiceIds.addAll(widget.coupon!.serviceIds);
     }
+  }
+
+  void _syncAllServicesFromSelection(List services) {
+    if (services.isEmpty) {
+      applyAllServices = false;
+      return;
+    }
+    final allSelected =
+        services.every((s) => selectedServiceIds.contains(s.id));
+    applyAllServices = allSelected;
   }
 
   double _selectedServicesTotal() {
@@ -1212,51 +1229,58 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
             title: Text('All services'.tr),
             value: applyAllServices,
             activeThumbColor: const Color(0xFF6C5CE7),
+            activeTrackColor: const Color(0xFF6C5CE7).withOpacity(0.45),
+            inactiveThumbColor: Colors.white,
+            inactiveTrackColor: const Color(0xFFD1D5DB),
             onChanged: (value) {
               setState(() {
                 applyAllServices = value;
                 if (value) {
-                  selectedServiceIds.clear();
+                  selectedServiceIds
+                    ..clear()
+                    ..addAll(services.map((s) => s.id));
                 }
               });
               _syncOriginalFromServices();
               _recalculateAmounts();
             },
           ),
-          if (!applyAllServices) ...[
-            if (services.isEmpty)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Text('No active services found for this partner.'.tr,
-                  style: const TextStyle(color: Colors.red),
+          if (services.isEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text('No active services found for this partner.'.tr,
+                style: const TextStyle(color: Colors.red),
+              ),
+            )
+          else
+            ...services.map((service) {
+              final selected =
+                  applyAllServices || selectedServiceIds.contains(service.id);
+              return CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                value: selected,
+                title: Text(
+                  service.name,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
-              )
-            else
-              ...services.map((service) {
-                final selected = selectedServiceIds.contains(service.id);
-                return CheckboxListTile(
-                  contentPadding: EdgeInsets.zero,
-                  value: selected,
-                  title: Text(
-                    service.name,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  subtitle: _servicePriceSubtitle(service, selected: selected),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  onChanged: (checked) {
-                    setState(() {
-                      if (checked == true) {
-                        selectedServiceIds.add(service.id);
-                      } else {
-                        selectedServiceIds.remove(service.id);
-                      }
-                    });
-                    _syncOriginalFromServices();
-                    _recalculateAmounts();
-                  },
-                );
-              }),
-          ],
+                subtitle: _servicePriceSubtitle(service, selected: selected),
+                controlAffinity: ListTileControlAffinity.leading,
+                onChanged: applyAllServices
+                    ? null
+                    : (checked) {
+                        setState(() {
+                          if (checked == true) {
+                            selectedServiceIds.add(service.id);
+                          } else {
+                            selectedServiceIds.remove(service.id);
+                          }
+                          _syncAllServicesFromSelection(services);
+                        });
+                        _syncOriginalFromServices();
+                        _recalculateAmounts();
+                      },
+              );
+            }),
         ],
       );
     });

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/add_packages_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/app_image.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/tax_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 
 class AddPackagesScreen extends StatefulWidget {
@@ -283,7 +284,8 @@ class _AddPackagesScreenState extends State<AddPackagesScreen> {
                         readOnly: true,
                         labelColor: ThemeProvider.appColor,
                       ),
-                      if (value.sellPriceTextEditor.text.isNotEmpty)
+                      if (TaxHelper.isAvailable &&
+                          value.sellPriceTextEditor.text.isNotEmpty)
                         Padding(
                           padding: const EdgeInsets.only(top: 12.0, left: 4.0),
                           child: Text(

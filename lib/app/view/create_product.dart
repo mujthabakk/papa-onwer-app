@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/create_products_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/app_image.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/tax_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 
 class CreateProductsScreen extends StatefulWidget {
@@ -274,7 +275,7 @@ class _CreateProductsScreenState extends State<CreateProductsScreen> {
           enabled: false,
           fillColor: Colors.grey[100],
         ),
-        if (value.sellPriceTextEditor.text.isNotEmpty)
+        if (TaxHelper.isAvailable && value.sellPriceTextEditor.text.isNotEmpty)
           Padding(
             padding: const EdgeInsets.only(top: 12.0, left: 4.0),
             child: Text(

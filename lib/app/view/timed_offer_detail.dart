@@ -9,6 +9,7 @@ import 'package:ultimate_salon_owner_flutter/app/helper/shared_pref.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/app_image.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/constants.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/tax_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 
 class TimedOfferDetailScreen extends StatelessWidget {
@@ -476,6 +477,7 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
   }
 
   double get _tax {
+    if (!TaxHelper.isAvailable) return 0;
     if (!Get.isRegistered<SharedPreferencesManager>()) return 0;
     return Get.find<SharedPreferencesManager>().getDouble('tax') ?? 0;
   }
@@ -517,6 +519,13 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _controller.fetchPartnerServices();
       if (!mounted) return;
+      setState(() {
+        _syncAllServicesFromSelection(_controller.partnerServices);
+        if (applyAllServices && selectedServiceIds.isEmpty) {
+          selectedServiceIds
+              .addAll(_controller.partnerServices.map((s) => s.id));
+        }
+      });
       _syncOriginalFromServices();
       _recalculateSell();
     });
@@ -534,6 +543,16 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
       selectedType = widget.campaign.discountType == 'flat' ? 2 : 1;
       discountController.text = '${widget.campaign.discountValue}';
     }
+  }
+
+  void _syncAllServicesFromSelection(List services) {
+    if (services.isEmpty) {
+      applyAllServices = false;
+      return;
+    }
+    final allSelected =
+        services.every((s) => selectedServiceIds.contains(s.id));
+    applyAllServices = allSelected;
   }
 
   double _selectedServicesTotal() {
@@ -734,52 +753,58 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
             title: Text('All services'.tr),
             value: applyAllServices,
             activeThumbColor: const Color(0xFF6C5CE7),
+            activeTrackColor: const Color(0xFF6C5CE7).withOpacity(0.45),
+            inactiveThumbColor: Colors.white,
+            inactiveTrackColor: const Color(0xFFD1D5DB),
             onChanged: (value) {
               setState(() {
                 applyAllServices = value;
                 if (value) {
-                  selectedServiceIds.clear();
+                  selectedServiceIds
+                    ..clear()
+                    ..addAll(services.map((s) => s.id));
                 }
               });
               _syncOriginalFromServices();
               _recalculateSell();
             },
           ),
-          if (!applyAllServices) ...[
-            if (services.isEmpty)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Text('No active services found for this partner.'.tr,
-                  style: const TextStyle(color: Colors.red),
+          if (services.isEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text('No active services found for this partner.'.tr,
+                style: const TextStyle(color: Colors.red),
+              ),
+            )
+          else
+            ...services.map((service) {
+              final selected =
+                  applyAllServices || selectedServiceIds.contains(service.id);
+              return CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                value: selected,
+                title: Text(
+                  service.name,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
                 ),
-              )
-            else
-              ...services.map((service) {
-                final selected =
-                    applyAllServices || selectedServiceIds.contains(service.id);
-                return CheckboxListTile(
-                  contentPadding: EdgeInsets.zero,
-                  value: selectedServiceIds.contains(service.id),
-                  title: Text(
-                    service.name,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  subtitle: _servicePriceSubtitle(service, selected: selected),
-                  controlAffinity: ListTileControlAffinity.leading,
-                  onChanged: (checked) {
-                    setState(() {
-                      if (checked == true) {
-                        selectedServiceIds.add(service.id);
-                      } else {
-                        selectedServiceIds.remove(service.id);
-                      }
-                    });
-                    _syncOriginalFromServices();
-                    _recalculateSell();
-                  },
-                );
-              }),
-          ],
+                subtitle: _servicePriceSubtitle(service, selected: selected),
+                controlAffinity: ListTileControlAffinity.leading,
+                onChanged: applyAllServices
+                    ? null
+                    : (checked) {
+                        setState(() {
+                          if (checked == true) {
+                            selectedServiceIds.add(service.id);
+                          } else {
+                            selectedServiceIds.remove(service.id);
+                          }
+                          _syncAllServicesFromSelection(services);
+                        });
+                        _syncOriginalFromServices();
+                        _recalculateSell();
+                      },
+              );
+            }),
         ],
       );
     });
@@ -940,7 +965,7 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
             readOnly: true,
             prefixText: '$_currencySymbol ',
           ),
-          if (sell > 0 && _tax > 0)
+          if (TaxHelper.isAvailable && sell > 0 && _tax > 0)
             Padding(
               padding: const EdgeInsets.only(bottom: 12, left: 4),
               child: Text(
