@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/api/api.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/locale_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/shared_pref.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/app_country.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/constants.dart';
 
 class UpgradeParser {
@@ -29,10 +30,8 @@ class UpgradeParser {
         if (selected.nameEn.trim().isNotEmpty) return selected.nameEn.trim();
         if (selected.name.trim().isNotEmpty) return selected.name.trim();
       }
-      final code = loc.countryCode.toUpperCase();
-      if (code == 'QA' || code == 'QAT') return 'Qatar';
     }
-    return 'India';
+    return AppCountry.headerValue(sharedPreferencesManager);
   }
 
   Future<Response> getUpgradePlans() async {
@@ -53,6 +52,7 @@ class UpgradeParser {
         'uid': uid,
         'plan_id': planId,
         'plan_amount': amount,
+        'country': _planCountry(),
       },
       token,
     );

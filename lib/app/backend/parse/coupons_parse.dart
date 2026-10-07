@@ -1,3 +1,4 @@
+import 'package:image_picker/image_picker.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/api/api.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/shared_pref.dart';
 import 'package:get/get.dart';
@@ -16,7 +17,15 @@ class CouponsParser {
 
   dynamic get partnerId => uid;
 
-  Future<Response> createCoupons(dynamic body) async {
+  Future<Response> createCoupons(dynamic body, {XFile? image}) async {
+    if (image != null) {
+      return apiService.postPrivateMultipart(
+        AppConstants.couponsCreate,
+        Map<String, dynamic>.from(body),
+        token,
+        file: image,
+      );
+    }
     return apiService.postPrivate(AppConstants.couponsCreate, body, token);
   }
 
@@ -57,7 +66,15 @@ class CouponsParser {
         AppConstants.couponsGetPartnerServices, body, token);
   }
 
-  Future<Response> updateCoupons(var body) async {
+  Future<Response> updateCoupons(var body, {XFile? image}) async {
+    if (image != null) {
+      return apiService.postPrivateMultipart(
+        AppConstants.couponsUpdate,
+        Map<String, dynamic>.from(body),
+        token,
+        file: image,
+      );
+    }
     return apiService.postPrivate(AppConstants.couponsUpdate, body, token);
   }
 

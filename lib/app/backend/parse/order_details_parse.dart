@@ -100,6 +100,14 @@ class OrderDetailsParser {
     );
   }
 
+  Future<Response> getPaymentsByCountry() async {
+    return apiService.postPrivate(
+      AppConstants.getPaymentsByCountry,
+      {},
+      sharedPreferencesManager.getString('token') ?? '',
+    );
+  }
+
   String? getUid() => sharedPreferencesManager.getString('uid');
 
   // Future<Response> sendNotification(var body) async {

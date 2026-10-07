@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/api/handler.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/coupons_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/coupons_parse.dart';
@@ -130,7 +131,7 @@ class CouponsController extends GetxController implements GetxService {
     };
   }
 
-  Future<void> createCoupons(CouponModel coupon) async {
+  Future<void> createCoupons(CouponModel coupon, {XFile? image}) async {
     Get.dialog(
       SimpleDialog(
         children: [
@@ -152,7 +153,8 @@ class CouponsController extends GetxController implements GetxService {
       barrierDismissible: false,
     );
 
-    final response = await parser.createCoupons(_offerBody(coupon));
+    final response =
+        await parser.createCoupons(_offerBody(coupon), image: image);
     Get.back();
     if (response.statusCode == 200 && response.body['success'] == true) {
       successToast('Your offer was submitted successfully');
@@ -163,10 +165,12 @@ class CouponsController extends GetxController implements GetxService {
     update();
   }
 
-  Future<void> updateCoupon(CouponModel coupon) async {
+  Future<void> updateCoupon(CouponModel coupon, {XFile? image}) async {
     isLoading.value = true;
-    final response =
-        await parser.updateCoupons(_offerBody(coupon, includeId: true));
+    final response = await parser.updateCoupons(
+      _offerBody(coupon, includeId: true),
+      image: image,
+    );
     if (response.statusCode == 200 && response.body['success'] == true) {
       successToast('Your offer was updated successfully');
     } else {

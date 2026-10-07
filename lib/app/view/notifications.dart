@@ -4,6 +4,7 @@ import 'package:ultimate_salon_owner_flutter/app/backend/models/notification_mod
 import 'package:ultimate_salon_owner_flutter/app/controller/notification_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/withdrawal_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/router.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -274,7 +275,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       notification.type == 'Withdrawal'
                           ? Container()
                           : Text(
-                              'INR ${notification.data.price.toStringAsFixed(2)}',
+                              CurrencyHelper.format(notification.data.price),
                               style: TextStyle(
                                 color: ThemeProvider.appColor,
                                 fontSize: 16,

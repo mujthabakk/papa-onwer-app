@@ -18,6 +18,7 @@ import 'package:ultimate_salon_owner_flutter/app/controller/products_controller.
 import 'package:ultimate_salon_owner_flutter/app/controller/services_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/shared_pref.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/constants.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/app_country.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/locale_helper.dart';
 
@@ -77,6 +78,14 @@ class LocaleController extends GetxController implements GetxService {
   void _persistSelection() {
     prefs.putString('language', languageCode);
     prefs.putString('country', countryCode);
+    final countryName = selectedCountry?.nameEn.isNotEmpty == true
+        ? selectedCountry!.nameEn
+        : (selectedCountry?.name.isNotEmpty == true
+            ? selectedCountry!.name
+            : AppCountry.fromCode(countryCode));
+    if (countryName.isNotEmpty) {
+      prefs.putString('preferred_country', countryName);
+    }
     prefs.putString('direction', direction);
     prefs.putBool('is_rtl', isRtl);
   }
@@ -166,6 +175,7 @@ class LocaleController extends GetxController implements GetxService {
         data?['preferred_country']?.toString() ??
         data?['selected_country']?.toString();
     if (country != null && country.isNotEmpty) {
+      prefs.putString('preferred_country', country);
       CurrencyHelper.save(prefs, CurrencyHelper.fromCountry(name: country));
     }
   }

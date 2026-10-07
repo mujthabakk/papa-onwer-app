@@ -59,6 +59,12 @@ class PaymentSocketService extends GetxService {
         }
       }
 
+      final uid = prefs.getString('uid') ?? '';
+      if (uid.isNotEmpty &&
+          (_channel == 'payment-status' || _channel == 'payment-status-')) {
+        _channel = 'payment-status-$uid';
+      }
+
       _pusher = PusherChannelsFlutter.getInstance();
       await _pusher!.init(
         apiKey: apiKey,
@@ -91,7 +97,9 @@ class PaymentSocketService extends GetxService {
     final name = event.eventName;
     if (name != _event &&
         name != 'payment-completed' &&
-        name != 'payment_completed') {
+        name != 'payment_completed' &&
+        name != 'payment-cancelled' &&
+        name != 'payment_cancelled') {
       return;
     }
     if (event.data == null) return;
@@ -109,6 +117,11 @@ class PaymentSocketService extends GetxService {
       if (payload == null) return;
 
       final payment = PaymentOptionsModel.fromJson(payload);
+      if (name.contains('cancel') &&
+          !payment.isPaid &&
+          !payment.isPaymentCompleted) {
+        debugPrint('💳 Payment cancelled for book #${payment.bookId}');
+      }
       for (final listener in List<PaymentCompletedCallback>.from(_listeners)) {
         listener(payment);
       }

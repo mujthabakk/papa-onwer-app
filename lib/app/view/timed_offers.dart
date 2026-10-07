@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/timed_offer_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/timed_offers_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/app_image.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/timed_offer_detail.dart';
 
@@ -168,6 +169,15 @@ class TimedOffersScreen extends StatelessWidget {
           },
           child: Column(
             children: [
+              if (campaign.displayImage.isNotEmpty)
+                SizedBox(
+                  height: 140,
+                  width: double.infinity,
+                  child: AppNetImage(
+                    path: campaign.displayImage,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
@@ -265,63 +275,101 @@ class TimedOffersScreen extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
-                child: Row(
+                child: Column(
                   children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () async {
-                          await controller.openCampaign(campaign);
-                          Get.to(
-                              () => TimedOfferDetailScreen(campaign: campaign));
-                        },
-                        icon: const Icon(Icons.visibility_outlined, size: 18),
-                        label: Text('View Services'.tr),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: const Color.fromARGB(255, 54, 54, 54),
-                          side: const BorderSide(
-                            color: Color.fromARGB(255, 55, 55, 55),
-                            width: 1.5,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () async {
+                              await controller.openCampaign(campaign);
+                              Get.to(() =>
+                                  TimedOfferDetailScreen(campaign: campaign));
+                            },
+                            icon: const Icon(Icons.visibility_outlined, size: 18),
+                            label: Text('View Services'.tr),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor:
+                                  const Color.fromARGB(255, 54, 54, 54),
+                              side: const BorderSide(
+                                color: Color.fromARGB(255, 55, 55, 55),
+                                width: 1.5,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 14),
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () async {
+                              await controller.openCampaign(campaign);
+                              Get.to(() => TimedOfferFormScreen(
+                                    campaign: campaign,
+                                    addMore: campaign.hasJoined,
+                                  ));
+                            },
+                            icon: const Icon(Icons.add_rounded, size: 18),
+                            label: Text(
+                                campaign.hasJoined ? 'Add services' : 'Join'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: ThemeProvider.golden,
+                              foregroundColor: Colors.black,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 14),
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                              ),
+                            ),
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          textStyle: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
+                        ),
+                      ],
+                    ),
+                    if (campaign.hasJoined) ...[
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                          onPressed: () async {
+                            await controller.openCampaign(campaign);
+                            Get.to(() => TimedOfferFormScreen(
+                                  campaign: campaign,
+                                ));
+                          },
+                          icon: const Icon(Icons.edit_rounded, size: 18),
+                          label: Text('Edit Offer'.tr),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor:
+                                const Color.fromARGB(255, 54, 54, 54),
+                            side: const BorderSide(
+                              color: Color.fromARGB(255, 55, 55, 55),
+                              width: 1.5,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            textStyle: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () async {
-                          await controller.openCampaign(campaign);
-                          Get.to(() => TimedOfferFormScreen(campaign: campaign));
-                        },
-                        icon: Icon(
-                          campaign.hasJoined
-                              ? Icons.edit_rounded
-                              : Icons.add_rounded,
-                          size: 18,
-                        ),
-                        label: Text(campaign.hasJoined ? 'Edit Offer' : 'Join'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: ThemeProvider.golden,
-                          foregroundColor: Colors.black,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          textStyle: const TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ),
+                    ],
                   ],
                 ),
               ),

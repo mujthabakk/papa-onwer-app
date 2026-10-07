@@ -60,6 +60,8 @@ class AppConstants {
       'api/v1/timed_offers/partnerUpdate';
   static const String timedOffersGetPartnerItems =
       'api/v1/timed_offers/getPartnerItems';
+  static const String timedOffersGetPartnerOffer =
+      'api/v1/timed_offers/getPartnerOffer';
   static const String timedOffersUpdateItem = 'api/v1/timed_offers/updateItem';
   static const String timedOffersRemoveItem = 'api/v1/timed_offers/removeItem';
 
@@ -179,9 +181,16 @@ class AppConstants {
   static const String markCashPaid = 'api/v1/payments/markCashPaid';
   static const String getPaymentOptions = 'api/v1/payments/getPaymentOptions';
   static const String getPaymentStatus = 'api/v1/payments/getStatus';
+  static const String getPaymentsByCountry = 'api/v1/payments/getByCountry';
+  static const String getPayments = 'api/v1/payments/getPayments';
+  static const String generateCheckoutPaymentUrl =
+      'api/v1/payments/generatePaymentUrl';
   static const String payNow = 'api/v1/payments/payNow';
   static const String verifyCheckoutPayment =
       'api/v1/payments/verifyCheckoutPayment';
+  static const String cancelCheckoutPayment =
+      'api/v1/payments/cancelCheckoutPayment';
+  static const String cancelPayNow = 'api/v1/payments/cancelPayNow';
   static const String paymentSocketConfig = 'api/v1/payments/socketConfig';
   static const String previousAppointments = 'api/v1/appointments/getPrevious';
 

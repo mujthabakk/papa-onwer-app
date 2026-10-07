@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/api/handler.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/appointments_details_model.dart';
+import 'package:ultimate_salon_owner_flutter/app/backend/models/country_payments_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/payment_options_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/salon_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/stylist_model.dart';
@@ -21,6 +22,7 @@ import 'package:ultimate_salon_owner_flutter/app/controller/complaints_controlle
 import 'package:ultimate_salon_owner_flutter/app/controller/previous_appointments_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/router.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/constants.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -61,21 +63,33 @@ class OrderDetailsController extends GetxController implements GetxService {
   bool appointmentCanPayNow = false;
   bool appointmentShowPayNow = false;
   bool appointmentShowCod = false;
+  bool countryCodEnabled = true;
+  bool countryOnlineEnabled = true;
   String appointmentPaymentStatus = '';
   String appointmentPaymentMessage = '';
   PaymentOptionsModel? paymentOptions;
+  CountryPaymentsModel? countryPayments;
   OrderDetailsController({required this.parser});
   List<SalonModel> _salonList = <SalonModel>[];
   List<SalonModel> get salonList => _salonList;
 
   bool get showMarkCashPaid =>
       !appointmentIsPaid &&
-      (appointmentShowCod || appointmentCanPayNow || appointmentShowPayNow) &&
+      countryCodEnabled &&
+      (appointmentShowCod || paymentOptions?.codAvailable == true) &&
       (_appointmentInfo.status == 4 ||
           _appointmentInfo.status == 0 ||
           _appointmentInfo.status == 1 ||
           _appointmentInfo.status == 3 ||
           _appointmentInfo.status == 8);
+
+  String paymentMethodLabel() {
+    final label = paymentOptions?.payMethodLabel.trim() ?? '';
+    if (label.isNotEmpty) return label;
+    final idx = appointmentInfo.payMethod ?? 0;
+    if (idx >= 0 && idx < paymentName.length) return paymentName[idx];
+    return 'NA'.tr;
+  }
 
   @override
   void onInit() {
@@ -113,6 +127,12 @@ class OrderDetailsController extends GetxController implements GetxService {
   void _onPaymentCompleted(PaymentOptionsModel payment) {
     final bookId = payment.bookId != 0 ? payment.bookId : payment.appointmentId;
     if (bookId != id && payment.id != id) return;
+
+    if (!payment.isPaid && !payment.isPaymentCompleted) {
+      _applyPaymentModel(payment);
+      update();
+      return;
+    }
 
     final partnerUid = parser.getUid();
     final salonId = _appointmentInfo.salonId?.toString();
@@ -181,11 +201,13 @@ class OrderDetailsController extends GetxController implements GetxService {
   Future<void> _refreshPaymentStatus() async {
     final customerUid = _appointmentInfo.uid ?? 0;
     if (customerUid <= 0) {
+      await _loadCountryPaymentMethods();
       await _refreshAppointmentStatusFallback();
       return;
     }
 
     // Preferred: payments/getPaymentOptions {uid, book_id}
+    await _loadCountryPaymentMethods();
     final optionsResponse = await parser.getPaymentOptions(
       customerUid: customerUid,
       bookId: id,
@@ -218,6 +240,25 @@ class OrderDetailsController extends GetxController implements GetxService {
     await _refreshAppointmentStatusFallback();
   }
 
+  Future<void> _loadCountryPaymentMethods() async {
+    try {
+      final response = await parser.getPaymentsByCountry();
+      if (response.statusCode != 200 || response.body is! Map) return;
+      final body = Map<String, dynamic>.from(response.body);
+      final data = body['data'];
+      if (data is! Map) return;
+      countryPayments =
+          CountryPaymentsModel.fromJson(Map<String, dynamic>.from(data));
+      countryCodEnabled = countryPayments!.codEnabled;
+      countryOnlineEnabled = countryPayments!.onlineEnabled;
+      if (body['success'] == true &&
+          countryPayments!.methods.isEmpty &&
+          countryPayments!.message.isNotEmpty) {
+        appointmentPaymentMessage = countryPayments!.message;
+      }
+    } catch (_) {}
+  }
+
   Future<void> _refreshAppointmentStatusFallback() async {
     final statusResponse = await parser.getAppointmentStatus({"id": id});
     if (statusResponse.statusCode == 200 && statusResponse.body is Map) {
@@ -232,14 +273,27 @@ class OrderDetailsController extends GetxController implements GetxService {
 
   void _applyPaymentModel(PaymentOptionsModel model) {
     paymentOptions = model;
-    appointmentIsPaid = model.isPaid;
-    appointmentCanPayNow = model.canPayNow;
-    appointmentShowPayNow = model.showPayNow;
-    appointmentShowCod = model.showCod;
+    appointmentIsPaid = model.isPaid || model.isPaymentCompleted;
+    appointmentCanPayNow = model.canPayNow && countryOnlineEnabled;
+    appointmentShowPayNow = model.showPayNow && countryOnlineEnabled;
+    appointmentShowCod = model.showCod && countryCodEnabled;
     appointmentPaymentStatus = model.paymentStatus.isNotEmpty
         ? model.paymentStatus
-        : (model.isPaid ? 'paid' : 'unpaid');
+        : (appointmentIsPaid ? 'paid' : 'unpaid');
     appointmentPaymentMessage = model.message;
+
+    if (model.currencySymbol.isNotEmpty || model.currencyCode.isNotEmpty) {
+      currencySymbol = model.currencySymbol.isNotEmpty
+          ? model.currencySymbol
+          : model.currencyCode;
+      CurrencyHelper.save(
+        parser.sharedPreferencesManager,
+        CurrencyHelper.fromCurrencyCode(
+          model.currencyCode.isNotEmpty ? model.currencyCode : model.currency,
+          symbol: model.currencySymbol,
+        ),
+      );
+    }
 
     final paidField = _appointmentInfo.paid?.toString().toLowerCase() ?? '';
     if (!appointmentIsPaid &&

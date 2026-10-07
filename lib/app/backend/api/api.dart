@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/shared_pref.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/app_country.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/constants.dart';
 
 class ApiService extends GetxService {
@@ -23,11 +24,16 @@ class ApiService extends GetxService {
         AppConstants.defaultLanguageApp;
   }
 
+  String _appCountry() =>
+      AppCountry.headerValue(sharedPreferencesManager);
+
   Map<String, String> _languageHeaders() {
     final lang = _currentLang();
+    final country = _appCountry();
     return {
       'X-App-Language': lang,
       'Accept-Language': lang,
+      if (country.isNotEmpty) 'X-App-Country': country,
     };
   }
 
@@ -40,16 +46,37 @@ class ApiService extends GetxService {
     return uriObj.replace(queryParameters: merged).toString();
   }
 
-  dynamic _withLangBody(dynamic body) {
+  bool _isPaymentUri(String uri) {
+    return uri.contains('/payments/') ||
+        uri.contains('/upgrade/generatePaymentUrl') ||
+        uri.contains('/upgrade/verifyPayment');
+  }
+
+  dynamic _withLangBody(dynamic body, {String uri = ''}) {
     final lang = _currentLang();
+    final country = _appCountry();
+    final uid = sharedPreferencesManager.getString('uid') ?? '';
     if (body == null) {
-      return {'lang': lang};
+      return {
+        'lang': lang,
+        if (country.isNotEmpty) 'country': country,
+        if (country.isNotEmpty) 'preferred_country': country,
+        if (_isPaymentUri(uri) && uid.isNotEmpty) 'uid': uid,
+      };
     }
     if (body is Map) {
-      return {
-        ...Map<String, dynamic>.from(body),
-        'lang': lang,
-      };
+      final map = Map<String, dynamic>.from(body);
+      map['lang'] = lang;
+      if (country.isNotEmpty) {
+        map.putIfAbsent('country', () => country);
+        map.putIfAbsent('preferred_country', () => country);
+      }
+      if (_isPaymentUri(uri) &&
+          uid.isNotEmpty &&
+          (map['uid'] == null || '${map['uid']}'.isEmpty)) {
+        map['uid'] = uid;
+      }
+      return map;
     }
     return body;
   }
@@ -77,6 +104,7 @@ class ApiService extends GetxService {
     debugPrint('║ Endpoint : $uri');
     debugPrint('║ Full URL : ${_withLangUri(uri)}');
     debugPrint('║ Lang : ${_currentLang()}');
+    debugPrint('║ Country : ${_appCountry()}');
     debugPrint('║ Params : ${_pretty(params)}');
     debugPrint('╚═════════════════════════════');
   }
@@ -141,6 +169,70 @@ class ApiService extends GetxService {
     }
   }
 
+  Future<Response> postPrivateMultipart(
+    String uri,
+    Map<String, dynamic> body,
+    String token, {
+    XFile? file,
+    String fileKey = 'image',
+  }) async {
+    _logRequest('POST-MULTIPART', uri, params: {
+      ...body,
+      if (file != null) fileKey: file.path,
+    });
+    try {
+      final request =
+          http.MultipartRequest('POST', Uri.parse(_withLangUri(uri)));
+      request.headers.addAll({
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+        ..._languageHeaders(),
+      });
+      _flattenMultipartFields(request.fields, body);
+      if (file != null && file.path.isNotEmpty) {
+        request.files.add(await http.MultipartFile.fromPath(
+          fileKey,
+          file.path,
+          filename: file.name.isNotEmpty
+              ? file.name
+              : file.path.split('/').last,
+        ));
+      }
+      final streamed = await request
+          .send()
+          .timeout(Duration(seconds: timeoutInSeconds));
+      final response = await http.Response.fromStream(streamed);
+      _logResponse('POST-MULTIPART', uri, response);
+      return parseResponse(response, uri);
+    } catch (e) {
+      _logError('POST-MULTIPART', uri, e, params: body);
+      return const Response(statusCode: 1, statusText: connectionIssue);
+    }
+  }
+
+  void _flattenMultipartFields(
+    Map<String, String> fields,
+    dynamic value, [
+    String prefix = '',
+  ]) {
+    if (value == null) return;
+    if (value is Map) {
+      value.forEach((key, nested) {
+        final next = prefix.isEmpty ? '$key' : '$prefix[$key]';
+        _flattenMultipartFields(fields, nested, next);
+      });
+      return;
+    }
+    if (value is List) {
+      for (var i = 0; i < value.length; i++) {
+        _flattenMultipartFields(fields, value[i], '$prefix[$i]');
+      }
+      return;
+    }
+    if (prefix.isEmpty) return;
+    fields[prefix] = value.toString();
+  }
+
   Future<Response> uploadFiles(
     String uri,
     List<MultipartBody> multipartBody,
@@ -174,7 +266,7 @@ class ApiService extends GetxService {
 
   Future<Response> postPublic(String uri, dynamic body,
       {Map<String, String>? headers}) async {
-    final payload = _withLangBody(body);
+    final payload = _withLangBody(body, uri: uri);
     _logRequest('POST', uri, params: payload);
     try {
       http.Response response = await http
@@ -201,7 +293,7 @@ class ApiService extends GetxService {
     dynamic body,
     String token,
   ) async {
-    final payload = _withLangBody(body);
+    final payload = _withLangBody(body, uri: uri);
     _logRequest('POST', uri, params: payload);
     try {
       http.Response response = await http.post(

@@ -91,6 +91,45 @@ class PaymentParser {
     );
   }
 
+  Future<Response> getByCountry({int? uid, String? country}) async {
+    return apiService.postPrivate(
+      AppConstants.getPaymentsByCountry,
+      {
+        if (uid != null) 'uid': uid,
+        if (country != null && country.isNotEmpty) 'country': country,
+      },
+      token,
+    );
+  }
+
+  Future<Response> cancelCheckoutPayment({
+    required int customerUid,
+    required int bookId,
+  }) async {
+    return apiService.postPrivate(
+      AppConstants.cancelCheckoutPayment,
+      {
+        'uid': customerUid,
+        'book_id': bookId,
+      },
+      token,
+    );
+  }
+
+  Future<Response> generateCheckoutPaymentUrl({
+    required int customerUid,
+    required int bookId,
+  }) async {
+    return apiService.postPrivate(
+      AppConstants.generateCheckoutPaymentUrl,
+      {
+        'uid': customerUid,
+        'book_id': bookId,
+      },
+      token,
+    );
+  }
+
   Future<Response> getSocketConfig() async {
     return apiService.getPublic(AppConstants.paymentSocketConfig);
   }

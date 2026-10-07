@@ -152,15 +152,14 @@ class CurrencyHelper {
   static String withTaxFixed(double amount, double taxPercent) =>
       withTax(amount, taxPercent).toStringAsFixed(2);
 
-  /// Same rule as Premium plans: INR uses ₹, others use code (e.g. QAR 100).
-  static String format(dynamic amount, {int? decimals}) {
+  /// API amount + API symbol. Do not convert in the app.
+  static String format(dynamic amount, {int? decimals, String? symbol}) {
     final info = active();
     final n = amount is num ? amount : num.tryParse('$amount') ?? 0;
-    final places = decimals ?? (n % 1 == 0 ? 0 : 2);
+    final places = decimals ?? 2;
     final text = n.toStringAsFixed(places);
-    if (info.code.toUpperCase() == 'INR') {
-      return '₹$text';
-    }
+    final mark = (symbol ?? info.symbol).trim();
+    if (mark.isNotEmpty) return '$mark $text';
     return '${info.code} $text';
   }
 }

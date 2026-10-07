@@ -21,6 +21,10 @@ class OfferServiceModel {
   final double off;
   final double duration;
   final double discount;
+  final int offerType;
+  final String discountText;
+  final String startDate;
+  final String expire;
   final int status;
   final int cateId;
   final String cover;
@@ -34,6 +38,10 @@ class OfferServiceModel {
     this.off = 0,
     this.duration = 0,
     this.discount = 0,
+    this.offerType = 1,
+    this.discountText = '',
+    this.startDate = '',
+    this.expire = '',
     this.status = 1,
     this.cateId = 0,
     this.cover = '',
@@ -57,10 +65,16 @@ class OfferServiceModel {
       uid: _toInt(json['uid']),
       serviceId: _toInt(json['service_id']),
       name: json['name']?.toString() ?? '',
-      price: _toDouble(json['price']),
-      off: _toDouble(json['off']),
+      price: _toDouble(json['original_price'] ?? json['price']),
+      off: _toDouble(json['offer_price'] ?? json['off']),
       duration: _toDouble(json['duration']),
       discount: _toDouble(json['discount']),
+      offerType: _offerType(json['type'] ?? json['offer_type']),
+      discountText: json['discount_text']?.toString() ?? '',
+      startDate: _dateOnly(json['start_date'] ?? json['startDate']),
+      expire: _dateOnly(
+        json['expire'] ?? json['expire_date'] ?? json['end_date'],
+      ),
       status: _toInt(json['status'], 1),
       cateId: _toInt(json['cate_id']),
       cover: json['cover']?.toString() ?? '',
@@ -87,6 +101,8 @@ class CouponModel {
   final List<OfferServiceModel> services;
   final List<OfferPartnerModel> salons;
   final List<OfferPartnerModel> freelancers;
+  final String image;
+  final String cover;
 
   CouponModel({
     required this.id,
@@ -107,7 +123,11 @@ class CouponModel {
     this.services = const [],
     this.salons = const [],
     this.freelancers = const [],
+    this.image = '',
+    this.cover = '',
   });
+
+  String get displayImage => _mediaUrl(image, cover);
 
   bool get isPercent => type == 1;
 
@@ -138,6 +158,8 @@ class CouponModel {
       services: _parseServices(json['services']),
       salons: _parsePartners(json['salons']),
       freelancers: _parsePartners(json['freelancers']),
+      image: _mediaUrl(json['image'], json['cover']),
+      cover: _mediaUrl(json['cover'], json['image']),
     );
   }
 
@@ -180,8 +202,30 @@ class CouponModel {
       services: services,
       salons: salons,
       freelancers: freelancers,
+      image: image,
+      cover: cover,
     );
   }
+}
+
+String _mediaUrl(dynamic image, [dynamic cover]) {
+  for (final value in [image, cover]) {
+    final text = value?.toString().trim() ?? '';
+    if (text.isEmpty) continue;
+    final lower = text.toLowerCase();
+    if (lower == 'null' || lower == 'undefined' || lower == 'none') continue;
+    return text;
+  }
+  return '';
+}
+
+int _offerType(dynamic value) {
+  if (value is num) return value.toInt() == 2 ? 2 : 1;
+  final text = value?.toString().toLowerCase().trim() ?? '';
+  if (text == 'flat' || text == 'amount' || text == 'fixed' || text == '2') {
+    return 2;
+  }
+  return 1;
 }
 
 int _toInt(dynamic value, [int fallback = 0]) {
@@ -196,6 +240,19 @@ double _toDouble(dynamic value, [double fallback = 0]) {
   if (value is double) return value;
   if (value is num) return value.toDouble();
   return double.tryParse(value.toString()) ?? fallback;
+}
+
+String _dateOnly(dynamic value) {
+  final raw = value?.toString().trim() ?? '';
+  if (raw.isEmpty || raw.toLowerCase() == 'null') return '';
+  final parsed = DateTime.tryParse(raw);
+  if (parsed != null) {
+    final y = parsed.year.toString().padLeft(4, '0');
+    final m = parsed.month.toString().padLeft(2, '0');
+    final d = parsed.day.toString().padLeft(2, '0');
+    return '$y-$m-$d';
+  }
+  return raw.length >= 10 ? raw.substring(0, 10) : raw;
 }
 
 List<int> _parseServiceIds(dynamic value) {

@@ -75,7 +75,7 @@ class UpgradePlanModel {
     this.title = '',
     this.description = '',
     this.amount = 0,
-    this.currency = 'INR',
+    this.currency = '',
     this.currencySymbol = '',
     this.billingPeriod = '',
     this.durationDays = 0,
@@ -159,7 +159,7 @@ class UpgradePlanModel {
       title: json['title']?.toString() ?? '',
       description: json['description']?.toString() ?? '',
       amount: _toNum(json['amount']),
-      currency: json['currency']?.toString() ?? 'INR',
+      currency: json['currency']?.toString() ?? '',
       currencySymbol: json['currencySymbol']?.toString() ??
           json['currency_symbol']?.toString() ??
           '',
@@ -213,7 +213,7 @@ class UpgradePaymentLinkModel {
     this.planId = 0,
     this.planName = '',
     this.amount = 0,
-    this.currency = 'INR',
+    this.currency = '',
     this.paymentLink = '',
     this.paymentLinkId = '',
     this.status = 'pending',
@@ -226,7 +226,7 @@ class UpgradePaymentLinkModel {
       planId: _toInt(json['plan_id']),
       planName: json['plan_name']?.toString() ?? '',
       amount: _toNum(json['amount']),
-      currency: json['currency']?.toString() ?? 'INR',
+      currency: json['currency']?.toString() ?? '',
       paymentLink: json['payment_link']?.toString() ?? '',
       paymentLinkId: json['payment_link_id']?.toString() ?? '',
       status: json['status']?.toString() ?? 'pending',
@@ -241,6 +241,8 @@ class UpgradeVerifyModel {
   final String? upgradeExpiresAt;
   final num amount;
   final int planId;
+  final bool isPaidFlag;
+  final bool isPaymentCompleted;
 
   UpgradeVerifyModel({
     required this.orderId,
@@ -249,9 +251,14 @@ class UpgradeVerifyModel {
     this.upgradeExpiresAt,
     this.amount = 0,
     this.planId = 0,
+    this.isPaidFlag = false,
+    this.isPaymentCompleted = false,
   });
 
-  bool get isPaid => paymentStatus.toLowerCase() == 'paid';
+  bool get isPaid {
+    final status = paymentStatus.toLowerCase();
+    return status == 'paid' || isPaidFlag || isPaymentCompleted;
+  }
 
   factory UpgradeVerifyModel.fromJson(Map<String, dynamic> json) {
     return UpgradeVerifyModel(
@@ -261,6 +268,8 @@ class UpgradeVerifyModel {
       upgradeExpiresAt: json['upgrade_expires_at']?.toString(),
       amount: _toNum(json['amount']),
       planId: _toInt(json['plan_id']),
+      isPaidFlag: _toBool(json['is_paid']),
+      isPaymentCompleted: _toBool(json['is_payment_completed']),
     );
   }
 }

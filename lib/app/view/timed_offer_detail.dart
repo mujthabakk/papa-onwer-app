@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/coupons_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/timed_offer_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/timed_offers_controller.dart';
-import 'package:ultimate_salon_owner_flutter/app/helper/shared_pref.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/app_image.dart';
-import 'package:ultimate_salon_owner_flutter/app/util/constants.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
-import 'package:ultimate_salon_owner_flutter/app/util/tax_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 
 class TimedOfferDetailScreen extends StatelessWidget {
@@ -32,15 +30,30 @@ class TimedOfferDetailScreen extends StatelessWidget {
             current.name,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
           ),
+          actions: [
+            if (current.hasJoined)
+              TextButton(
+                onPressed: () {
+                  Get.to(() => TimedOfferFormScreen(campaign: current));
+                },
+                child: Text(
+                  'Edit'.tr,
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+          ],
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () {
-            Get.to(() => TimedOfferFormScreen(campaign: current));
+            Get.to(() => TimedOfferFormScreen(
+                  campaign: current,
+                  addMore: current.hasJoined,
+                ));
           },
           backgroundColor: ThemeProvider.golden,
           foregroundColor: Colors.black,
-          icon: Icon(current.hasJoined ? Icons.edit_rounded : Icons.add_rounded),
-          label: Text(current.hasJoined ? 'Edit Offer' : 'Join Campaign'),
+          icon: const Icon(Icons.add_rounded),
+          label: Text(current.hasJoined ? 'Add services' : 'Join Campaign'),
         ),
         body: RefreshIndicator(
           onRefresh: () => controller.fetchCampaignItems(current.id),
@@ -68,6 +81,13 @@ class TimedOfferDetailScreen extends StatelessWidget {
     });
   }
 
+  String _campaignImage(
+      TimedCampaignModel current, TimedOffersController controller) {
+    final partner = controller.partnerOffer?.displayImage ?? '';
+    if (partner.isNotEmpty) return partner;
+    return current.displayImage;
+  }
+
   Widget _headerCard(
       TimedCampaignModel current, TimedOffersController controller) {
     return Container(
@@ -86,6 +106,20 @@ class TimedOfferDetailScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (_campaignImage(current, controller).isNotEmpty) ...[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: SizedBox(
+                height: 140,
+                width: double.infinity,
+                child: AppNetImage(
+                  path: _campaignImage(current, controller),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+          ],
           if ((controller.partnerOffer?.displayDiscount ??
                   current.displayDiscount)
               .isNotEmpty)
@@ -226,8 +260,24 @@ class TimedOfferDetailScreen extends StatelessWidget {
                       fontSize: 12,
                     ),
                   ),
+                  if (item.startDate.isNotEmpty || item.expire.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      [
+                        if (item.startDate.isNotEmpty) item.startDate,
+                        if (item.expire.isNotEmpty) item.expire,
+                      ].join(' → '),
+                      style: const TextStyle(
+                        color: Color(0xFF6B7280),
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
                   const SizedBox(height: 8),
-                  Row(
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 6,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Text(
                         CurrencyHelper.format(item.displayPrice),
@@ -237,8 +287,7 @@ class TimedOfferDetailScreen extends StatelessWidget {
                           color: Color(0xFF059669),
                         ),
                       ),
-                      if (item.originalPrice > item.displayPrice) ...[
-                        const SizedBox(width: 8),
+                      if (item.originalPrice > item.displayPrice)
                         Text(
                           CurrencyHelper.format(item.originalPrice),
                           style: const TextStyle(
@@ -246,8 +295,8 @@ class TimedOfferDetailScreen extends StatelessWidget {
                             decoration: TextDecoration.lineThrough,
                           ),
                         ),
-                      ],
-                      const Spacer(),
+                      if (item.discountText.isNotEmpty)
+                        _miniBadge(item.discountText, const Color(0xFFB45309)),
                       if (item.isSoldOut)
                         _miniBadge('Sold out', const Color(0xFFDC2626))
                       else if (item.canBuy)
@@ -440,9 +489,13 @@ class TimedOfferDetailScreen extends StatelessWidget {
 
 class TimedOfferFormScreen extends StatefulWidget {
   final TimedCampaignModel campaign;
+  final bool addMore;
 
-  const TimedOfferFormScreen({Key? key, required this.campaign})
-      : super(key: key);
+  const TimedOfferFormScreen({
+    Key? key,
+    required this.campaign,
+    this.addMore = false,
+  }) : super(key: key);
 
   @override
   State<TimedOfferFormScreen> createState() => _TimedOfferFormScreenState();
@@ -467,68 +520,155 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
   int selectedType = 1;
   bool applyAllServices = false;
   final Set<int> selectedServiceIds = {};
+  final Map<int, int> serviceOfferType = {};
+  final Map<int, TextEditingController> serviceDiscountCtrls = {};
+  final Map<int, TextEditingController> serviceStartDateCtrls = {};
+  final Map<int, TextEditingController> serviceExpireCtrls = {};
   bool _recalcLock = false;
+  XFile? _imageFile;
 
-  bool get isEdit => widget.campaign.hasJoined;
+  bool get isEdit => widget.campaign.hasJoined && !widget.addMore;
+  bool get alreadyJoined => widget.campaign.hasJoined;
 
   String get _currencySymbol {
     final info = CurrencyHelper.active();
     return info.code.toUpperCase() == 'INR' ? info.symbol : info.code;
   }
 
-  double get _tax {
-    if (!TaxHelper.isAvailable) return 0;
-    if (!Get.isRegistered<SharedPreferencesManager>()) return 0;
-    return Get.find<SharedPreferencesManager>().getDouble('tax') ?? 0;
-  }
-
   @override
   void initState() {
     super.initState();
-    final existing = _controller.partnerOffer;
-    nameController.text = existing?.name.isNotEmpty == true
-        ? existing!.name
-        : widget.campaign.name;
-    descriptionController.text = existing?.shortDescription ?? '';
-    codeController.text = existing?.code ?? '';
-    selectedType = existing?.type == 0 ? 1 : (existing?.type ?? 1);
-    discountController.text =
-        existing != null && existing.discount > 0 ? '${existing.discount}' : '';
-    uptoController.text =
-        existing != null && existing.upto > 0 ? '${existing.upto}' : '';
-    startDateController.text = existing?.startDate ?? '';
-    expireController.text = existing?.expire ?? '';
-    startTimeController.text = existing?.startTime.isNotEmpty == true
-        ? existing!.startTime
-        : widget.campaign.dailyStartTime;
-    endTimeController.text = existing?.endTime.isNotEmpty == true
-        ? existing!.endTime
-        : widget.campaign.dailyEndTime;
-    maxUsageController.text = existing != null && existing.maxUsage > 0
-        ? '${existing.maxUsage}'
-        : '';
-    applyAllServices = existing?.applyAllServices ?? false;
-    if (existing != null && existing.serviceIds.isNotEmpty) {
-      selectedServiceIds.addAll(existing.serviceIds);
-    } else {
-      selectedServiceIds.addAll(_controller.matchedServiceIds());
-    }
-    _prefillDiscountFromCampaign();
     originalPriceController.addListener(_recalculateSell);
     discountController.addListener(_recalculateSell);
+    _fillFromExisting(_controller.partnerOffer);
+    if (nameController.text.isEmpty) {
+      nameController.text = widget.campaign.name;
+    }
+    if (startTimeController.text.isEmpty) {
+      startTimeController.text = widget.campaign.dailyStartTime;
+    }
+    if (endTimeController.text.isEmpty) {
+      endTimeController.text = widget.campaign.dailyEndTime;
+    }
+    if (discountController.text.isEmpty) {
+      _prefillDiscountFromCampaign();
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       await _controller.fetchPartnerServices();
+      await _controller.fetchCampaignItems(widget.campaign.id);
       if (!mounted) return;
+      _fillFromExisting(_controller.partnerOffer);
+      _fillFromCampaignItems();
+      _fillCampaignDatesIfEmpty();
+      if (nameController.text.isEmpty) {
+        nameController.text = widget.campaign.name;
+      }
       setState(() {
         _syncAllServicesFromSelection(_controller.partnerServices);
         if (applyAllServices && selectedServiceIds.isEmpty) {
           selectedServiceIds
               .addAll(_controller.partnerServices.map((s) => s.id));
         }
+        if (selectedServiceIds.isEmpty) {
+          selectedServiceIds.addAll(_controller.matchedServiceIds());
+        }
       });
       _syncOriginalFromServices();
       _recalculateSell();
     });
+  }
+
+  void _fillFromExisting(TimedPartnerOfferModel? existing) {
+    if (existing == null) {
+      _fillCampaignDatesIfEmpty();
+      return;
+    }
+    if (existing.name.isNotEmpty) nameController.text = existing.name;
+    if (existing.shortDescription.isNotEmpty) {
+      descriptionController.text = existing.shortDescription;
+    }
+    if (existing.code.isNotEmpty) codeController.text = existing.code;
+    if (existing.type != 0) selectedType = existing.type == 0 ? 1 : existing.type;
+    if (existing.discount > 0) discountController.text = '${existing.discount}';
+    if (existing.upto > 0) uptoController.text = '${existing.upto}';
+    if (existing.startDate.isNotEmpty) {
+      startDateController.text = existing.startDate;
+    }
+    if (existing.expire.isNotEmpty) expireController.text = existing.expire;
+    if (existing.startTime.isNotEmpty) {
+      startTimeController.text = existing.startTime;
+    }
+    if (existing.endTime.isNotEmpty) endTimeController.text = existing.endTime;
+    if (existing.maxUsage > 0) {
+      maxUsageController.text = '${existing.maxUsage}';
+    }
+    applyAllServices = existing.applyAllServices;
+    if (existing.serviceIds.isNotEmpty) {
+      selectedServiceIds
+        ..clear()
+        ..addAll(existing.serviceIds);
+    }
+    for (final line in existing.serviceOffers) {
+      if (line.id <= 0) continue;
+      selectedServiceIds.add(line.id);
+      _ensureOfferFields(
+        line.id,
+        type: line.type,
+        discount: line.discount,
+        startDate: line.startDate,
+        expire: line.expire,
+      );
+    }
+    for (final service in existing.services) {
+      selectedServiceIds.add(service.id);
+      _ensureOfferFields(
+        service.id,
+        type: service.offerType,
+        discount: service.discount,
+        startDate: service.startDate,
+        expire: service.expire,
+      );
+    }
+    _fillCampaignDatesIfEmpty();
+  }
+
+  void _fillFromCampaignItems() {
+    for (final item in _controller.campaignItems) {
+      var id = item.id;
+      if (!_controller.partnerServices.any((s) => s.id == id)) {
+        OfferServiceModel? match;
+        for (final service in _controller.partnerServices) {
+          if (service.name.toLowerCase() == item.name.toLowerCase()) {
+            match = service;
+            break;
+          }
+        }
+        if (match == null) continue;
+        id = match.id;
+      }
+      selectedServiceIds.add(id);
+      _ensureOfferFields(
+        id,
+        type: item.type,
+        discount: item.discount,
+        startDate: item.startDate,
+        expire: item.expire,
+      );
+    }
+  }
+
+  void _fillCampaignDatesIfEmpty() {
+    if (startDateController.text.isEmpty &&
+        widget.campaign.startDate.isNotEmpty) {
+      startDateController.text = widget.campaign.startDate;
+    }
+    if (expireController.text.isEmpty &&
+        widget.campaign.expireDate.isNotEmpty) {
+      expireController.text = widget.campaign.expireDate;
+    }
+    if (maxUsageController.text.isEmpty && widget.campaign.maxUsage > 0) {
+      maxUsageController.text = '${widget.campaign.maxUsage}';
+    }
   }
 
   void _prefillDiscountFromCampaign() {
@@ -542,6 +682,66 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
     if (widget.campaign.discountValue > 0) {
       selectedType = widget.campaign.discountType == 'flat' ? 2 : 1;
       discountController.text = '${widget.campaign.discountValue}';
+    }
+  }
+
+  int get _defaultOfferType =>
+      widget.campaign.discountType.toLowerCase() == 'flat' ? 2 : 1;
+
+  String get _defaultDiscountText {
+    final value = widget.campaign.discountValue;
+    if (value <= 0) return '';
+    return value % 1 == 0 ? '${value.toInt()}' : '$value';
+  }
+
+  void _ensureOfferFields(
+    int id, {
+    int? type,
+    num? discount,
+    String? startDate,
+    String? expire,
+  }) {
+    if (type != null) {
+      serviceOfferType[id] = type == 2 ? 2 : 1;
+    } else {
+      serviceOfferType.putIfAbsent(id, () => _defaultOfferType);
+    }
+    if (!serviceDiscountCtrls.containsKey(id)) {
+      final text = discount != null && discount > 0
+          ? (discount % 1 == 0 ? '${discount.toInt()}' : '$discount')
+          : _defaultDiscountText;
+      serviceDiscountCtrls[id] = TextEditingController(text: text);
+    } else if (discount != null &&
+        discount > 0 &&
+        serviceDiscountCtrls[id]!.text.isEmpty) {
+      serviceDiscountCtrls[id]!.text =
+          discount % 1 == 0 ? '${discount.toInt()}' : '$discount';
+    }
+    _ensureDateCtrl(
+      serviceStartDateCtrls,
+      id,
+      startDate,
+      widget.campaign.startDate,
+    );
+    _ensureDateCtrl(
+      serviceExpireCtrls,
+      id,
+      expire,
+      widget.campaign.expireDate,
+    );
+  }
+
+  void _ensureDateCtrl(
+    Map<int, TextEditingController> map,
+    int id,
+    String? value,
+    String fallback,
+  ) {
+    final text = (value != null && value.isNotEmpty) ? value : fallback;
+    if (!map.containsKey(id)) {
+      map[id] = TextEditingController(text: text);
+    } else if (value != null && value.isNotEmpty) {
+      map[id]!.text = value;
     }
   }
 
@@ -597,7 +797,9 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
         foregroundColor: Colors.black87,
         elevation: 0,
         title: Text(
-          isEdit ? 'Update Limited Offer' : 'Join Limited Offer',
+          widget.addMore
+              ? 'Add services'
+              : (isEdit ? 'Update Limited Offer' : 'Join Limited Offer'),
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
       ),
@@ -608,7 +810,18 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
           children: [
             _infoBanner(),
             const SizedBox(height: 16),
-            _buildFormCard([_buildServicePicker()]),
+            _buildFormCard([
+              OfferImagePickerTile(
+                file: _imageFile,
+                existingUrl: _controller.partnerOffer?.displayImage.isNotEmpty ==
+                        true
+                    ? _controller.partnerOffer!.displayImage
+                    : widget.campaign.displayImage,
+                onPick: _pickOfferImage,
+                onClear: () => setState(() => _imageFile = null),
+              ),
+              _buildServicePicker(),
+            ]),
             const SizedBox(height: 20),
             _buildFormCard([
               _buildTextField(
@@ -633,26 +846,12 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
             ]),
             const SizedBox(height: 20),
             _buildFormCard([
-              _buildDiscountTypeDropdown(),
-              _buildPriceSection(),
               _buildTextField(
                 controller: maxUsageController,
                 label: 'Max Usage'.tr,
                 hint: '0'.tr,
                 icon: Icons.repeat,
                 isNumeric: true,
-              ),
-              _buildDateField(
-                controller: startDateController,
-                label: 'Start Date'.tr,
-                hint: 'Defaults to campaign date'.tr,
-                icon: Icons.event_available,
-              ),
-              _buildDateField(
-                controller: expireController,
-                label: 'Expiry Date'.tr,
-                hint: 'Defaults to campaign date'.tr,
-                icon: Icons.calendar_today,
               ),
             ]),
             const SizedBox(height: 32),
@@ -668,7 +867,9 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
                 elevation: 0,
               ),
               child: Text(
-                isEdit ? 'Update Limited Offer' : 'Join Limited Offer',
+                widget.addMore
+                    ? 'Add services'
+                    : (isEdit ? 'Update Limited Offer' : 'Join Limited Offer'),
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -743,9 +944,9 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
           ),
           const SizedBox(height: 4),
           Text(
-            isEdit
-                ? 'Optional. Send a new selection to re-sync services.'
-                : 'Required. Choose ALL or select partner services.',
+            widget.addMore
+                ? 'Select extra services. Set type, discount and dates on each row.'
+                : 'Required. Each selected service has its own type, discount, start date and end date.',
             style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280)),
           ),
           SwitchListTile(
@@ -763,6 +964,9 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
                   selectedServiceIds
                     ..clear()
                     ..addAll(services.map((s) => s.id));
+                  for (final s in services) {
+                    _ensureOfferFields(s.id);
+                  }
                 }
               });
               _syncOriginalFromServices();
@@ -776,38 +980,166 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
                 style: const TextStyle(color: Colors.red),
               ),
             )
-          else
+            else
             ...services.map((service) {
               final selected =
                   applyAllServices || selectedServiceIds.contains(service.id);
-              return CheckboxListTile(
-                contentPadding: EdgeInsets.zero,
-                value: selected,
-                title: Text(
-                  service.name,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
-                subtitle: _servicePriceSubtitle(service, selected: selected),
-                controlAffinity: ListTileControlAffinity.leading,
-                onChanged: applyAllServices
-                    ? null
-                    : (checked) {
-                        setState(() {
-                          if (checked == true) {
-                            selectedServiceIds.add(service.id);
-                          } else {
-                            selectedServiceIds.remove(service.id);
-                          }
-                          _syncAllServicesFromSelection(services);
-                        });
-                        _syncOriginalFromServices();
-                        _recalculateSell();
-                      },
-              );
+              if (selected) _ensureOfferFields(service.id);
+              return _serviceOfferRow(service, selected);
             }),
         ],
       );
     });
+  }
+
+  Widget _serviceOfferRow(OfferServiceModel service, bool selected) {
+    final type = serviceOfferType[service.id] ?? _defaultOfferType;
+    final discountCtrl = serviceDiscountCtrls[service.id];
+    final discount = double.tryParse(discountCtrl?.text ?? '') ?? 0;
+    double sell = service.price;
+    if (type == 1) {
+      sell = service.price - ((service.price * discount) / 100);
+    } else {
+      sell = service.price - discount;
+    }
+    if (sell < 0) sell = 0;
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CheckboxListTile(
+            contentPadding: EdgeInsets.zero,
+            value: selected,
+            title: Text(
+              service.name,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+            subtitle: _servicePriceSubtitle(service, selected: selected),
+            controlAffinity: ListTileControlAffinity.leading,
+            onChanged: applyAllServices
+                ? null
+                : (checked) {
+                    setState(() {
+                      if (checked == true) {
+                        selectedServiceIds.add(service.id);
+                        _ensureOfferFields(service.id);
+                      } else {
+                        selectedServiceIds.remove(service.id);
+                      }
+                      _syncAllServicesFromSelection(
+                          _controller.partnerServices);
+                    });
+                  },
+          ),
+          if (selected && discountCtrl != null) ...[
+            Padding(
+              padding: const EdgeInsets.only(left: 16, right: 4, bottom: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: DropdownButtonFormField<int>(
+                      value: type,
+                      isExpanded: true,
+                      decoration: InputDecoration(
+                        labelText: 'Type'.tr,
+                        isDense: true,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[50],
+                      ),
+                      items: [
+                        DropdownMenuItem(
+                            value: 1, child: Text('Percent %'.tr)),
+                        DropdownMenuItem(
+                            value: 2,
+                            child: Text('Flat $_currencySymbol'.tr)),
+                      ],
+                      onChanged: (value) {
+                        if (value == null) return;
+                        setState(() => serviceOfferType[service.id] = value);
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: TextFormField(
+                      controller: discountCtrl,
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                      ],
+                      autovalidateMode: AutovalidateMode.onUserInteraction,
+                      validator: (value) => _discountError(
+                        service: service,
+                        type: type,
+                        raw: value,
+                      ),
+                      onChanged: (_) => setState(() {}),
+                      decoration: InputDecoration(
+                        labelText: type == 1 ? 'Discount %' : 'Discount',
+                        isDense: true,
+                        prefixText: type == 2 ? '$_currencySymbol ' : null,
+                        errorMaxLines: 2,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[50],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          if (selected &&
+              discount > 0 &&
+              _discountError(
+                    service: service,
+                    type: type,
+                    raw: discountCtrl.text,
+                  ) ==
+                  null)
+            Padding(
+              padding: const EdgeInsets.only(left: 20, bottom: 4),
+              child: Text(
+                '${CurrencyHelper.format(service.price, decimals: 2)} → ${CurrencyHelper.format(sell, decimals: 2)}',
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF059669),
+                ),
+              ),
+            ),
+          if (selected)
+            Padding(
+              padding: const EdgeInsets.only(left: 16, right: 4, bottom: 4),
+              child: Column(
+                children: [
+                  _buildServiceDateField(
+                    controller: serviceStartDateCtrls[service.id]!,
+                    label: 'Start date'.tr,
+                    icon: Icons.event_available,
+                    validator: (_) => _serviceDateError(service.id),
+                  ),
+                  _buildServiceDateField(
+                    controller: serviceExpireCtrls[service.id]!,
+                    label: 'End date'.tr,
+                    icon: Icons.event_busy,
+                    validator: (_) => _serviceDateError(service.id),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
   }
 
   Widget _servicePriceSubtitle(OfferServiceModel service,
@@ -876,112 +1208,6 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
     );
   }
 
-  Widget _buildDiscountTypeDropdown() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: DropdownButtonFormField<int>(
-        value: selectedType,
-        isExpanded: true,
-        decoration: InputDecoration(
-          labelText: 'Discount Type'.tr,
-          prefixIcon: const Icon(Icons.tune, color: Color(0xFF6C5CE7)),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          filled: true,
-          fillColor: Colors.grey[50],
-        ),
-        items: [
-          DropdownMenuItem(value: 1, child: Text('Percentage (%)'.tr)),
-          DropdownMenuItem(
-              value: 2, child: Text('Flat Amount ($_currencySymbol)'.tr)),
-        ],
-        onChanged: (value) {
-          if (value == null) return;
-          setState(() => selectedType = value);
-          _recalculateSell();
-        },
-      ),
-    );
-  }
-
-  Widget _buildPriceSection() {
-    final isPercent = selectedType == 1;
-    final sell = double.tryParse(sellPriceController.text) ?? 0;
-    final taxAmount = sell * (_tax / 100);
-    final finalAmount = sell + taxAmount;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            isPercent
-                ? 'Price Information (%)'.tr
-                : 'Price Information ($_currencySymbol)'.tr,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            isPercent
-                ? 'Enter original price and discount percent. Sell price is calculated automatically.'
-                    .tr
-                : 'Enter original price and flat discount amount. Sell price is calculated automatically.'
-                    .tr,
-            style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280)),
-          ),
-          const SizedBox(height: 12),
-          _buildTextField(
-            controller: originalPriceController,
-            label: 'Original Price'.tr,
-            hint: '0'.tr,
-            icon: Icons.payments_outlined,
-            isNumeric: true,
-            prefixText: '$_currencySymbol ',
-          ),
-          if (isPercent)
-            _buildTextField(
-              controller: discountController,
-              label: 'Discount %'.tr,
-              hint: '0'.tr,
-              icon: Icons.percent,
-              isNumeric: true,
-            )
-          else
-            _buildTextField(
-              controller: discountController,
-              label: 'Discount Amount'.tr,
-              hint: '0'.tr,
-              icon: Icons.money_off_csred_outlined,
-              isNumeric: true,
-              prefixText: '$_currencySymbol ',
-            ),
-          _buildTextField(
-            controller: sellPriceController,
-            label: 'Sell Price'.tr,
-            hint: '0.00'.tr,
-            icon: Icons.sell_outlined,
-            isNumeric: true,
-            readOnly: true,
-            prefixText: '$_currencySymbol ',
-          ),
-          if (TaxHelper.isAvailable && sell > 0 && _tax > 0)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12, left: 4),
-              child: Text(
-                '${'Final amount (incl. tax ${_tax.toStringAsFixed(1)}%) -'.tr} $_currencySymbol${finalAmount.toStringAsFixed(2)}',
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.grey[600],
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildTextField({
     required TextEditingController controller,
     required String label,
@@ -1033,67 +1259,118 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
     required String label,
     required String hint,
     required IconData icon,
+    String? Function(String?)? validator,
   }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: TextFormField(
         controller: controller,
         readOnly: true,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: validator,
         decoration: _fieldDecoration(label, hint, icon, hasDropdown: true),
-        onTap: () async {
-          DateTime? picked = await showDatePicker(
-            context: context,
-            initialDate: DateTime.tryParse(controller.text) ?? DateTime.now(),
-            firstDate: DateTime(2020),
-            lastDate: DateTime(2101),
-            builder: (context, child) {
-              return Theme(
-                data: Theme.of(context).copyWith(
-                  colorScheme: Theme.of(context).colorScheme.copyWith(
-                        primary: const Color(0xFF6C5CE7),
-                      ),
-                ),
-                child: child!,
-              );
+        onTap: () => _pickDate(controller),
+      ),
+    );
+  }
+
+  String _displayDate(String raw) {
+    final parsed = DateTime.tryParse(raw.trim());
+    if (parsed == null) return raw;
+    return DateFormat('dd MMM yyyy').format(parsed);
+  }
+
+  Widget _buildServiceDateField({
+    required TextEditingController controller,
+    required String label,
+    required IconData icon,
+    String? Function(String?)? validator,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: FormField<String>(
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: validator,
+        builder: (state) {
+          return InkWell(
+            onTap: () async {
+              await _pickDate(controller);
+              state.didChange(controller.text);
             },
+            borderRadius: BorderRadius.circular(10),
+            child: InputDecorator(
+              isEmpty: controller.text.trim().isEmpty,
+              decoration: InputDecoration(
+                labelText: label,
+                hintText: 'DD MMM YYYY',
+                isDense: true,
+                prefixIcon:
+                    Icon(icon, color: const Color(0xFF6C5CE7), size: 20),
+                prefixIconConstraints:
+                    const BoxConstraints(minWidth: 40, minHeight: 40),
+                suffixIcon:
+                    const Icon(Icons.calendar_today_outlined, size: 16),
+                floatingLabelBehavior: FloatingLabelBehavior.always,
+                errorText: state.errorText,
+                errorMaxLines: 2,
+                contentPadding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide: BorderSide(color: Colors.grey[300]!),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                  borderSide:
+                      const BorderSide(color: Color(0xFF6C5CE7), width: 2),
+                ),
+                filled: true,
+                fillColor: Colors.grey[50],
+              ),
+              child: Text(
+                controller.text.trim().isEmpty
+                    ? 'Select date'.tr
+                    : _displayDate(controller.text),
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                  color: controller.text.trim().isEmpty
+                      ? const Color(0xFF9CA3AF)
+                      : const Color(0xFF111827),
+                ),
+              ),
+            ),
           );
-          if (picked != null) {
-            setState(() {
-              controller.text = DateFormat('yyyy-MM-dd').format(picked);
-            });
-          }
         },
       ),
     );
   }
 
-  Widget _buildTimeField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    required IconData icon,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: TextFormField(
-        controller: controller,
-        readOnly: true,
-        decoration: _fieldDecoration(label, hint, icon, hasDropdown: true),
-        onTap: () async {
-          final initial = _parseTime(controller.text) ?? TimeOfDay.now();
-          final picked = await showTimePicker(
-            context: context,
-            initialTime: initial,
-          );
-          if (picked != null) {
-            setState(() {
-              controller.text =
-                  '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
-            });
-          }
-        },
-      ),
+  Future<void> _pickDate(TextEditingController controller) async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.tryParse(controller.text) ?? DateTime.now(),
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2101),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: Theme.of(context).colorScheme.copyWith(
+                  primary: const Color(0xFF6C5CE7),
+                ),
+          ),
+          child: child!,
+        );
+      },
     );
+    if (picked != null) {
+      setState(() {
+        controller.text = DateFormat('yyyy-MM-dd').format(picked);
+      });
+    }
   }
 
   InputDecoration _fieldDecoration(
@@ -1124,19 +1401,69 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
     );
   }
 
-  TimeOfDay? _parseTime(String value) {
-    final parts = value.split(':');
-    if (parts.length < 2) return null;
-    final hour = int.tryParse(parts[0]);
-    final minute = int.tryParse(parts[1]);
-    if (hour == null || minute == null) return null;
-    return TimeOfDay(hour: hour, minute: minute);
+  Future<void> _pickOfferImage() async {
+    final picked = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+    );
+    if (picked != null) setState(() => _imageFile = picked);
   }
 
   int _toInt(String value) => int.tryParse(value.trim()) ?? 0;
 
+  OfferServiceModel? _serviceById(int id) {
+    for (final service in _controller.partnerServices) {
+      if (service.id == id) return service;
+    }
+    return null;
+  }
+
+  String? _discountError({
+    required OfferServiceModel service,
+    required int type,
+    required String? raw,
+  }) {
+    final text = raw?.trim() ?? '';
+    if (text.isEmpty) {
+      return 'Enter discount'.tr;
+    }
+    final discount = num.tryParse(text);
+    if (discount == null) {
+      return 'Enter a valid number'.tr;
+    }
+    if (discount <= 0) {
+      return 'Discount must be greater than 0'.tr;
+    }
+    if (type == 1) {
+      if (discount >= 100) {
+        return 'Percent must be less than 100'.tr;
+      }
+    } else if (service.price > 0 && discount >= service.price) {
+      return 'Must be less than ${CurrencyHelper.format(service.price, decimals: 2)}';
+    }
+    return null;
+  }
+
+  String? _serviceDateError(int id) {
+    final start = serviceStartDateCtrls[id]?.text.trim() ?? '';
+    final expire = serviceExpireCtrls[id]?.text.trim() ?? '';
+    if (start.isEmpty) return 'Select start date'.tr;
+    if (expire.isEmpty) return 'Select end date'.tr;
+    final startDate = DateTime.tryParse(start);
+    final expireDate = DateTime.tryParse(expire);
+    if (startDate != null &&
+        expireDate != null &&
+        expireDate.isBefore(startDate)) {
+      return 'End date must be after start date'.tr;
+    }
+    return null;
+  }
+
   Future<void> _submitForm() async {
-    if (!applyAllServices && selectedServiceIds.isEmpty && !isEdit) {
+    final ids = applyAllServices
+        ? _controller.partnerServices.map((s) => s.id).toList()
+        : selectedServiceIds.toList();
+    if (ids.isEmpty && !isEdit) {
       Get.snackbar(
         'Services required',
         'Select ALL or at least one partner service',
@@ -1147,14 +1474,68 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
       return;
     }
 
+    for (final id in ids) {
+      _ensureOfferFields(id);
+    }
+
+    final formOk = _formKey.currentState?.validate() ?? false;
+    if (!formOk) {
+        Get.snackbar(
+          'Invalid fields'.tr,
+          'Fix discount and dates for each selected service'.tr,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+      return;
+    }
+
+    for (final id in ids) {
+      final service = _serviceById(id);
+      if (service == null) continue;
+      final error = _discountError(
+        service: service,
+        type: serviceOfferType[id] ?? 1,
+        raw: serviceDiscountCtrls[id]?.text,
+      );
+      if (error != null) {
+        Get.snackbar(
+          service.name,
+          error,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return;
+      }
+      final dateError = _serviceDateError(id);
+      if (dateError != null) {
+        Get.snackbar(
+          service.name,
+          dateError,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+        return;
+      }
+    }
+
+    final serviceOffers = ids
+        .map((id) => TimedOfferServiceLine(
+              id: id,
+              type: serviceOfferType[id] ?? 1,
+              discount: num.tryParse(serviceDiscountCtrls[id]?.text ?? '') ?? 0,
+              startDate: serviceStartDateCtrls[id]?.text.trim() ?? '',
+              expire: serviceExpireCtrls[id]?.text.trim() ?? '',
+            ))
+        .toList();
+
     final offer = TimedPartnerOfferModel(
       campaignId: widget.campaign.id,
       name: nameController.text.trim(),
       shortDescription: descriptionController.text.trim(),
       code: codeController.text.trim(),
-      type: selectedType,
-      discount: _toInt(discountController.text),
-      upto: _toInt(uptoController.text),
       startDate: startDateController.text.trim(),
       expire: expireController.text.trim(),
       startTime: startTimeController.text.trim(),
@@ -1162,16 +1543,18 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
       maxUsage: _toInt(maxUsageController.text),
       minCartValue: 100,
       applyAllServices: applyAllServices,
-      serviceIds: applyAllServices ? const [] : selectedServiceIds.toList(),
+      serviceIds: applyAllServices ? const [] : ids,
+      serviceOffers: serviceOffers,
     );
 
-    final includeServices = applyAllServices || selectedServiceIds.isNotEmpty;
-    final success = isEdit
+    final includeServices = applyAllServices || ids.isNotEmpty;
+    final success = alreadyJoined
         ? await _controller.updatePartnerOffer(
             offer,
             includeServices: includeServices,
+            image: _imageFile,
           )
-        : await _controller.createPartnerOffer(offer);
+        : await _controller.createPartnerOffer(offer, image: _imageFile);
 
     if (success && mounted) {
       await Get.dialog(
@@ -1190,9 +1573,11 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
             ],
           ),
           content: Text(
-            isEdit
-                ? 'Limited offer updated successfully.'.tr
-                : 'Limited offer saved successfully.'.tr,
+            widget.addMore
+                ? 'Services added to this limited offer.'.tr
+                : (isEdit
+                    ? 'Limited offer updated successfully.'.tr
+                    : 'Limited offer saved successfully.'.tr),
             style: const TextStyle(fontSize: 16),
           ),
           actions: [
@@ -1232,6 +1617,15 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
     startTimeController.dispose();
     endTimeController.dispose();
     maxUsageController.dispose();
+    for (final ctrl in serviceDiscountCtrls.values) {
+      ctrl.dispose();
+    }
+    for (final ctrl in serviceStartDateCtrls.values) {
+      ctrl.dispose();
+    }
+    for (final ctrl in serviceExpireCtrls.values) {
+      ctrl.dispose();
+    }
     super.dispose();
   }
 }

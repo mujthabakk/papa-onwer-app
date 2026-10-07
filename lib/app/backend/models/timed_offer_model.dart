@@ -14,6 +14,11 @@ class TimedCampaignModel {
   final String statusText;
   final int myItemsCount;
   final int status;
+  final String startDate;
+  final String expireDate;
+  final int maxUsage;
+  final String image;
+  final String cover;
 
   TimedCampaignModel({
     required this.id,
@@ -28,12 +33,21 @@ class TimedCampaignModel {
     this.statusText = '',
     this.myItemsCount = 0,
     this.status = 1,
+    this.startDate = '',
+    this.expireDate = '',
+    this.maxUsage = 0,
+    this.image = '',
+    this.cover = '',
   });
+
+  String get displayImage => _mediaUrl(image, cover);
 
   bool get hasJoined => myItemsCount > 0;
 
-  String get displayDiscount =>
-      timedDiscountLabel(type: discountType, value: discountValue);
+  String get displayDiscount {
+    if (discountType.toLowerCase() == 'mixed') return 'Per service';
+    return timedDiscountLabel(type: discountType, value: discountValue);
+  }
 
   TimedCampaignModel copyWith({
     int? myItemsCount,
@@ -54,6 +68,11 @@ class TimedCampaignModel {
       statusText: statusText,
       myItemsCount: myItemsCount ?? this.myItemsCount,
       status: status ?? this.status,
+      startDate: startDate,
+      expireDate: expireDate,
+      maxUsage: maxUsage,
+      image: image,
+      cover: cover,
     );
   }
 
@@ -71,6 +90,20 @@ class TimedCampaignModel {
       statusText: json['status_text']?.toString() ?? '',
       myItemsCount: _toInt(json['my_items_count']),
       status: _toInt(json['status'], 1),
+      startDate: _dateOnly(
+        json['start_date'] ?? json['from_date'] ?? json['valid_from'],
+      ),
+      expireDate: _dateOnly(
+        json['expire'] ??
+            json['expire_date'] ??
+            json['expiry_date'] ??
+            json['end_date'],
+      ),
+      maxUsage: _toInt(
+        json['max_usage'] ?? json['max_users'] ?? json['max_user'],
+      ),
+      image: _mediaUrl(json['image'], json['cover']),
+      cover: _mediaUrl(json['cover'], json['image']),
     );
   }
 }
@@ -107,6 +140,11 @@ class TimedOfferItemModel {
   final int stock;
   final bool isSoldOut;
   final bool canBuy;
+  final int type;
+  final num discount;
+  final String discountText;
+  final String startDate;
+  final String expire;
   final TimedOfferLocation location;
 
   TimedOfferItemModel({
@@ -120,6 +158,11 @@ class TimedOfferItemModel {
     this.stock = 0,
     this.isSoldOut = false,
     this.canBuy = true,
+    this.type = 1,
+    this.discount = 0,
+    this.discountText = '',
+    this.startDate = '',
+    this.expire = '',
     TimedOfferLocation? location,
   }) : location = location ?? TimedOfferLocation();
 
@@ -129,7 +172,7 @@ class TimedOfferItemModel {
     return TimedOfferItemModel(
       id: _toInt(json['id']),
       name: json['name']?.toString() ?? '',
-      image: json['image']?.toString() ?? json['cover']?.toString() ?? '',
+      image: _mediaUrl(json['image'], json['cover']),
       duration: _toInt(json['duration']),
       amount: _toNum(json['amount']),
       offerPrice: _toNum(json['offer_price']),
@@ -137,6 +180,13 @@ class TimedOfferItemModel {
       stock: _toInt(json['stock']),
       isSoldOut: _toBool(json['is_sold_out']),
       canBuy: _toBool(json['can_buy'], true),
+      type: _discountTypeToInt(json['type'] ?? json['offer_type']),
+      discount: _toNum(json['discount']),
+      discountText: json['discount_text']?.toString() ?? '',
+      startDate: _dateOnly(json['start_date'] ?? json['startDate']),
+      expire: _dateOnly(
+        json['expire'] ?? json['expire_date'] ?? json['end_date'],
+      ),
       location: json['location'] is Map
           ? TimedOfferLocation.fromJson(
               Map<String, dynamic>.from(json['location']))
@@ -175,6 +225,52 @@ class TimedOfferSchedule {
   }
 }
 
+class TimedOfferServiceLine {
+  final int id;
+  final int type;
+  final num discount;
+  final num offerPrice;
+  final String startDate;
+  final String expire;
+
+  TimedOfferServiceLine({
+    required this.id,
+    this.type = 1,
+    this.discount = 0,
+    this.offerPrice = 0,
+    this.startDate = '',
+    this.expire = '',
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'type': type == 2 ? 2 : 1,
+      'discount': discount,
+      if (startDate.isNotEmpty) 'start_date': startDate,
+      if (expire.isNotEmpty) 'expire': expire,
+    };
+  }
+
+  factory TimedOfferServiceLine.fromJson(Map<String, dynamic> json) {
+    return TimedOfferServiceLine(
+      id: _toInt(json['id'] ?? json['service_id']),
+      type: _discountTypeToInt(json['type'] ?? json['offer_type']),
+      discount: _toNum(json['discount'] ?? json['discount_value']),
+      offerPrice: _toNum(json['offer_price']),
+      startDate: _dateOnly(
+        json['start_date'] ?? json['startDate'] ?? json['from_date'],
+      ),
+      expire: _dateOnly(
+        json['expire'] ??
+            json['expire_date'] ??
+            json['end_date'] ??
+            json['expiry_date'],
+      ),
+    );
+  }
+}
+
 class TimedPartnerOfferModel {
   final int id;
   final int campaignId;
@@ -194,7 +290,10 @@ class TimedPartnerOfferModel {
   final bool applyAllServices;
   final List<int> serviceIds;
   final List<OfferServiceModel> services;
+  final List<TimedOfferServiceLine> serviceOffers;
   final TimedOfferSchedule schedule;
+  final String image;
+  final String cover;
 
   TimedPartnerOfferModel({
     this.id = 0,
@@ -215,13 +314,31 @@ class TimedPartnerOfferModel {
     this.applyAllServices = false,
     this.serviceIds = const [],
     this.services = const [],
+    this.serviceOffers = const [],
+    this.image = '',
+    this.cover = '',
     TimedOfferSchedule? schedule,
   }) : schedule = schedule ?? TimedOfferSchedule();
 
+  String get displayImage => _mediaUrl(image, cover);
+
   bool get isPercent => type != 2;
 
+  bool get hasMixedServiceOffers {
+    final types = serviceOffers.map((line) => line.type == 2 ? 2 : 1).toSet();
+    return types.length > 1;
+  }
+
+  String get campaignDiscountType {
+    if (hasMixedServiceOffers) return 'mixed';
+    if (serviceOffers.length == 1) {
+      return serviceOffers.first.type == 2 ? 'flat' : 'percentage';
+    }
+    return isPercent ? 'percentage' : 'flat';
+  }
+
   String get displayDiscount => timedDiscountLabel(
-        type: isPercent ? 'percentage' : 'flat',
+        type: campaignDiscountType,
         value: discount,
       );
 
@@ -242,22 +359,52 @@ class TimedPartnerOfferModel {
       type: _discountTypeToInt(json['discount_type'] ?? json['type']),
       discount: _toInt(json['discount_value'] ?? json['discount']),
       upto: _toInt(json['upto']),
-      startDate: json['start_date']?.toString() ?? '',
-      expire: json['expire']?.toString() ??
-          json['end_date']?.toString() ??
-          '',
-      startTime: json['start_time']?.toString() ??
-          json['daily_start_time']?.toString() ??
-          '',
-      endTime: json['end_time']?.toString() ??
-          json['daily_end_time']?.toString() ??
-          '',
-      maxUsage: _toInt(json['max_usage']),
+      startDate: _dateOnly(
+        json['start_date'] ??
+            json['startDate'] ??
+            json['from_date'] ??
+            json['valid_from'] ??
+            (json['schedule'] is Map
+                ? (json['schedule'] as Map)['start_date']
+                : null),
+      ),
+      expire: _dateOnly(
+        json['expire'] ??
+            json['expire_date'] ??
+            json['expiry_date'] ??
+            json['end_date'] ??
+            json['valid_to'] ??
+            json['to_date'] ??
+            (json['schedule'] is Map
+                ? ((json['schedule'] as Map)['expire_date'] ??
+                    (json['schedule'] as Map)['end_date'] ??
+                    (json['schedule'] as Map)['expire'])
+                : null),
+      ),
+      startTime: _firstText(json, const [
+        'start_time',
+        'daily_start_time',
+      ], nested: const ['schedule', 'start_time']),
+      endTime: _firstText(json, const [
+        'end_time',
+        'daily_end_time',
+      ], nested: const ['schedule', 'end_time']),
+      maxUsage: _toInt(
+        json['max_usage'] ??
+            json['maxUsage'] ??
+            json['max_users'] ??
+            json['max_user'] ??
+            json['usage_limit'] ??
+            json['max_limit'],
+      ),
       minCartValue: _toInt(json['min_cart_value']),
       status: _toInt(json['status'], 1),
       applyAllServices: applyAll,
       serviceIds: applyAll ? const [] : _parseServiceIds(rawIds),
-      services: _parseServices(json['services']),
+      services: _parseServices(json['services'] ?? json['items']),
+      serviceOffers: _parseServiceOffers(json['services'] ?? json['items']),
+      image: _mediaUrl(json['image'], json['cover']),
+      cover: _mediaUrl(json['cover'], json['image']),
       schedule: json['schedule'] is Map
           ? TimedOfferSchedule.fromJson(
               Map<String, dynamic>.from(json['schedule']))
@@ -289,12 +436,27 @@ class TimedPartnerOfferModel {
       applyAllServices: applyAllServices ?? this.applyAllServices,
       serviceIds: serviceIds ?? this.serviceIds,
       services: services,
+      serviceOffers: serviceOffers,
+      image: image,
+      cover: cover,
       schedule: schedule,
     );
   }
 }
 
+String _mediaUrl(dynamic image, [dynamic cover]) {
+  for (final value in [image, cover]) {
+    final text = value?.toString().trim() ?? '';
+    if (text.isEmpty) continue;
+    final lower = text.toLowerCase();
+    if (lower == 'null' || lower == 'undefined' || lower == 'none') continue;
+    return text;
+  }
+  return '';
+}
+
 String timedDiscountLabel({required String type, required num value}) {
+  if (type.toLowerCase() == 'mixed') return 'Per service';
   if (value <= 0) return '';
   final amount = value % 1 == 0 ? value.toInt().toString() : value.toString();
   final kind = type.toLowerCase().trim();
@@ -316,6 +478,8 @@ int _discountTypeToInt(dynamic value) {
 }
 
 String _discountTypeString(dynamic value) {
+  final text = value?.toString().toLowerCase().trim() ?? '';
+  if (text == 'mixed') return 'mixed';
   return _discountTypeToInt(value) == 2 ? 'flat' : 'percentage';
 }
 
@@ -324,6 +488,37 @@ int _toInt(dynamic value, [int fallback = 0]) {
   if (value is int) return value;
   if (value is num) return value.toInt();
   return int.tryParse(value.toString()) ?? fallback;
+}
+
+String _firstText(
+  Map<String, dynamic> json,
+  List<String> keys, {
+  List<String>? nested,
+}) {
+  for (final key in keys) {
+    final value = json[key]?.toString().trim() ?? '';
+    if (value.isNotEmpty && value.toLowerCase() != 'null') return value;
+  }
+  if (nested != null && nested.length >= 2 && json[nested[0]] is Map) {
+    final inner = Map<String, dynamic>.from(json[nested[0]] as Map);
+    final value = inner[nested[1]]?.toString().trim() ?? '';
+    if (value.isNotEmpty && value.toLowerCase() != 'null') return value;
+  }
+  return '';
+}
+
+String _dateOnly(dynamic value) {
+  final raw = value?.toString().trim() ?? '';
+  if (raw.isEmpty || raw.toLowerCase() == 'null') return '';
+  final parsed = DateTime.tryParse(raw);
+  if (parsed != null) {
+    final y = parsed.year.toString().padLeft(4, '0');
+    final m = parsed.month.toString().padLeft(2, '0');
+    final d = parsed.day.toString().padLeft(2, '0');
+    return '$y-$m-$d';
+  }
+  final match = RegExp(r'(\d{4}-\d{2}-\d{2})').firstMatch(raw);
+  return match?.group(1) ?? raw;
 }
 
 num _toNum(dynamic value, [num fallback = 0]) {
@@ -362,5 +557,15 @@ List<OfferServiceModel> _parseServices(dynamic value) {
       .whereType<Map>()
       .map((item) =>
           OfferServiceModel.fromJson(Map<String, dynamic>.from(item)))
+      .toList();
+}
+
+List<TimedOfferServiceLine> _parseServiceOffers(dynamic value) {
+  if (value is! List) return const [];
+  return value
+      .whereType<Map>()
+      .map((item) =>
+          TimedOfferServiceLine.fromJson(Map<String, dynamic>.from(item)))
+      .where((item) => item.id > 0)
       .toList();
 }

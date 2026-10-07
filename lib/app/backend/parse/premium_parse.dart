@@ -2,6 +2,7 @@
 import 'package:ultimate_salon_owner_flutter/app/backend/api/api.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/shared_pref.dart';
 import 'package:get/get.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/app_country.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/constants.dart';
 
 class PremiumParser {
@@ -36,19 +37,11 @@ class PremiumParser {
   }
 
   String _planCountry() {
-    return sharedPreferencesManager.getString('country') ?? 'IN';
+    return AppCountry.headerValue(sharedPreferencesManager);
   }
 
   Future<Response> getUpgradePlans() async {
-    final country = _planCountry();
-    String countryName = country;
-    if (country.toUpperCase() == 'QA' || country.toUpperCase() == 'QAT') {
-      countryName = 'Qatar';
-    } else if (country.toUpperCase() == 'IN' ||
-        country.toUpperCase() == 'IND') {
-      countryName = 'India';
-    }
-    final body = {'uid': uid, 'country': countryName};
+    final body = {'uid': uid, 'country': _planCountry()};
     if (token.isNotEmpty) {
       return apiService.postPrivate(AppConstants.upgradePlans, body, token);
     }
@@ -62,9 +55,10 @@ class PremiumParser {
     return apiService.postPrivate(
       AppConstants.upgradeCreatePaymentLink,
       {
-        "uid": uid,
-        "plan_id": planId,
-        "plan_amount": amount,
+        'uid': uid,
+        'plan_id': planId,
+        'plan_amount': amount,
+        'country': _planCountry(),
       },
       token,
     );

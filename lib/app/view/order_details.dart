@@ -1028,12 +1028,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               controller.appointmentInfo.total?.toString() ?? '0', controller),
           _buildPricingRow(
               'Payment'.tr,
-              controller.appointmentInfo.payMethod != null &&
-                      controller.appointmentInfo.payMethod! <
-                          controller.paymentName.length
-                  ? controller
-                      .paymentName[controller.appointmentInfo.payMethod as int]
-                  : 'N/A',
+              controller.paymentMethodLabel(),
               controller,
               isPayment: true),
           const Divider(height: 24),

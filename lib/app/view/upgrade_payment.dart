@@ -50,8 +50,22 @@ class _UpgradePaymentScreenState extends State<UpgradePaymentScreen> {
           onPageStarted: (_) {
             if (mounted) setState(() => isLoading = true);
           },
-          onPageFinished: (_) {
+          onPageFinished: (url) async {
             if (mounted) setState(() => isLoading = false);
+            try {
+              final title = await _controller.getTitle() ?? '';
+              final lower = title.toLowerCase();
+              if (lower.contains('payment cancelled') ||
+                  lower.contains('payment canceled')) {
+                pollTimer?.cancel();
+                if (mounted && !paid) Navigator.of(context).pop(false);
+                return;
+              }
+              if (lower.contains('payment received') ||
+                  lower.contains('payment successful')) {
+                _checkPayment(showSuccessDialog: true);
+              }
+            } catch (_) {}
           },
           onWebResourceError: (_) {
             if (mounted) setState(() => isLoading = false);

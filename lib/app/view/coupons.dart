@@ -3,8 +3,10 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/coupon_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/app_image.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 
@@ -212,6 +214,15 @@ class _CouponsScreenState extends State<CouponsScreen> {
         borderRadius: BorderRadius.circular(20),
         child: Column(
           children: [
+            if (coupon.displayImage.isNotEmpty)
+              SizedBox(
+                height: 140,
+                width: double.infinity,
+                child: AppNetImage(
+                  path: coupon.displayImage,
+                  fit: BoxFit.cover,
+                ),
+              ),
             // Header Section
             Container(
               padding: const EdgeInsets.all(24),
@@ -930,6 +941,7 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
   bool applyAllServices = false;
   final Set<int> selectedServiceIds = {};
   bool _recalcLock = false;
+  XFile? _imageFile;
 
   @override
   void initState() {
@@ -1029,6 +1041,12 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
           padding: const EdgeInsets.all(20),
           children: [
             _buildFormCard([
+              OfferImagePickerTile(
+                file: _imageFile,
+                existingUrl: widget.coupon?.displayImage,
+                onPick: _pickOfferImage,
+                onClear: () => setState(() => _imageFile = null),
+              ),
               _buildServicePicker(),
             ]),
             const SizedBox(height: 20),
@@ -1471,6 +1489,14 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
     );
   }
 
+  Future<void> _pickOfferImage() async {
+    final picked = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+    );
+    if (picked != null) setState(() => _imageFile = picked);
+  }
+
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       if (!applyAllServices && selectedServiceIds.isEmpty) {
@@ -1502,9 +1528,9 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
       );
 
       if (widget.coupon == null) {
-        _controller.createCoupons(offer);
+        _controller.createCoupons(offer, image: _imageFile);
       } else {
-        _controller.updateCoupon(offer);
+        _controller.updateCoupon(offer, image: _imageFile);
       }
       Navigator.of(context).pop();
     }
