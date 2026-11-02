@@ -173,6 +173,7 @@ class _GallaryScreenState extends State<GallaryScreen> {
                     Text(
                       'Update Images'.tr,
                       style: const TextStyle(
+                          fontFamily: 'regular',
                           color: ThemeProvider.whiteColor, fontSize: 17),
                     ),
                   ],

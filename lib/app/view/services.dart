@@ -214,6 +214,7 @@ class _ServicesScreenState extends State<ServicesScreen>
               title: Text(
                 'Services'.tr,
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   color: ThemeProvider.whiteColor,
                   fontSize: 20,
                   fontWeight: FontWeight.w600,
@@ -231,7 +232,7 @@ class _ServicesScreenState extends State<ServicesScreen>
                 indicatorSize: TabBarIndicatorSize.label,
                 labelColor: Colors.white,
                 unselectedLabelColor: Colors.white.withOpacity(0.7),
-                labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+                labelStyle: const TextStyle(fontFamily: 'bold', fontWeight: FontWeight.bold),
                 tabs: _tabs.map((tab) => Tab(text: tab.tr)).toList(),
               ),
             ),
@@ -244,7 +245,7 @@ class _ServicesScreenState extends State<ServicesScreen>
               ),
               label: Text(
                 'Add Service'.tr,
-                style: const TextStyle(color: ThemeProvider.whiteColor),
+                style: const TextStyle(fontFamily: 'regular', color: ThemeProvider.whiteColor),
               ),
             ),
             body: value.apiCalled == false
@@ -335,6 +336,7 @@ class _ServicesScreenState extends State<ServicesScreen>
             child: Text(
               'Clear All'.tr,
               style: const TextStyle(
+                fontFamily: 'regular',
                 color: ThemeProvider.appColor,
                 fontSize: 12,
               ),
@@ -360,6 +362,7 @@ class _ServicesScreenState extends State<ServicesScreen>
           Text(
             label,
             style: const TextStyle(
+              fontFamily: 'medium',
               color: ThemeProvider.appColor,
               fontSize: 12,
               fontWeight: FontWeight.w500,
@@ -449,6 +452,7 @@ class _ServicesScreenState extends State<ServicesScreen>
                     Text(
                       'Filter & Sort'.tr,
                       style: const TextStyle(
+                        fontFamily: 'bold',
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -472,6 +476,7 @@ class _ServicesScreenState extends State<ServicesScreen>
                 Text(
                   'Sort By'.tr,
                   style: const TextStyle(
+                    fontFamily: 'semibold',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -508,6 +513,7 @@ class _ServicesScreenState extends State<ServicesScreen>
                         Text(
                           'Filter by Category'.tr,
                           style: const TextStyle(
+                            fontFamily: 'semibold',
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
                           ),
@@ -561,6 +567,7 @@ class _ServicesScreenState extends State<ServicesScreen>
                     child: Text(
                       'Apply Filters'.tr,
                       style: const TextStyle(
+                        fontFamily: 'bold',
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
@@ -608,6 +615,7 @@ class _ServicesScreenState extends State<ServicesScreen>
       title: Text(
         title,
         style: TextStyle(
+          fontFamily: 'regular',
           color: isSelected ? ThemeProvider.appColor : Colors.black,
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         ),
@@ -633,6 +641,7 @@ class _ServicesScreenState extends State<ServicesScreen>
       title: Text(
         title,
         style: TextStyle(
+          fontFamily: 'regular',
           color: isSelected ? ThemeProvider.appColor : Colors.black,
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         ),
@@ -748,6 +757,7 @@ class _ServicesScreenState extends State<ServicesScreen>
                 Text(
                   'No Services Found'.tr,
                   style: const TextStyle(
+                    fontFamily: 'bold',
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -759,6 +769,7 @@ class _ServicesScreenState extends State<ServicesScreen>
                     'Add your first service by tapping the button below'.tr,
                     textAlign: TextAlign.center,
                     style: TextStyle(
+                      fontFamily: 'regular',
                       fontSize: 14,
                       color: Colors.grey[600],
                     ),
@@ -808,6 +819,7 @@ class _ServicesScreenState extends State<ServicesScreen>
                   Text(
                     'No services in this category'.tr,
                     style: TextStyle(
+                      fontFamily: 'medium',
                       fontSize: 16,
                       color: Colors.grey[600],
                       fontWeight: FontWeight.w500,
@@ -886,6 +898,7 @@ class _ServicesScreenState extends State<ServicesScreen>
                     child: Text(
                       item.status == 1 ? 'Active'.tr : 'Inactive'.tr,
                       style: const TextStyle(
+                        fontFamily: 'bold',
                         color: Colors.white,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -908,6 +921,7 @@ class _ServicesScreenState extends State<ServicesScreen>
                       child: Text(
                         '${item.discount}% OFF'.tr,
                         style: const TextStyle(
+                          fontFamily: 'bold',
                           color: Colors.white,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -935,6 +949,7 @@ class _ServicesScreenState extends State<ServicesScreen>
                             Text(
                               item.name?.toString() ?? 'Unknown Service',
                               style: const TextStyle(
+                                fontFamily: 'bold',
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
                               ),
@@ -954,6 +969,7 @@ class _ServicesScreenState extends State<ServicesScreen>
                                   item.webCatesData?.name?.toString() ??
                                       'No Category',
                                   style: TextStyle(
+                                    fontFamily: 'regular',
                                     fontSize: 13,
                                     color: Colors.grey[700],
                                   ),
@@ -983,6 +999,7 @@ class _ServicesScreenState extends State<ServicesScreen>
                             Text(
                               '${item.duration ?? 0} min',
                               style: TextStyle(
+                                fontFamily: 'medium',
                                 fontSize: 12,
                                 color: Colors.grey[800],
                                 fontWeight: FontWeight.w500,
@@ -1016,6 +1033,7 @@ class _ServicesScreenState extends State<ServicesScreen>
                                     ? '${Get.find<ServicesController>().currencySymbol} ${item.price ?? 0}'
                                     : '${item.price ?? 0} ${Get.find<ServicesController>().currencySymbol}',
                                 style: TextStyle(
+                                  fontFamily: 'regular',
                                   decoration: TextDecoration.lineThrough,
                                   fontSize: 14,
                                   color: Colors.grey[600],
@@ -1029,6 +1047,7 @@ class _ServicesScreenState extends State<ServicesScreen>
                                   ? '${Get.find<ServicesController>().currencySymbol} ${item.off ?? 0}'
                                   : '${item.off ?? 0} ${Get.find<ServicesController>().currencySymbol}',
                               style: const TextStyle(
+                                fontFamily: 'bold',
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                                 color: ThemeProvider.appColor,
@@ -1105,6 +1124,7 @@ class _ServicesScreenState extends State<ServicesScreen>
               Text(
                 label,
                 style: TextStyle(
+                  fontFamily: 'medium',
                   color: color,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -1139,6 +1159,7 @@ class _ServicesScreenState extends State<ServicesScreen>
               Text(
                 'Delete Service?'.tr,
                 style: const TextStyle(
+                  fontFamily: 'bold',
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1151,6 +1172,7 @@ class _ServicesScreenState extends State<ServicesScreen>
                       .tr,
                   textAlign: TextAlign.center,
                   style: TextStyle(
+                    fontFamily: 'regular',
                     fontSize: 14,
                     color: Colors.grey[600],
                   ),
@@ -1170,7 +1192,7 @@ class _ServicesScreenState extends State<ServicesScreen>
                         ),
                         child: Text(
                           'Cancel'.tr,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontFamily: 'bold', fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -1188,7 +1210,7 @@ class _ServicesScreenState extends State<ServicesScreen>
                         ),
                         child: Text(
                           'Delete'.tr,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontFamily: 'bold', fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -1270,6 +1292,7 @@ class ServiceSearchDelegate extends SearchDelegate<String> {
                 Text(
                   'No services found'.tr,
                   style: const TextStyle(
+                    fontFamily: 'medium',
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
                   ),
@@ -1299,13 +1322,14 @@ class ServiceSearchDelegate extends SearchDelegate<String> {
                 ),
                 title: Text(
                   item.name?.toString() ?? 'Unknown Service',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontFamily: 'bold', fontWeight: FontWeight.bold),
                 ),
                 subtitle: Row(
                   children: [
                     Text(
                       item.webCatesData?.name?.toString() ?? 'No Category',
                       style: TextStyle(
+                        fontFamily: 'regular',
                         color: Colors.grey[600],
                         fontSize: 12,
                       ),
@@ -1321,6 +1345,7 @@ class ServiceSearchDelegate extends SearchDelegate<String> {
                       child: Text(
                         '${item.duration ?? 0} min',
                         style: TextStyle(
+                          fontFamily: 'regular',
                           fontSize: 11,
                           color: Colors.grey[700],
                         ),
@@ -1340,6 +1365,7 @@ class ServiceSearchDelegate extends SearchDelegate<String> {
                         ? '${Get.find<ServicesController>().currencySymbol} ${item.off ?? 0}'
                         : '${item.off ?? 0} ${Get.find<ServicesController>().currencySymbol}',
                     style: const TextStyle(
+                      fontFamily: 'bold',
                       color: ThemeProvider.appColor,
                       fontWeight: FontWeight.bold,
                       fontSize: 12,

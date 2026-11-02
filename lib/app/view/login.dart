@@ -5,6 +5,7 @@ import 'package:country_code_picker/country_code_picker.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/login_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/locale_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/pwa_install.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/widgets/locale_picker.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -101,6 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             Text(
                               'Welcome Back!'.tr,
                               style: const TextStyle(
+                                fontFamily: 'bold',
                                 color: ThemeProvider.blackColor,
                                 fontSize: 26,
                                 fontWeight: FontWeight.bold,
@@ -110,6 +112,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             Text(
                               'Login to continue'.tr,
                               style: const TextStyle(
+                                fontFamily: 'regular',
                                 color: ThemeProvider.greyColor,
                                 fontSize: 14,
                               ),
@@ -140,6 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   Text(
                                     'New to PapaBear?'.tr,
                                     style: const TextStyle(
+                                      fontFamily: 'semibold',
                                       color: ThemeProvider.blackColor,
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
@@ -165,6 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       child: Text(
                                         'Create Account'.tr,
                                         style: const TextStyle(
+                                          fontFamily: 'bold',
                                           fontSize: 16,
                                           fontWeight: FontWeight.w800,
                                         ),
@@ -174,6 +179,27 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ],
                               ),
                             ),
+                            if (isPwaWeb) ...[
+                              const SizedBox(height: 12),
+                              SizedBox(
+                                width: double.infinity,
+                                child: OutlinedButton.icon(
+                                  onPressed: () => _onDownloadPwa(context),
+                                  icon: const Icon(Icons.download_rounded),
+                                  label: Text('Download App'.tr),
+                                  style: OutlinedButton.styleFrom(
+                                    foregroundColor: ThemeProvider.blackColor,
+                                    side: const BorderSide(
+                                        color: ThemeProvider.blackColor),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 14),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                             const SizedBox(height: 18),
                             Row(
                               children: [
@@ -184,6 +210,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: Text(
                                     'LOG IN'.tr,
                                     style: const TextStyle(
+                                      fontFamily: 'semibold',
                                       color: ThemeProvider.greyColor,
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
@@ -246,6 +273,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: Text(
                                     'Forgot Password?'.tr,
                                     style: const TextStyle(
+                                        fontFamily: 'bold',
                                         color: ThemeProvider.appColor,
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -269,6 +297,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: Text(
                                     'LOG IN'.tr,
                                     style: const TextStyle(
+                                        fontFamily: 'bold',
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -351,6 +380,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: Text(
                                     'Forgot Password?'.tr,
                                     style: const TextStyle(
+                                        fontFamily: 'bold',
                                         color: ThemeProvider.appColor,
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -374,6 +404,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: Text(
                                     'LOG IN'.tr,
                                     style: const TextStyle(
+                                        fontFamily: 'bold',
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -431,6 +462,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: Text(
                                     'Forgot Password?'.tr,
                                     style: const TextStyle(
+                                        fontFamily: 'bold',
                                         color: ThemeProvider.appColor,
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -454,6 +486,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: Text(
                                     'LOG IN'.tr,
                                     style: const TextStyle(
+                                        fontFamily: 'bold',
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -473,6 +506,28 @@ class _LoginScreenState extends State<LoginScreen> {
       );
       });
     });
+  }
+
+  Future<void> _onDownloadPwa(BuildContext context) async {
+    final installed = await promptPwaInstall();
+    if (installed) return;
+    if (!context.mounted) return;
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('Install PapaBear App'.tr),
+        content: Text(
+          'Chrome / Android: tap the install icon in the address bar, or use this Download App button again after the page fully loads.\n\niPhone: tap Share, then Add to Home Screen.'
+              .tr,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text('Okay'.tr),
+          ),
+        ],
+      ),
+    );
   }
 }
 

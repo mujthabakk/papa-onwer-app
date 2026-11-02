@@ -12,9 +12,9 @@ import 'package:ultimate_salon_owner_flutter/app/controller/appointment_controll
 import 'package:ultimate_salon_owner_flutter/app/controller/calendar_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/order_details_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/premium_controller.dart';
-import 'package:ultimate_salon_owner_flutter/app/controller/product_history_controller.dart';
-import 'package:ultimate_salon_owner_flutter/app/controller/product_order_details_controller.dart';
-import 'package:ultimate_salon_owner_flutter/app/controller/products_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/controller/product_history_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/controller/product_order_details_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/controller/products_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/services_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/shared_pref.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/constants.dart';
@@ -477,6 +477,7 @@ class LocaleController extends GetxController implements GetxService {
     _refreshMoneyControllers();
     if (countryChanged) {
       await _refreshPlans();
+      await _refreshPartnerAds();
     }
     Get.updateLocale(LocaleHelper.toFlutterLocale(languageCode));
     _scheduleUi(pushLocale: true);
@@ -514,7 +515,13 @@ class LocaleController extends GetxController implements GetxService {
       await _saveRemotePreference();
     }
     await _refreshPlans();
+    await _refreshPartnerAds();
     _scheduleUi();
+  }
+
+  Future<void> _refreshPartnerAds() async {
+    if (!Get.isRegistered<AppointmentController>()) return;
+    await Get.find<AppointmentController>().getBannerData();
   }
 
   Future<void> _refreshPlans() async {

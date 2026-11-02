@@ -2,6 +2,7 @@
 import 'package:ultimate_salon_owner_flutter/app/backend/api/api.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/shared_pref.dart';
 import 'package:get/get.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/app_country.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/constants.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
 
@@ -85,8 +86,63 @@ class AppointmentParser {
     return CurrencyHelper.displaySymbol(sharedPreferencesManager);
   }
 
+  String get token => sharedPreferencesManager.getString('token') ?? '';
+
+  String getUID() {
+    return sharedPreferencesManager.getString('uid') ?? '0';
+  }
+
+  Map<String, dynamic> locationBody() {
+    final uid = int.tryParse(getUID()) ?? 0;
+    final country = AppCountry.headerValue(sharedPreferencesManager);
+    final cid = sharedPreferencesManager.getString('cid') ??
+        sharedPreferencesManager.getString('city_id');
+    final lat = sharedPreferencesManager.getString('lat');
+    final lng = sharedPreferencesManager.getString('lng');
+    return {
+      if (uid > 0) 'uid': uid,
+      if (country.isNotEmpty) 'country': country,
+      if (cid != null && cid.isNotEmpty)
+        'city_id': int.tryParse(cid) ?? cid,
+      if (lat != null && lat.isNotEmpty)
+        'lat': double.tryParse(lat) ?? lat,
+      if (lng != null && lng.isNotEmpty)
+        'lng': double.tryParse(lng) ?? lng,
+    };
+  }
+
   Future<Response> getBannerData() async {
-    var response = await apiService.getPublic(AppConstants.getBannerData);
-    return response;
+    final body = locationBody();
+    var response = await apiService.postPrivate(
+      AppConstants.partnerGetHomeAds,
+      body,
+      token,
+    );
+    if (response.statusCode == 200) return response;
+    response = await apiService.getPrivate(
+      '${AppConstants.partnerGetHomeAds}?uid=${getUID()}',
+      token,
+    );
+    if (response.statusCode == 200) return response;
+    return apiService.getPrivate(
+      '${AppConstants.partnerAdsGetHome}?uid=${getUID()}',
+      token,
+    );
+  }
+
+  Future<Response> salonDetails(int id) async {
+    return apiService.postPrivate(
+      AppConstants.salonDetails,
+      {'id': id},
+      token,
+    );
+  }
+
+  Future<Response> individualDetails(int id) async {
+    return apiService.postPrivate(
+      AppConstants.individualDetails,
+      {'id': id},
+      token,
+    );
   }
 }

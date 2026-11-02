@@ -11,10 +11,11 @@ class TabsController extends GetxController
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   TabsController({required this.parser});
 
+  bool get isProductUser => parser.isProductUser();
+
   @override
   void onInit() {
     super.onInit();
-    // 4 tabs: Appointment, Earnings, Calendar, Profile (Orders/Products hidden)
     tabController = TabController(length: 4, vsync: this, initialIndex: tabId);
   }
 

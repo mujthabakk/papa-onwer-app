@@ -6,8 +6,8 @@ import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/analytics.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/appointment.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/calendar.dart';
-// PRODUCT RELATED — hidden for now
-// import 'package:ultimate_salon_owner_flutter/app/view/product_order_listing.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/view/product_order_listing.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/view/products.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/profile_menu.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/drawer.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
@@ -19,20 +19,29 @@ class TabScreen extends StatefulWidget {
 }
 
 class _TabScreenState extends State<TabScreen> {
-  // Keep page instances stable so Syncfusion charts are not disposed/recreated
-  // on every GetBuilder rebuild (fixes RenderChartFadeTransition DISPOSED crash).
-  late final List<Widget> _pages;
+  bool? _productMode;
+  late List<Widget> _pages;
 
-  @override
-  void initState() {
-    super.initState();
-    _pages = const [
+  List<Widget> _pagesFor(bool isProductUser) {
+    if (isProductUser) {
+      return const [
+        HistoryScreen(),
+        ProductsScreen(),
+        AnalyticScreen(),
+        ProfileScreen(),
+      ];
+    }
+    return const [
       AppointmentScreen(),
-      // HistoryScreen(), // PRODUCT / Orders tab — hidden
       AnalyticScreen(),
       CalendarScreen(),
       ProfileScreen(),
     ];
+  }
+
+  @override
+  void initState() {
+    super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (Get.isRegistered<LocaleController>()) {
         Get.find<LocaleController>().bootstrap(force: false, applyLocale: false);
@@ -83,6 +92,10 @@ class _TabScreenState extends State<TabScreen> {
         : getResponsiveSize(context, 5.0);
 
     return GetBuilder<TabsController>(builder: (value) {
+      if (_productMode != value.isProductUser) {
+        _productMode = value.isProductUser;
+        _pages = _pagesFor(value.isProductUser);
+      }
       return Scaffold(
         key: value.scaffoldKey,
         backgroundColor: Colors.white,
@@ -115,34 +128,51 @@ class _TabScreenState extends State<TabScreen> {
                       padding: EdgeInsets.symmetric(
                           horizontal: horizontalPadding,
                           vertical: verticalPadding),
-                      tabs: [
-                        GButton(
-                          icon: Icons.content_paste_outlined,
-                          text: 'Appoinment'.tr,
-                          backgroundColor: ThemeProvider.appColor,
-                        ),
-                        // PRODUCT / Orders tab — hidden
-                        // GButton(
-                        //   icon: Icons.shopping_cart_outlined,
-                        //   text: 'Orders'.tr,
-                        //   backgroundColor: ThemeProvider.appColor,
-                        // ),
-                        GButton(
-                          icon: Icons.currency_exchange_outlined,
-                          text: 'Earnings'.tr,
-                          backgroundColor: ThemeProvider.appColor,
-                        ),
-                        GButton(
-                          icon: Icons.calendar_today_outlined,
-                          text: 'Calendar'.tr,
-                          backgroundColor: ThemeProvider.appColor,
-                        ),
-                        GButton(
-                          icon: Icons.person_outlined,
-                          text: 'Profile'.tr,
-                          backgroundColor: ThemeProvider.appColor,
-                        ),
-                      ],
+                      tabs: value.isProductUser
+                          ? [
+                              GButton(
+                                icon: Icons.shopping_cart_outlined,
+                                text: 'Orders'.tr,
+                                backgroundColor: ThemeProvider.appColor,
+                              ),
+                              GButton(
+                                icon: Icons.inventory_2_outlined,
+                                text: 'Products'.tr,
+                                backgroundColor: ThemeProvider.appColor,
+                              ),
+                              GButton(
+                                icon: Icons.currency_exchange_outlined,
+                                text: 'Earnings'.tr,
+                                backgroundColor: ThemeProvider.appColor,
+                              ),
+                              GButton(
+                                icon: Icons.person_outlined,
+                                text: 'Profile'.tr,
+                                backgroundColor: ThemeProvider.appColor,
+                              ),
+                            ]
+                          : [
+                              GButton(
+                                icon: Icons.content_paste_outlined,
+                                text: 'Appoinment'.tr,
+                                backgroundColor: ThemeProvider.appColor,
+                              ),
+                              GButton(
+                                icon: Icons.currency_exchange_outlined,
+                                text: 'Earnings'.tr,
+                                backgroundColor: ThemeProvider.appColor,
+                              ),
+                              GButton(
+                                icon: Icons.calendar_today_outlined,
+                                text: 'Calendar'.tr,
+                                backgroundColor: ThemeProvider.appColor,
+                              ),
+                              GButton(
+                                icon: Icons.person_outlined,
+                                text: 'Profile'.tr,
+                                backgroundColor: ThemeProvider.appColor,
+                              ),
+                            ],
                       selectedIndex: value.tabId,
                       onTabChange: (index) {
                         value.updateTabId(index);

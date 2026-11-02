@@ -72,7 +72,7 @@ class SimpleBarChart extends StatelessWidget {
                                 point.label,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(fontSize: 9),
+                                style: const TextStyle(fontFamily: 'regular', fontSize: 9),
                               ),
                               Text(
                                 '${point.value.toStringAsFixed(point.value % 1 == 0 ? 0 : 1)}$valueSuffix',

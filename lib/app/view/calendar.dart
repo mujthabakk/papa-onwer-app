@@ -111,6 +111,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   ? ' ${'Premium'.tr}'
                                   : ' ${'Upgrade'.tr}',
                               style: const TextStyle(
+                                fontFamily: 'bold',
                                 color: ThemeProvider.golden,
                                 fontSize: 11.5,
                                 fontWeight: FontWeight.bold,
@@ -268,6 +269,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                                                         .ellipsis,
                                                                 maxLines: 2,
                                                                 style: const TextStyle(
+                                                                    fontFamily: 'regular',
                                                                     fontSize:
                                                                         11,
                                                                     color: ThemeProvider
@@ -287,6 +289,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                           style: const TextStyle(
+                                                              fontFamily: 'regular',
                                                               fontSize: 12,
                                                               color: ThemeProvider
                                                                   .blackColor),
@@ -389,6 +392,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                                                                 value.appointmentList[index].items!.services![serviceIndex].price.toString()
                                                                             : value.appointmentList[index].items!.services![serviceIndex].price.toString() + value.currencySymbol,
                                                                         style: const TextStyle(
+                                                                            fontFamily: 'regular',
                                                                             fontSize:
                                                                                 10,
                                                                             color:
@@ -497,6 +501,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                                                                 ? value.currencySymbol + value.appointmentList[index].items!.packages![packageIndex].price.toString()
                                                                                 : value.appointmentList[index].items!.packages![packageIndex].price.toString() + value.currencySymbol,
                                                                             style: const TextStyle(
+                                                                                fontFamily: 'regular',
                                                                                 fontSize: 10,
                                                                                 color: ThemeProvider.blackColor,
                                                                                 decoration: TextDecoration.lineThrough),
@@ -620,6 +625,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                                   Text(
                                                     'Appointment at :'.tr,
                                                     style: const TextStyle(
+                                                        fontFamily: 'regular',
                                                         fontSize: 12,
                                                         color: ThemeProvider
                                                             .appColor),
@@ -627,6 +633,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                                   Text(
                                                     '${value.appointmentList[index].saveDate} ${value.appointmentList[index].slot}',
                                                     style: const TextStyle(
+                                                      fontFamily: 'regular',
                                                       fontSize: 12,
                                                     ),
                                                   )

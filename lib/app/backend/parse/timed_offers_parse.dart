@@ -2,6 +2,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/api/api.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/shared_pref.dart';
 import 'package:get/get.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/util/product_user.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/constants.dart';
 
 class TimedOffersParser {
@@ -24,6 +25,8 @@ class TimedOffersParser {
 
   int get uid => int.tryParse(getUID()) ?? 0;
 
+  bool get isProductUser => ProductUser.isProduct(sharedPreferencesManager);
+
   Future<Response> getPartnerCampaigns() async {
     return apiService.postPrivate(
       _getPartnerCampaigns,
@@ -33,8 +36,11 @@ class TimedOffersParser {
   }
 
   Future<Response> getPartnerServices() async {
+    final path = isProductUser
+        ? AppConstants.productCouponsGetPartnerProducts
+        : AppConstants.couponsGetPartnerServices;
     return apiService.postPrivate(
-      AppConstants.couponsGetPartnerServices,
+      path,
       {"uid": uid},
       token,
     );

@@ -3,6 +3,7 @@ import 'package:ultimate_salon_owner_flutter/app/backend/models/partner_plan_mod
 import 'package:ultimate_salon_owner_flutter/app/helper/shared_pref.dart';
 import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/constants.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/util/product_user.dart';
 
 class ProfileParser {
   final SharedPreferencesManager sharedPreferencesManager;
@@ -14,6 +15,8 @@ class ProfileParser {
   bool getType() {
     return sharedPreferencesManager.getString('type') == 'salon' ? true : false;
   }
+
+  bool isProductUser() => ProductUser.isProduct(sharedPreferencesManager);
 
   Future<Response> logout() async {
     return await apiService.logout(
@@ -68,6 +71,7 @@ class ProfileParser {
     sharedPreferencesManager.clearKey('totalRating');
     sharedPreferencesManager.clearKey('phone');
     sharedPreferencesManager.clearKey('type');
+    sharedPreferencesManager.clearKey('is_product_user');
     PartnerPlanModel.clear(sharedPreferencesManager);
   }
 

@@ -1258,6 +1258,7 @@ class _AdsPublishScreenState extends State<AdsPublishScreen> {
                           child: Text('Recommended Image Size - 1024x500'.tr,
                               textAlign: TextAlign.left,
                               style: const TextStyle(
+                                  fontFamily: 'medium',
                                   color: Colors.grey,
                                   fontSize: 12,
                                   fontStyle: FontStyle.italic,
@@ -1348,6 +1349,7 @@ class _AdsPublishScreenState extends State<AdsPublishScreen> {
       child: Text(
         title,
         style: const TextStyle(
+          fontFamily: 'bold',
           color: ThemeProvider.blackColor,
           fontSize: 18,
           fontWeight: FontWeight.bold,
@@ -1418,7 +1420,7 @@ class _AdsPublishScreenState extends State<AdsPublishScreen> {
                   const SizedBox(height: 8),
                   Text(
                     'Tap to select image'.tr,
-                    style: TextStyle(color: Colors.grey.shade600),
+                    style: TextStyle(fontFamily: 'regular', color: Colors.grey.shade600),
                   ),
                 ],
               ),
@@ -1443,7 +1445,7 @@ class _AdsPublishScreenState extends State<AdsPublishScreen> {
         controller: controller,
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: TextStyle(color: Colors.grey.shade500),
+          hintStyle: TextStyle(fontFamily: 'regular', color: Colors.grey.shade500),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.all(16),
         ),
@@ -1470,7 +1472,7 @@ class _AdsPublishScreenState extends State<AdsPublishScreen> {
             border: InputBorder.none,
           ),
           hint: Text('Select'.tr,
-            style: TextStyle(color: Colors.grey.shade500),
+            style: TextStyle(fontFamily: 'regular', color: Colors.grey.shade500),
           ),
           onChanged: onChanged,
           items: items.keys.map((String item) {
@@ -1492,33 +1494,17 @@ class _AdsPublishScreenState extends State<AdsPublishScreen> {
         border: Border.all(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: value.isSearchPage
-          ? _buildDurationList(value, value.paywallProductsHome, selectedIndex)
-          : _buildDurationList(
-              value, value.paywallProductsSearch, selectedIndex2),
+      child: _buildDurationList(
+        value,
+        value.durationPlans,
+        value.isSearchPage ? selectedIndex : selectedIndex2,
+      ),
     );
   }
 
   // Duration List Widget
   Widget _buildDurationList(
-      AdsPublishController value, List? products, int? selectedIdx) {
-    if (products == null || products.isEmpty) {
-      return SizedBox(
-        height: 180,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const CircularProgressIndicator(color: ThemeProvider.appColor),
-              const SizedBox(height: 16),
-              Text('Loading plans...'.tr,
-                  style: TextStyle(color: Colors.grey.shade600)),
-            ],
-          ),
-        ),
-      );
-    }
-
+      AdsPublishController value, List products, int? selectedIdx) {
     return SizedBox(
       height: 180,
       child: ListView.separated(
@@ -1527,9 +1513,10 @@ class _AdsPublishScreenState extends State<AdsPublishScreen> {
         separatorBuilder: (context, index) => const Divider(height: 1),
         itemBuilder: (context, index) {
           final isSelected = index == selectedIdx;
-          final price = products[index].price.amount;
-          final currency = products[index].price.currencySymbol!;
-          final title = products[index].localizedTitle;
+          final plan = products[index] as Map;
+          final price = plan['price'] as num;
+          const currency = r'$';
+          final title = plan['title']?.toString() ?? '';
 
           return InkWell(
             onTap: () {
@@ -1539,15 +1526,8 @@ class _AdsPublishScreenState extends State<AdsPublishScreen> {
                 } else {
                   selectedIndex2 = isSelected ? null : index;
                 }
-
-                final RegExp digitRegex = RegExp(r'\d+');
-                final match = digitRegex.firstMatch(title);
-                final extractedDigits =
-                    match != null ? match.group(0) : 'No digits found';
-
-                value.selectedDurationValue = extractedDigits!;
+                value.selectedDurationValue = plan['key']?.toString() ?? '';
                 value.setAdPrice(price);
-                value.setSku(products[index]);
               });
             },
             child: Container(
@@ -1583,6 +1563,7 @@ class _AdsPublishScreenState extends State<AdsPublishScreen> {
                       children: [
                         Text('Plan: $title'.tr,
                           style: TextStyle(
+                            fontFamily: 'bold',
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
                             color: isSelected
@@ -1593,6 +1574,7 @@ class _AdsPublishScreenState extends State<AdsPublishScreen> {
                         const SizedBox(height: 4),
                         Text('Price: $price $currency'.tr,
                           style: TextStyle(
+                            fontFamily: 'regular',
                             fontSize: 14,
                             color: isSelected
                                 ? ThemeProvider.appColor
@@ -1614,7 +1596,7 @@ class _AdsPublishScreenState extends State<AdsPublishScreen> {
   // Submit Button Widget
   Widget _buildSubmitButton(AdsPublishController value, BuildContext context) {
     return ElevatedButton(
-      onPressed: () => value.purchasePremium(context),
+      onPressed: () => value.onSubmit(),
       style: ElevatedButton.styleFrom(
         backgroundColor: ThemeProvider.appColor,
         foregroundColor: Colors.white,
@@ -1627,6 +1609,7 @@ class _AdsPublishScreenState extends State<AdsPublishScreen> {
       child: Text(
         'SUBMIT AD'.tr,
         style: const TextStyle(
+          fontFamily: 'bold',
           fontSize: 16,
           fontWeight: FontWeight.bold,
         ),
@@ -1652,6 +1635,7 @@ class _AdsPublishScreenState extends State<AdsPublishScreen> {
       child: Text(
         'UPDATE'.tr,
         style: const TextStyle(
+          fontFamily: 'bold',
           fontSize: 16,
           fontWeight: FontWeight.bold,
         ),

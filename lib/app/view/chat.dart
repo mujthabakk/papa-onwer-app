@@ -75,7 +75,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                               value.chatList[index].message
                                                   .toString(),
                                               style:
-                                                  const TextStyle(fontSize: 14),
+                                                  const TextStyle(fontFamily: 'regular', fontSize: 14),
                                             ),
                                           ),
                                         ],
@@ -141,6 +141,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                                           .message
                                                           .toString(),
                                                       style: const TextStyle(
+                                                          fontFamily: 'regular',
                                                           color: ThemeProvider
                                                               .whiteColor,
                                                           fontSize: 14),

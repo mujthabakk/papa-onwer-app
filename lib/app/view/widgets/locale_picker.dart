@@ -129,6 +129,7 @@ class LocalePickerBar extends StatelessWidget {
                   label,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
+                    fontFamily: 'bold',
                     color: color,
                     fontWeight: FontWeight.w700,
                     fontSize: compact ? 11 : 12,
@@ -312,6 +313,7 @@ class LocalePickerBar extends StatelessWidget {
               child: Text(
                 language.code.toUpperCase(),
                 style: TextStyle(
+                  fontFamily: 'bold',
                   fontSize: 11,
                   color: selected ? Colors.white : ThemeProvider.blackColor,
                   fontWeight: FontWeight.bold,
@@ -346,7 +348,7 @@ class LocalePickerBar extends StatelessWidget {
       return Center(
         child: Text(
           'No countries available'.tr,
-          style: const TextStyle(color: ThemeProvider.greyColor),
+          style: const TextStyle(fontFamily: 'regular', color: ThemeProvider.greyColor),
         ),
       );
     }

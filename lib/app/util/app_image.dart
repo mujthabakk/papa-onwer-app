@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ultimate_salon_owner_flutter/app/env.dart';
@@ -101,12 +99,12 @@ class OfferImagePickerTile extends StatelessWidget {
         children: [
           const Text(
             'Offer image',
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 14),
+            style: TextStyle(fontFamily: 'bold', fontWeight: FontWeight.w700, fontSize: 14),
           ),
           const SizedBox(height: 4),
           const Text(
             'Optional. JPG, PNG or WEBP.',
-            style: TextStyle(fontSize: 12, color: Color(0xFF6B7280)),
+            style: TextStyle(fontFamily: 'regular', fontSize: 12, color: Color(0xFF6B7280)),
           ),
           const SizedBox(height: 10),
           InkWell(
@@ -119,7 +117,19 @@ class OfferImagePickerTile extends StatelessWidget {
                 width: double.infinity,
                 color: const Color(0xFFF3F4F6),
                 child: hasFile
-                    ? Image.file(File(file!.path), fit: BoxFit.cover)
+                    ? FutureBuilder(
+                        future: file!.readAsBytes(),
+                        builder: (context, snap) {
+                          if (!snap.hasData) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+                          return Image.memory(
+                            snap.data!,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      )
                     : hasUrl
                         ? AppNetImage(path: existingUrl, fit: BoxFit.cover)
                         : const Column(
@@ -130,7 +140,7 @@ class OfferImagePickerTile extends StatelessWidget {
                               SizedBox(height: 6),
                               Text(
                                 'Tap to add image',
-                                style: TextStyle(color: Color(0xFF6B7280)),
+                                style: TextStyle(fontFamily: 'regular', color: Color(0xFF6B7280)),
                               ),
                             ],
                           ),

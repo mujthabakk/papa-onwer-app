@@ -56,6 +56,7 @@ class PremiumScreen extends StatelessWidget {
                                       Text(
                                         'PapaBear Premium'.tr,
                                         style: const TextStyle(
+                                          fontFamily: 'bold',
                                           color: ThemeProvider.golden,
                                           fontSize: 22,
                                           fontWeight: FontWeight.bold,
@@ -66,6 +67,7 @@ class PremiumScreen extends StatelessWidget {
                                         'Unlock premium listing and grow faster'
                                             .tr,
                                         style: const TextStyle(
+                                          fontFamily: 'regular',
                                           color: Colors.white70,
                                           fontSize: 13,
                                         ),
@@ -93,6 +95,7 @@ class PremiumScreen extends StatelessWidget {
                       Text(
                         'Choose Your Plan'.tr,
                         style: const TextStyle(
+                          fontFamily: 'bold',
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFF111827),
@@ -102,6 +105,7 @@ class PremiumScreen extends StatelessWidget {
                       Text(
                         'Select a plan to continue with secure payment'.tr,
                         style: const TextStyle(
+                          fontFamily: 'regular',
                           color: Color(0xFF6B7280),
                           fontSize: 13,
                         ),
@@ -154,6 +158,7 @@ class PremiumScreen extends StatelessWidget {
           Text(
             'Premium Benefits'.tr,
             style: const TextStyle(
+              fontFamily: 'bold',
               color: Colors.white,
               fontSize: 16,
               fontWeight: FontWeight.w700,
@@ -175,6 +180,7 @@ class PremiumScreen extends StatelessWidget {
                     child: Text(
                       benefit.tr,
                       style: const TextStyle(
+                        fontFamily: 'medium',
                         color: Colors.white,
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
@@ -232,6 +238,7 @@ class PremiumScreen extends StatelessWidget {
                           plan.title.isNotEmpty ? plan.title : plan.name,
                         ),
                         style: const TextStyle(
+                          fontFamily: 'bold',
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                           color: Color(0xFF111827),
@@ -242,6 +249,7 @@ class PremiumScreen extends StatelessWidget {
                         Text(
                           _visibleDescription(plan),
                           style: const TextStyle(
+                            fontFamily: 'regular',
                             color: Color(0xFF6B7280),
                             fontSize: 13,
                             height: 1.4,
@@ -263,6 +271,7 @@ class PremiumScreen extends StatelessWidget {
                     child: Text(
                       _prettyTitle(plan.badge!),
                       style: const TextStyle(
+                        fontFamily: 'bold',
                         color: Color(0xFFB45309),
                         fontSize: 11,
                         fontWeight: FontWeight.w700,
@@ -286,6 +295,7 @@ class PremiumScreen extends StatelessWidget {
                 Text(
                   plan.priceLabel,
                   style: const TextStyle(
+                    fontFamily: 'bold',
                     fontSize: 32,
                     fontWeight: FontWeight.w800,
                     color: Color(0xFF111827),
@@ -298,6 +308,7 @@ class PremiumScreen extends StatelessWidget {
                     child: Text(
                       plan.validityLabel.tr,
                       style: const TextStyle(
+                        fontFamily: 'semibold',
                         color: Color(0xFF6B7280),
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
@@ -322,6 +333,7 @@ class PremiumScreen extends StatelessWidget {
                       child: Text(
                         feature,
                         style: const TextStyle(
+                          fontFamily: 'medium',
                           color: Color(0xFF374151),
                           fontSize: 13,
                           fontWeight: FontWeight.w500,
@@ -371,6 +383,7 @@ class PremiumScreen extends StatelessWidget {
                         ? 'Please wait...'.tr
                         : '${'Choose'.tr} ${plan.name}',
                     style: const TextStyle(
+                      fontFamily: 'bold',
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                     ),
@@ -453,6 +466,7 @@ class PremiumScreen extends StatelessWidget {
                           Text(
                             title,
                             style: const TextStyle(
+                              fontFamily: 'bold',
                               fontSize: 22,
                               fontWeight: FontWeight.w800,
                               color: Color(0xFF111827),
@@ -481,6 +495,7 @@ class PremiumScreen extends StatelessWidget {
                             Text(
                               description,
                               style: const TextStyle(
+                                fontFamily: 'regular',
                                 color: Color(0xFF6B7280),
                                 fontSize: 13,
                                 height: 1.4,
@@ -538,6 +553,7 @@ class PremiumScreen extends StatelessWidget {
                         child: Text(
                           'CRM is not included in this plan.'.tr,
                           style: const TextStyle(
+                            fontFamily: 'medium',
                             color: Color(0xFF64748B),
                             fontSize: 13,
                             fontWeight: FontWeight.w500,
@@ -569,6 +585,7 @@ class PremiumScreen extends StatelessWidget {
                     child: Text(
                       '${'Choose'.tr} $title',
                       style: const TextStyle(
+                        fontFamily: 'bold',
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
                       ),
@@ -600,6 +617,7 @@ class PremiumScreen extends StatelessWidget {
           Text(
             text,
             style: const TextStyle(
+              fontFamily: 'semibold',
               color: Color(0xFF374151),
               fontSize: 12,
               fontWeight: FontWeight.w600,
@@ -614,6 +632,7 @@ class PremiumScreen extends StatelessWidget {
     return Text(
       title,
       style: const TextStyle(
+        fontFamily: 'bold',
         fontSize: 15,
         fontWeight: FontWeight.w800,
         color: Color(0xFF111827),
@@ -637,6 +656,7 @@ class PremiumScreen extends StatelessWidget {
             child: Text(
               text,
               style: const TextStyle(
+                fontFamily: 'medium',
                 color: Color(0xFF374151),
                 fontSize: 13,
                 fontWeight: FontWeight.w500,
@@ -681,6 +701,7 @@ class PremiumScreen extends StatelessWidget {
             child: Text(
               feature.label,
               style: const TextStyle(
+                fontFamily: 'semibold',
                 color: Color(0xFF111827),
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -696,6 +717,7 @@ class PremiumScreen extends StatelessWidget {
             child: Text(
               display.isEmpty ? (enabled ? 'YES' : 'NO') : display,
               style: TextStyle(
+                fontFamily: 'bold',
                 color: badgeColor,
                 fontSize: 11,
                 fontWeight: FontWeight.w800,
@@ -723,6 +745,7 @@ class PremiumScreen extends StatelessWidget {
           Text(
             module.label,
             style: const TextStyle(
+              fontFamily: 'bold',
               fontSize: 14,
               fontWeight: FontWeight.w700,
               color: Color(0xFF0F172A),
@@ -744,6 +767,7 @@ class PremiumScreen extends StatelessWidget {
                     child: Text(
                       item,
                       style: const TextStyle(
+                        fontFamily: 'medium',
                         color: Color(0xFF475569),
                         fontSize: 12.5,
                         fontWeight: FontWeight.w500,
@@ -773,13 +797,13 @@ class PremiumScreen extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             'No upgrade plans available'.tr,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            style: const TextStyle(fontFamily: 'bold', fontSize: 18, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 8),
           Text(
             'Please try again later or contact support.'.tr,
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey[600]),
+            style: TextStyle(fontFamily: 'regular', color: Colors.grey[600]),
           ),
           const SizedBox(height: 16),
           OutlinedButton(

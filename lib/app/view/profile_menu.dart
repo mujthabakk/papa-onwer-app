@@ -138,6 +138,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     Text(
                                       '${value.ownerReviewsList.length} Reviews',
                                       style: const TextStyle(
+                                        fontFamily: 'medium',
                                         fontSize: 12,
                                         color: Colors.black87,
                                         fontWeight: FontWeight.w500,
@@ -230,8 +231,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           _buildMenuItem(
                             icon: Icons.history_toggle_off,
-                            title: 'Appointment History'.tr,
-                            onTap: () => value.onAppoitmentHistory(),
+                            title: value.isProductUser
+                                ? 'History'.tr
+                                : 'Appointment History'.tr,
+                            onTap: () => value.isProductUser
+                                ? value.onHistory()
+                                : value.onAppoitmentHistory(),
                           ),
                           _buildMenuItem(
                             icon: Icons.edit_outlined,
@@ -298,56 +303,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             title: 'Limited Offer'.tr,
                             onTap: () => value.onLimitedOffers(),
                           ),
-                          _buildMenuItem(
-                            icon: Icons.event_busy_outlined,
-                            title: 'Holidays'.tr,
-                            onTap: () => value.onHolidays(),
-                          ),
-                          _buildMenuItem(
-                            icon: Icons.room_service_outlined,
-                            title: 'Facilities'.tr,
-                            onTap: () => value.onFacilities(),
-                          ),
+                          if (!value.isProductUser)
+                            _buildMenuItem(
+                              icon: Icons.event_busy_outlined,
+                              title: 'Holidays'.tr,
+                              onTap: () => value.onHolidays(),
+                            ),
+                          if (!value.isProductUser)
+                            _buildMenuItem(
+                              icon: Icons.room_service_outlined,
+                              title: 'Facilities'.tr,
+                              onTap: () => value.onFacilities(),
+                            ),
                         ],
                       ),
                       _buildMenuSection(
                         title: 'Services'.tr,
                         icon: Icons.store_outlined,
                         children: [
-                          _buildMenuItem(
-                            icon: Icons.access_time,
-                            title: 'Slots'.tr,
-                            onTap: () => value.onSlot(),
-                          ),
-                          _buildMenuItem(
-                            icon: Icons.shop,
-                            title: 'Services'.tr,
-                            onTap: () => value.onServices(),
-                          ),
-                          if (value.type == true)
+                          if (!value.isProductUser)
+                            _buildMenuItem(
+                              icon: Icons.access_time,
+                              title: 'Slots'.tr,
+                              onTap: () => value.onSlot(),
+                            ),
+                          if (!value.isProductUser)
+                            _buildMenuItem(
+                              icon: Icons.shop,
+                              title: 'Services'.tr,
+                              onTap: () => value.onServices(),
+                            ),
+                          if (value.type == true && !value.isProductUser)
                             _buildMenuItem(
                               icon: Icons.style_outlined,
                               title: 'Stylist'.tr,
                               onTap: () => value.onStylist(),
                             ),
-                          // PRODUCT RELATED — hidden
-                          // _buildMenuItem(
-                          //   icon: Icons.list_alt,
-                          //   title: 'Products'.tr,
-                          //   onTap: () {
-                          //     if (value.parser.getPremium()) {
-                          //       value.onProducts();
-                          //     } else {
-                          //       value.onPremiumRequired(context);
-                          //     }
-                          //   },
-                          //   requiresPremium: !value.parser.getPremium(),
-                          // ),
-                          _buildMenuItem(
-                            icon: Icons.receipt_long_outlined,
-                            title: 'Packages'.tr,
-                            onTap: () => value.onPackages(),
-                          ),
+                          if (value.isProductUser)
+                            _buildMenuItem(
+                              icon: Icons.list_alt,
+                              title: 'Products'.tr,
+                              onTap: () => value.onProducts(),
+                            ),
+                          if (!value.isProductUser)
+                            _buildMenuItem(
+                              icon: Icons.receipt_long_outlined,
+                              title: 'Packages'.tr,
+                              onTap: () => value.onPackages(),
+                            ),
                         ],
                       ),
                       _buildMenuSection(
@@ -545,6 +548,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ? value.planName.value
                             : 'Premium Account',
                         style: const TextStyle(
+                          fontFamily: 'bold',
                           color: Colors.white,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -565,6 +569,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 : 'PRO')
                             .toUpperCase(),
                         style: const TextStyle(
+                          fontFamily: 'bold',
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
                           color: Color.fromARGB(255, 27, 143, 194),
@@ -576,6 +581,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Text(
                   _planExpiryLine(value),
                   style: const TextStyle(
+                    fontFamily: 'regular',
                     color: Colors.white70,
                     fontSize: 12,
                   ),
@@ -661,6 +667,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: Text(
                             currentName,
                             style: const TextStyle(
+                              fontFamily: 'bold',
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -678,6 +685,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: Text(
                             currentCode,
                             style: const TextStyle(
+                              fontFamily: 'bold',
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                               color: Color.fromARGB(255, 109, 137, 223),
@@ -691,6 +699,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ? 'Upgrade to ${planNames.join(' · ')}'
                           : 'Unlock all features and grow your business'.tr,
                       style: const TextStyle(
+                        fontFamily: 'regular',
                         color: Colors.white70,
                         fontSize: 12,
                       ),
@@ -749,6 +758,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
+                                    fontFamily: 'bold',
                                     color: Colors.white,
                                     fontSize: 13,
                                     fontWeight: FontWeight.w700,
@@ -760,6 +770,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Text(
                                   plan.badge!,
                                   style: const TextStyle(
+                                    fontFamily: 'semibold',
                                     color: Colors.white70,
                                     fontSize: 9,
                                     fontWeight: FontWeight.w600,
@@ -772,6 +783,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Text(
                             plan.priceLabel,
                             style: const TextStyle(
+                              fontFamily: 'semibold',
                               color: Colors.white,
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -835,6 +847,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Text(
                   title,
                   style: const TextStyle(
+                    fontFamily: 'bold',
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
                     color: Colors.black87,
@@ -905,6 +918,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Text(
                     title,
                     style: TextStyle(
+                      fontFamily: 'medium',
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                       color:
@@ -917,6 +931,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: Text(
                         subtitle,
                         style: TextStyle(
+                          fontFamily: 'regular',
                           fontSize: 12,
                           color: Colors.grey.shade600,
                         ),
@@ -940,6 +955,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: const Text(
                   'PRO',
                   style: TextStyle(
+                    fontFamily: 'bold',
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,

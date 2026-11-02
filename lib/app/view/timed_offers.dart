@@ -26,6 +26,7 @@ class TimedOffersScreen extends StatelessWidget {
               flexibleSpace: FlexibleSpaceBar(
                 title: Text('       Limited Offers'.tr,
                   style: const TextStyle(
+                    fontFamily: 'bold',
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
@@ -97,6 +98,7 @@ class TimedOffersScreen extends StatelessWidget {
               children: [
                 Text('Live Campaigns'.tr,
                   style: TextStyle(
+                    fontFamily: 'regular',
                     color: Colors.white70,
                     fontSize: 16,
                   ),
@@ -104,6 +106,7 @@ class TimedOffersScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text('$liveCount'.tr,
                   style: const TextStyle(
+                    fontFamily: 'bold',
                     color: Colors.white,
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
@@ -128,6 +131,7 @@ class TimedOffersScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 Text('$joinedCount joined'.tr,
                   style: const TextStyle(
+                    fontFamily: 'medium',
                     color: Colors.white,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -216,6 +220,7 @@ class TimedOffersScreen extends StatelessWidget {
                               Text(
                                 campaign.name,
                                 style: const TextStyle(
+                                  fontFamily: 'bold',
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,
                                   color: Color(0xFF111827),
@@ -227,6 +232,7 @@ class TimedOffersScreen extends StatelessWidget {
                                 Text(
                                   campaign.displayDiscount,
                                   style: const TextStyle(
+                                    fontFamily: 'bold',
                                     color: Color(0xFFB45309),
                                     fontSize: 14,
                                     fontWeight: FontWeight.w700,
@@ -244,6 +250,7 @@ class TimedOffersScreen extends StatelessWidget {
                       Text(
                         campaign.statusText,
                         style: const TextStyle(
+                          fontFamily: 'regular',
                           color: Color(0xFF6B7280),
                           fontSize: 13,
                           height: 1.4,
@@ -301,6 +308,7 @@ class TimedOffersScreen extends StatelessWidget {
                               padding:
                                   const EdgeInsets.symmetric(vertical: 14),
                               textStyle: const TextStyle(
+                                fontFamily: 'semibold',
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
                               ),
@@ -330,6 +338,7 @@ class TimedOffersScreen extends StatelessWidget {
                               padding:
                                   const EdgeInsets.symmetric(vertical: 14),
                               textStyle: const TextStyle(
+                                fontFamily: 'bold',
                                 fontWeight: FontWeight.w700,
                                 fontSize: 14,
                               ),
@@ -363,6 +372,7 @@ class TimedOffersScreen extends StatelessWidget {
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             textStyle: const TextStyle(
+                              fontFamily: 'semibold',
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                             ),
@@ -401,6 +411,7 @@ class TimedOffersScreen extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
+                fontFamily: 'semibold',
                 color: color,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -428,6 +439,7 @@ class TimedOffersScreen extends StatelessWidget {
           Text(
             status.label,
             style: TextStyle(
+              fontFamily: 'semibold',
               color: status.color,
               fontWeight: FontWeight.w600,
               fontSize: 12,
@@ -461,6 +473,7 @@ class TimedOffersScreen extends StatelessWidget {
           const SizedBox(height: 24),
           Text('No Limited Offers'.tr,
             style: TextStyle(
+              fontFamily: 'bold',
               fontSize: 24,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
@@ -470,6 +483,7 @@ class TimedOffersScreen extends StatelessWidget {
           Text('Timed campaigns from admin will appear here. Join one to add your services.'.tr,
             textAlign: TextAlign.center,
             style: TextStyle(
+              fontFamily: 'regular',
               fontSize: 16,
               color: Colors.grey[600],
               height: 1.4,

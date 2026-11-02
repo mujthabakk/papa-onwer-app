@@ -87,10 +87,11 @@ class AddServicesController extends GetxController implements GetxService {
             const SizedBox(width: 10),
             Text('Success'.tr,
                 style: const TextStyle(
+                    fontFamily: 'bold',
                     fontWeight: FontWeight.bold, fontSize: 18)),
           ],
         ),
-        content: Text(message, style: const TextStyle(fontSize: 16)),
+        content: Text(message, style: const TextStyle(fontFamily: 'regular', fontSize: 16)),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
@@ -98,7 +99,7 @@ class AddServicesController extends GetxController implements GetxService {
               backgroundColor: ThemeProvider.appColor,
             ),
             child: Text('OK'.tr,
-                style: const TextStyle(color: ThemeProvider.whiteColor)),
+                style: const TextStyle(fontFamily: 'regular', color: ThemeProvider.whiteColor)),
           ),
         ],
       ),
@@ -162,6 +163,7 @@ class AddServicesController extends GetxController implements GetxService {
               Text(
                 'Field Required ',
                 style: TextStyle(
+                  fontFamily: 'bold',
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                   color: ThemeProvider.appColor,
@@ -171,7 +173,7 @@ class AddServicesController extends GetxController implements GetxService {
           ),
           content: Text(
             message,
-            style: TextStyle(fontSize: 16, color: Colors.black87),
+            style: TextStyle(fontFamily: 'regular', fontSize: 16, color: Colors.black87),
           ),
           actions: [
             TextButton(
@@ -186,7 +188,7 @@ class AddServicesController extends GetxController implements GetxService {
               ),
               child: Text(
                 'OK',
-                style: TextStyle(color: ThemeProvider.whiteColor),
+                style: TextStyle(fontFamily: 'regular', color: ThemeProvider.whiteColor),
               ),
             ),
           ],

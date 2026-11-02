@@ -74,6 +74,7 @@ class CalendarsController extends GetxController implements GetxService {
                 const SizedBox(width: 10),
                 Text(title,
                     style: const TextStyle(
+                        fontFamily: 'bold',
                         fontSize: 16.5,
                         color: Colors.black,
                         fontWeight: FontWeight.bold)),
@@ -82,7 +83,7 @@ class CalendarsController extends GetxController implements GetxService {
                 ),
                 Text(
                   message,
-                  style: const TextStyle(fontSize: 16, color: Colors.black),
+                  style: const TextStyle(fontFamily: 'regular', fontSize: 16, color: Colors.black),
                 ),
               ],
             ),
@@ -92,6 +93,7 @@ class CalendarsController extends GetxController implements GetxService {
               child: const Text(
                 'OK',
                 style: TextStyle(
+                  fontFamily: 'bold',
                   color: Colors.blue,
                   fontWeight: FontWeight.bold,
                 ),

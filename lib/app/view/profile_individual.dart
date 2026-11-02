@@ -371,6 +371,7 @@ class _IndividualProfileScreenState extends State<IndividualProfileScreen> {
                                     Text(
                                       'Opening Hours'.tr,
                                       style: const TextStyle(
+                                        fontFamily: 'semibold',
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                         color: Colors.black87,
@@ -428,6 +429,7 @@ class _IndividualProfileScreenState extends State<IndividualProfileScreen> {
                                               value.getDayName(value
                                                   .timesList[index].day as int),
                                               style: const TextStyle(
+                                                fontFamily: 'medium',
                                                 color: ThemeProvider.appColor,
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w500,
@@ -439,6 +441,7 @@ class _IndividualProfileScreenState extends State<IndividualProfileScreen> {
                                             child: Text(
                                               '${value.timesList[index].displayRange}',
                                               style: const TextStyle(
+                                                fontFamily: 'regular',
                                                 color: Colors.black87,
                                                 fontSize: 14,
                                               ),
@@ -474,6 +477,7 @@ class _IndividualProfileScreenState extends State<IndividualProfileScreen> {
                                             child: Text(
                                               'Edit'.tr,
                                               style: const TextStyle(
+                                                fontFamily: 'semibold',
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w600,
                                               ),
@@ -514,6 +518,7 @@ class _IndividualProfileScreenState extends State<IndividualProfileScreen> {
                   Text(
                     'SUBMIT'.tr,
                     style: const TextStyle(
+                      fontFamily: 'bold',
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -564,6 +569,7 @@ class _IndividualProfileScreenState extends State<IndividualProfileScreen> {
                 Text(
                   title,
                   style: const TextStyle(
+                    fontFamily: 'semibold',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
@@ -596,6 +602,7 @@ class _IndividualProfileScreenState extends State<IndividualProfileScreen> {
         Text(
           label,
           style: const TextStyle(
+            fontFamily: 'semibold',
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
@@ -610,6 +617,7 @@ class _IndividualProfileScreenState extends State<IndividualProfileScreen> {
             fillColor: Colors.grey.shade50,
             hintText: hint,
             hintStyle: TextStyle(
+              fontFamily: 'regular',
               color: Colors.grey.shade500,
               fontSize: 14,
             ),
@@ -647,6 +655,7 @@ class _IndividualProfileScreenState extends State<IndividualProfileScreen> {
         Text(
           label,
           style: const TextStyle(
+            fontFamily: 'semibold',
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
@@ -664,6 +673,7 @@ class _IndividualProfileScreenState extends State<IndividualProfileScreen> {
             fillColor: Colors.grey.shade50,
             hintText: hint,
             hintStyle: TextStyle(
+              fontFamily: 'regular',
               color: Colors.grey.shade500,
               fontSize: 14,
             ),
@@ -701,6 +711,7 @@ class _IndividualProfileScreenState extends State<IndividualProfileScreen> {
         Text(
           label,
           style: const TextStyle(
+            fontFamily: 'semibold',
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
@@ -725,6 +736,7 @@ class _IndividualProfileScreenState extends State<IndividualProfileScreen> {
                   child: Text(
                     value,
                     style: TextStyle(
+                      fontFamily: 'regular',
                       fontSize: 14,
                       color: value.contains('Select') || value.contains('No ')
                           ? Colors.grey.shade500
@@ -764,6 +776,7 @@ class _IndividualProfileScreenState extends State<IndividualProfileScreen> {
           Text(
             title,
             style: const TextStyle(
+              fontFamily: 'medium',
               fontSize: 14,
               fontWeight: FontWeight.w500,
               color: Colors.black87,

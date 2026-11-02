@@ -97,8 +97,12 @@ class AppDrawer extends StatelessWidget {
                       _section('Business'.tr),
                       _item(
                         icon: Icons.history_toggle_off,
-                        title: 'Appointment History'.tr,
-                        onTap: () => _closeAnd(value.onAppoitmentHistory),
+                        title: value.isProductUser
+                            ? 'History'.tr
+                            : 'Appointment History'.tr,
+                        onTap: () => _closeAnd(value.isProductUser
+                            ? value.onHistory
+                            : value.onAppoitmentHistory),
                       ),
                       _item(
                         icon: Icons.edit_outlined,
@@ -151,16 +155,18 @@ class AppDrawer extends StatelessWidget {
                           }
                         }),
                       ),
-                      _item(
-                        icon: Icons.event_busy_outlined,
-                        title: 'Holidays'.tr,
-                        onTap: () => _closeAnd(value.onHolidays),
-                      ),
-                      _item(
-                        icon: Icons.room_service_outlined,
-                        title: 'Facilities'.tr,
-                        onTap: () => _closeAnd(value.onFacilities),
-                      ),
+                      if (!value.isProductUser)
+                        _item(
+                          icon: Icons.event_busy_outlined,
+                          title: 'Holidays'.tr,
+                          onTap: () => _closeAnd(value.onHolidays),
+                        ),
+                      if (!value.isProductUser)
+                        _item(
+                          icon: Icons.room_service_outlined,
+                          title: 'Facilities'.tr,
+                          onTap: () => _closeAnd(value.onFacilities),
+                        ),
                       _section('Services'.tr),
                       _item(
                         icon: Icons.access_time,
@@ -347,6 +353,7 @@ class AppDrawer extends StatelessWidget {
                       Text(
                         '#${value.uid.value}',
                         style: const TextStyle(
+                          fontFamily: 'regular',
                           color: Colors.white70,
                           fontSize: 12,
                         ),

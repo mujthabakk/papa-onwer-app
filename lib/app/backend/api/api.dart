@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -246,12 +245,14 @@ class ApiService extends GetxService {
           http.MultipartRequest('POST', Uri.parse(_withLangUri(uri)));
       request.headers.addAll(_languageHeaders());
       for (MultipartBody multipart in multipartBody) {
-        File file = File(multipart.file.path);
-        request.files.add(http.MultipartFile(
+        final bytes = await multipart.file.readAsBytes();
+        final filename = multipart.file.name.isNotEmpty
+            ? multipart.file.name
+            : multipart.file.path.split('/').last;
+        request.files.add(http.MultipartFile.fromBytes(
           multipart.key,
-          file.readAsBytes().asStream(),
-          file.lengthSync(),
-          filename: file.path.split('/').last,
+          bytes,
+          filename: filename,
         ));
       }
       http.Response response =

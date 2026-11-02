@@ -58,6 +58,7 @@ class _ErrorScreenState extends State<ErrorScreen> {
                   'Connection Failed'.tr,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
+                    fontFamily: 'bold',
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
                     color: Colors.black87,
@@ -68,6 +69,7 @@ class _ErrorScreenState extends State<ErrorScreen> {
                   'Could not connect to network'.tr,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
+                    fontFamily: 'regular',
                     fontSize: 15,
                     color: Colors.black87,
                   ),
@@ -77,6 +79,7 @@ class _ErrorScreenState extends State<ErrorScreen> {
                   'Please check and try again'.tr,
                   textAlign: TextAlign.center,
                   style: TextStyle(
+                    fontFamily: 'regular',
                     fontSize: 14,
                     color: Colors.grey[700],
                   ),
@@ -108,6 +111,7 @@ class _ErrorScreenState extends State<ErrorScreen> {
                         : Text(
                             'RETRY'.tr,
                             style: const TextStyle(
+                              fontFamily: 'bold',
                               color: Colors.white,
                               fontWeight: FontWeight.w800,
                               letterSpacing: 0.6,

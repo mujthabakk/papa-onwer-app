@@ -4,7 +4,7 @@ import 'package:ultimate_salon_owner_flutter/app/backend/api/handler.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/notification_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/notification_parser.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/order_details_controller.dart';
-import 'package:ultimate_salon_owner_flutter/app/controller/product_order_details_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/controller/product_order_details_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/router.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 
@@ -65,6 +65,7 @@ class NotificationController extends GetxController implements GetxService {
                       child: Text(
                         notification.title,
                         style: const TextStyle(
+                          fontFamily: 'bold',
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                           color: Colors.black87,
@@ -103,6 +104,7 @@ class NotificationController extends GetxController implements GetxService {
                 Text(
                   notification.message,
                   style: TextStyle(
+                    fontFamily: 'regular',
                     color: Colors.grey[800],
                     fontSize: 16,
                     height: 1.5,
@@ -121,6 +123,7 @@ class NotificationController extends GetxController implements GetxService {
                       child: Text(
                         'Dismiss',
                         style: TextStyle(
+                          fontFamily: 'semibold',
                           color: Colors.grey[600],
                           fontWeight: FontWeight.w600,
                         ),
@@ -149,6 +152,7 @@ class NotificationController extends GetxController implements GetxService {
                       child: const Text(
                         'More Details',
                         style: TextStyle(
+                          fontFamily: 'bold',
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
@@ -186,6 +190,7 @@ class NotificationController extends GetxController implements GetxService {
               Text(
                 label,
                 style: TextStyle(
+                  fontFamily: 'medium',
                   color: Colors.grey[600],
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -194,6 +199,7 @@ class NotificationController extends GetxController implements GetxService {
               Text(
                 value,
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   color: Colors.black87,
                   fontSize: 16,
                   fontWeight: FontWeight.w600,

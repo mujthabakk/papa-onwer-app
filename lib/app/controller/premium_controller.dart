@@ -135,7 +135,7 @@ class PremiumController extends GetxController implements GetxService {
       activeOrderId = payment.orderId;
       activePaymentLinkId = payment.paymentLinkId;
 
-      EasyLoading.dismiss();
+        EasyLoading.dismiss();
       final paid = await Get.to<bool>(() => UpgradePaymentScreen(
             paymentLink: payment.paymentLink,
             orderId: payment.orderId,
@@ -158,8 +158,8 @@ class PremiumController extends GetxController implements GetxService {
     } finally {
       EasyLoading.dismiss();
       isCreatingPayment.value = false;
-      update();
-    }
+    update();
+  }
   }
 
   Future<bool> verifyPayment({
@@ -296,6 +296,7 @@ class PremiumController extends GetxController implements GetxService {
                       Text(
                         title,
                         style: TextStyle(
+                          fontFamily: 'bold',
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                           color: Colors.grey[800],
@@ -310,6 +311,7 @@ class PremiumController extends GetxController implements GetxService {
                   child: Text(
                     message,
                     style: TextStyle(
+                      fontFamily: 'regular',
                       fontSize: 16,
                       color: Colors.grey[600],
                       height: 1.5,
@@ -335,6 +337,7 @@ class PremiumController extends GetxController implements GetxService {
                       child: const Text(
                         'OK',
                         style: TextStyle(
+                          fontFamily: 'semibold',
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                         ),

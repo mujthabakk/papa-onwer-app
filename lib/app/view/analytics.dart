@@ -35,6 +35,7 @@ class _AnalyticScreenState extends State<AnalyticScreen>
         0: Text(
           "Daily".tr,
           style: TextStyle(
+              fontFamily: 'regular',
               color:
                   Get.find<AnalyticsController>().segmentedControlGroupValue ==
                           0
@@ -43,6 +44,7 @@ class _AnalyticScreenState extends State<AnalyticScreen>
         ),
         1: Text("Monthly".tr,
             style: TextStyle(
+                fontFamily: 'regular',
                 color: Get.find<AnalyticsController>()
                             .segmentedControlGroupValue ==
                         1
@@ -50,6 +52,7 @@ class _AnalyticScreenState extends State<AnalyticScreen>
                     : ThemeProvider.blackColor)),
         2: Text("Yearly".tr,
             style: TextStyle(
+                fontFamily: 'regular',
                 color: Get.find<AnalyticsController>()
                             .segmentedControlGroupValue ==
                         2
@@ -60,6 +63,7 @@ class _AnalyticScreenState extends State<AnalyticScreen>
         0: Text(
           "Daily".tr,
           style: TextStyle(
+              fontFamily: 'regular',
               color: Get.find<AnalyticsController>()
                           .segmentedControlGroupValueProducts ==
                       0
@@ -68,6 +72,7 @@ class _AnalyticScreenState extends State<AnalyticScreen>
         ),
         1: Text("Monthly".tr,
             style: TextStyle(
+                fontFamily: 'regular',
                 color: Get.find<AnalyticsController>()
                             .segmentedControlGroupValueProducts ==
                         1
@@ -75,6 +80,7 @@ class _AnalyticScreenState extends State<AnalyticScreen>
                     : ThemeProvider.blackColor)),
         2: Text("Yearly".tr,
             style: TextStyle(
+                fontFamily: 'regular',
                 color: Get.find<AnalyticsController>()
                             .segmentedControlGroupValueProducts ==
                         2
@@ -99,8 +105,8 @@ class _AnalyticScreenState extends State<AnalyticScreen>
                   const SizedBox(width: 6),
                   Expanded(
                     child: Text(
-                      'Analyze'.tr,
-                      style: ThemeProvider.titleStyle,
+                    'Analyze'.tr,
+                    style: ThemeProvider.titleStyle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -146,6 +152,7 @@ class _AnalyticScreenState extends State<AnalyticScreen>
                                     ? ' Premium'
                                     : ' Upgrade',
                                 style: const TextStyle(
+                                      fontFamily: 'bold',
                                       color: ThemeProvider.golden,
                                       fontSize: 11.5,
                                       fontWeight: FontWeight.bold,
@@ -240,7 +247,7 @@ class _AnalyticScreenState extends State<AnalyticScreen>
                                       },
                                       icon: const Icon(Icons.chevron_right))
                                 ],
-                              ),
+                                    ),
                               const SizedBox(
                                 height: 20,
                               ),
@@ -435,7 +442,7 @@ class _AnalyticScreenState extends State<AnalyticScreen>
                                   ),
                                   const SizedBox(
                                     height: 20,
-                                  ),
+                                        ),
                                   value.monthList.isNotEmpty
                                       ? Row(
                                           mainAxisAlignment:
@@ -623,7 +630,7 @@ class _AnalyticScreenState extends State<AnalyticScreen>
                                 children: [
                                   const SizedBox(
                                     height: 20,
-                                  ),
+                                        ),
                                   value.yearlyList.isNotEmpty
                                       ? Row(
                                           mainAxisAlignment:

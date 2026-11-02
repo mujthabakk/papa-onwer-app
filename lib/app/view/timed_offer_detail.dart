@@ -28,7 +28,7 @@ class TimedOfferDetailScreen extends StatelessWidget {
           elevation: 0,
           title: Text(
             current.name,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            style: const TextStyle(fontFamily: 'bold', fontWeight: FontWeight.bold, fontSize: 18),
           ),
           actions: [
             if (current.hasJoined)
@@ -38,7 +38,7 @@ class TimedOfferDetailScreen extends StatelessWidget {
                 },
                 child: Text(
                   'Edit'.tr,
-                  style: const TextStyle(color: Colors.white),
+                  style: const TextStyle(fontFamily: 'regular', color: Colors.white),
                 ),
               ),
           ],
@@ -127,6 +127,7 @@ class TimedOfferDetailScreen extends StatelessWidget {
               controller.partnerOffer?.displayDiscount ??
                   current.displayDiscount,
               style: const TextStyle(
+                fontFamily: 'bold',
                 color: Color(0xFFB45309),
                 fontSize: 16,
                 fontWeight: FontWeight.w700,
@@ -136,7 +137,7 @@ class TimedOfferDetailScreen extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               current.statusText,
-              style: const TextStyle(color: Color(0xFF6B7280), fontSize: 13),
+              style: const TextStyle(fontFamily: 'regular', color: Color(0xFF6B7280), fontSize: 13),
             ),
           ],
           const SizedBox(height: 14),
@@ -148,6 +149,7 @@ class TimedOfferDetailScreen extends StatelessWidget {
               Text(
                 '${current.dailyStartTime} - ${current.dailyEndTime}',
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   fontWeight: FontWeight.w600,
                   color: Color(0xFF374151),
                 ),
@@ -156,6 +158,7 @@ class TimedOfferDetailScreen extends StatelessWidget {
               Text(
                 '${current.myItemsCount} services',
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   color: Color(0xFF6B7280),
                   fontWeight: FontWeight.w600,
                 ),
@@ -168,6 +171,7 @@ class TimedOfferDetailScreen extends StatelessWidget {
               children: [
                 Text('Active on this campaign'.tr,
                   style: TextStyle(
+                    fontFamily: 'semibold',
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF374151),
                   ),
@@ -198,13 +202,13 @@ class TimedOfferDetailScreen extends StatelessWidget {
           Icon(Icons.flash_on_outlined, size: 56, color: Colors.grey[400]),
           const SizedBox(height: 12),
           Text('No services added yet'.tr,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            style: TextStyle(fontFamily: 'bold', fontSize: 18, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 6),
           Text(
             'Join ${current.name} and pick the services you want to include.',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey[600]),
+            style: TextStyle(fontFamily: 'regular', color: Colors.grey[600]),
           ),
         ],
       ),
@@ -247,19 +251,35 @@ class TimedOfferDetailScreen extends StatelessWidget {
                   Text(
                     item.name,
                     style: const TextStyle(
+                      fontFamily: 'bold',
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
                       color: Color(0xFF111827),
                     ),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    '${item.duration} min',
-                    style: const TextStyle(
-                      color: Color(0xFF6B7280),
-                      fontSize: 12,
+                  if (controller.parser.isProductUser) ...[
+                    if (item.stock > 0) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        '${'Stock'.tr}: ${item.stock}',
+                        style: const TextStyle(
+                          fontFamily: 'regular',
+                          color: Color(0xFF6B7280),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ] else if (item.duration > 0) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      '${item.duration} min',
+                      style: const TextStyle(
+                        fontFamily: 'regular',
+                        color: Color(0xFF6B7280),
+                        fontSize: 12,
+                      ),
                     ),
-                  ),
+                  ],
                   if (item.startDate.isNotEmpty || item.expire.isNotEmpty) ...[
                     const SizedBox(height: 2),
                     Text(
@@ -268,6 +288,7 @@ class TimedOfferDetailScreen extends StatelessWidget {
                         if (item.expire.isNotEmpty) item.expire,
                       ].join(' → '),
                       style: const TextStyle(
+                        fontFamily: 'regular',
                         color: Color(0xFF6B7280),
                         fontSize: 11,
                       ),
@@ -282,6 +303,7 @@ class TimedOfferDetailScreen extends StatelessWidget {
                       Text(
                         CurrencyHelper.format(item.displayPrice),
                         style: const TextStyle(
+                          fontFamily: 'bold',
                           fontWeight: FontWeight.w700,
                           fontSize: 16,
                           color: Color(0xFF059669),
@@ -291,6 +313,7 @@ class TimedOfferDetailScreen extends StatelessWidget {
                         Text(
                           CurrencyHelper.format(item.originalPrice),
                           style: const TextStyle(
+                            fontFamily: 'regular',
                             color: Color(0xFF9CA3AF),
                             decoration: TextDecoration.lineThrough,
                           ),
@@ -348,6 +371,7 @@ class TimedOfferDetailScreen extends StatelessWidget {
       child: Text(
         label,
         style: TextStyle(
+          fontFamily: 'bold',
           color: color,
           fontSize: 11,
           fontWeight: FontWeight.w700,
@@ -388,6 +412,7 @@ class TimedOfferDetailScreen extends StatelessWidget {
               Text(
                 item.name,
                 style: const TextStyle(
+                  fontFamily: 'bold',
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                 ),
@@ -800,7 +825,7 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
           widget.addMore
               ? 'Add services'
               : (isEdit ? 'Update Limited Offer' : 'Join Limited Offer'),
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          style: const TextStyle(fontFamily: 'bold', fontWeight: FontWeight.bold, fontSize: 20),
         ),
       ),
       body: Form(
@@ -871,6 +896,7 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
                     ? 'Add services'
                     : (isEdit ? 'Update Limited Offer' : 'Join Limited Offer'),
                 style: const TextStyle(
+                  fontFamily: 'bold',
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -898,6 +924,7 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
             child: Text(
               widget.campaign.name,
               style: const TextStyle(
+                fontFamily: 'semibold',
                 fontWeight: FontWeight.w600,
                 color: Color(0xFF92400E),
               ),
@@ -940,14 +967,14 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Apply to services'.tr,
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+            style: TextStyle(fontFamily: 'bold', fontSize: 16, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 4),
           Text(
             widget.addMore
                 ? 'Select extra services. Set type, discount and dates on each row.'
                 : 'Required. Each selected service has its own type, discount, start date and end date.',
-            style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280)),
+            style: const TextStyle(fontFamily: 'regular', fontSize: 12, color: Color(0xFF6B7280)),
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
@@ -977,7 +1004,7 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
               child: Text('No active services found for this partner.'.tr,
-                style: const TextStyle(color: Colors.red),
+                style: const TextStyle(fontFamily: 'regular', color: Colors.red),
               ),
             )
             else
@@ -1014,7 +1041,7 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
             value: selected,
             title: Text(
               service.name,
-              style: const TextStyle(fontWeight: FontWeight.w600),
+              style: const TextStyle(fontFamily: 'semibold', fontWeight: FontWeight.w600),
             ),
             subtitle: _servicePriceSubtitle(service, selected: selected),
             controlAffinity: ListTileControlAffinity.leading,
@@ -1039,13 +1066,15 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
+                  Flexible(
                     child: DropdownButtonFormField<int>(
                       value: type,
                       isExpanded: true,
                       decoration: InputDecoration(
                         labelText: 'Type'.tr,
                         isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 12),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -1054,10 +1083,15 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
                       ),
                       items: [
                         DropdownMenuItem(
-                            value: 1, child: Text('Percent %'.tr)),
+                          value: 1,
+                          child: Text('Percent %'.tr,
+                              overflow: TextOverflow.ellipsis),
+                        ),
                         DropdownMenuItem(
-                            value: 2,
-                            child: Text('Flat $_currencySymbol'.tr)),
+                          value: 2,
+                          child: Text('Flat $_currencySymbol'.tr,
+                              overflow: TextOverflow.ellipsis),
+                        ),
                       ],
                       onChanged: (value) {
                         if (value == null) return;
@@ -1066,7 +1100,7 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Expanded(
+                  Flexible(
                     child: TextFormField(
                       controller: discountCtrl,
                       keyboardType:
@@ -1084,6 +1118,8 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
                       decoration: InputDecoration(
                         labelText: type == 1 ? 'Discount %' : 'Discount',
                         isDense: true,
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 12),
                         prefixText: type == 2 ? '$_currencySymbol ' : null,
                         errorMaxLines: 2,
                         border: OutlineInputBorder(
@@ -1110,6 +1146,7 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
               child: Text(
                 '${CurrencyHelper.format(service.price, decimals: 2)} → ${CurrencyHelper.format(sell, decimals: 2)}',
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFF059669),
@@ -1144,6 +1181,7 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
 
   Widget _servicePriceSubtitle(OfferServiceModel service,
       {required bool selected}) {
+    final isProduct = _controller.parser.isProductUser;
     final original = CurrencyHelper.format(service.price, decimals: 2);
     final offer = CurrencyHelper.format(service.offerPrice, decimals: 2);
     final mins = service.duration % 1 == 0
@@ -1161,6 +1199,7 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
             Text(
               original,
               style: const TextStyle(
+                fontFamily: 'regular',
                 fontSize: 12,
                 color: Color(0xFF9CA3AF),
                 decoration: TextDecoration.lineThrough,
@@ -1169,6 +1208,7 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
             Text(
               offer,
               style: const TextStyle(
+                fontFamily: 'bold',
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
                 color: Color(0xFF059669),
@@ -1184,6 +1224,7 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
                 child: Text(
                   '${service.discount % 1 == 0 ? service.discount.toInt() : service.discount}% OFF',
                   style: const TextStyle(
+                    fontFamily: 'bold',
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFFB45309),
@@ -1194,15 +1235,20 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
             Text(
               original,
               style: const TextStyle(
+                fontFamily: 'semibold',
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
                 color: Color(0xFF374151),
               ),
             ),
-          Text(
-            '• $mins min',
-            style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280)),
-          ),
+          if (!isProduct)
+            Text(
+              '• $mins min',
+              style: const TextStyle(
+                  fontFamily: 'regular',
+                  fontSize: 12,
+                  color: Color(0xFF6B7280)),
+            ),
         ],
       ),
     );
@@ -1292,6 +1338,7 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
         autovalidateMode: AutovalidateMode.onUserInteraction,
         validator: validator,
         builder: (state) {
+          final empty = controller.text.trim().isEmpty;
           return InkWell(
             onTap: () async {
               await _pickDate(controller);
@@ -1299,10 +1346,10 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
             },
             borderRadius: BorderRadius.circular(10),
             child: InputDecorator(
-              isEmpty: controller.text.trim().isEmpty,
+              isEmpty: empty,
               decoration: InputDecoration(
                 labelText: label,
-                hintText: 'DD MMM YYYY',
+                hintText: empty ? 'Select date'.tr : null,
                 isDense: true,
                 prefixIcon:
                     Icon(icon, color: const Color(0xFF6C5CE7), size: 20),
@@ -1330,18 +1377,19 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
                 filled: true,
                 fillColor: Colors.grey[50],
               ),
-              child: Text(
-                controller.text.trim().isEmpty
-                    ? 'Select date'.tr
-                    : _displayDate(controller.text),
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: controller.text.trim().isEmpty
-                      ? const Color(0xFF9CA3AF)
-                      : const Color(0xFF111827),
-                ),
-              ),
+              child: empty
+                  ? const SizedBox(height: 20)
+                  : Text(
+                      _displayDate(controller.text),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontFamily: 'semibold',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF111827),
+                      ),
+                    ),
             ),
           );
         },
@@ -1568,6 +1616,7 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
               Text(
                 'Success'.tr,
                 style: const TextStyle(
+                    fontFamily: 'bold',
                     fontWeight: FontWeight.bold, fontSize: 18),
               ),
             ],
@@ -1578,7 +1627,7 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
                 : (isEdit
                     ? 'Limited offer updated successfully.'.tr
                     : 'Limited offer saved successfully.'.tr),
-            style: const TextStyle(fontSize: 16),
+            style: const TextStyle(fontFamily: 'regular', fontSize: 16),
           ),
           actions: [
             TextButton(
@@ -1588,7 +1637,7 @@ class _TimedOfferFormScreenState extends State<TimedOfferFormScreen> {
               ),
               child: Text(
                 'OK'.tr,
-                style: const TextStyle(color: ThemeProvider.whiteColor),
+                style: const TextStyle(fontFamily: 'regular', color: ThemeProvider.whiteColor),
               ),
             ),
           ],

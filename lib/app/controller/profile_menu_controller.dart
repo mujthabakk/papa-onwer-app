@@ -18,13 +18,13 @@ import 'package:ultimate_salon_owner_flutter/app/controller/facilities_controlle
 import 'package:ultimate_salon_owner_flutter/app/controller/gallary_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/holiday_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/notification_controller.dart';
-import 'package:ultimate_salon_owner_flutter/app/controller/product_history_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/controller/product_history_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/inbox_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/profile_individual_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/packages_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/premium_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/previous_appointments_controller.dart';
-import 'package:ultimate_salon_owner_flutter/app/controller/products_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/controller/products_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/profile_business_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/review_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/services_controller.dart';
@@ -42,6 +42,7 @@ class ProfileController extends GetxController
   final ProfileParser parser;
 
   bool type = true;
+  bool get isProductUser => parser.isProductUser();
 
   ProfileController({required this.parser});
 
@@ -217,6 +218,7 @@ class ProfileController extends GetxController
                 'Premium Account Required',
                 textAlign: TextAlign.center,
                 style: TextStyle(
+                  fontFamily: 'bold',
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 209, 165, 32),
@@ -235,6 +237,7 @@ class ProfileController extends GetxController
                   'You need a premium account to access this feature. Would you like to upgrade?',
                   textAlign: TextAlign.center,
                   style: TextStyle(
+                    fontFamily: 'bold',
                     fontWeight: FontWeight.w700,
                     color: Color.fromARGB(255, 209, 165, 32),
                   ),
@@ -265,7 +268,7 @@ class ProfileController extends GetxController
                     ),
                     icon: Icon(Icons.workspace_premium, color: Colors.black),
                     label:
-                        Text('Upgrade', style: TextStyle(color: Colors.black)),
+                        Text('Upgrade', style: TextStyle(fontFamily: 'regular', color: Colors.black)),
                   ),
                 ],
               ),
@@ -470,6 +473,7 @@ class ProfileController extends GetxController
             child: Text(
               text,
               style: const TextStyle(
+                fontFamily: 'regular',
                 fontSize: 14,
                 height: 1.4,
               ),
@@ -629,7 +633,7 @@ class ProfileController extends GetxController
           content: Text(
             'Your account has been permanently deleted within 30 days. We\'re sorry to see you go.'
                 .tr,
-            style: const TextStyle(fontSize: 15),
+            style: const TextStyle(fontFamily: 'regular', fontSize: 15),
           ),
           actions: [
             ElevatedButton(

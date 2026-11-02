@@ -116,6 +116,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
       ),
       title: Text('Withdrawals'.tr,
         style: TextStyle(
+          fontFamily: 'bold',
           fontWeight: FontWeight.w700,
           letterSpacing: -0.5,
         ),
@@ -165,6 +166,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
           const SizedBox(height: 16),
           Text('Loading your wallet...'.tr,
             style: TextStyle(
+              fontFamily: 'medium',
               color: Color(0xFF64748B),
               fontSize: 16,
               fontWeight: FontWeight.w500,
@@ -192,6 +194,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
             const SizedBox(width: 12),
             Text('Withdrawal History'.tr,
               style: TextStyle(
+                fontFamily: 'bold',
                 color: Color(0xFF1E293B),
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
@@ -240,6 +243,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                 const SizedBox(width: 8),
                 Text('Export PDF'.tr,
                   style: const TextStyle(
+                    fontFamily: 'semibold',
                     color: Colors.white,
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -321,11 +325,9 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
               // Withdrawal Details Header
               pw.Text(
                 'Withdrawal Details',
-                style: pw.TextStyle(
-                  fontSize: 18,
+                style: pw.TextStyle(fontSize: 18,
                   fontWeight: pw.FontWeight.bold,
-                  color: PdfColors.indigo,
-                ),
+                  color: PdfColors.indigo),
               ),
               pw.SizedBox(height: 15),
 
@@ -388,19 +390,15 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                 children: [
                   pw.Text(
                     'PapaBear Withdrawal History',
-                    style: pw.TextStyle(
-                      fontSize: 24,
+                    style: pw.TextStyle(fontSize: 24,
                       fontWeight: pw.FontWeight.bold,
-                      color: PdfColors.white,
-                    ),
+                      color: PdfColors.white),
                   ),
                   pw.SizedBox(height: 8),
                   pw.Text(
                     'Professional Financial Report',
-                    style: const pw.TextStyle(
-                      fontSize: 12,
-                      color: PdfColors.white,
-                    ),
+                    style: const pw.TextStyle(fontSize: 12,
+                      color: PdfColors.white),
                   ),
                 ],
               ),
@@ -421,10 +419,8 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
           pw.SizedBox(height: 8),
           pw.Text(
             'Generated on ${DateFormat('dd MMM yyyy, hh:mm a').format(DateTime.now())}',
-            style: const pw.TextStyle(
-              fontSize: 12,
-              color: PdfColors.white,
-            ),
+            style: const pw.TextStyle(fontSize: 12,
+              color: PdfColors.white),
           ),
         ],
       ),
@@ -441,8 +437,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
   //       children: [
   //         pw.Text(
   //           'Account Summary',
-  //           style: pw.TextStyle(
-  //             fontSize: 18,
+  //           style: pw.TextStyle(//             fontSize: 18,
   //             fontWeight: pw.FontWeight.bold,
   //             color: PdfColors.indigo,
   //           ),
@@ -465,8 +460,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
   //                   pw.Text('Current Wallet Balance:',
   //                       style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
   //                   pw.Text('INR ${totalBalance.toStringAsFixed(2)}',
-  //                       style: pw.TextStyle(
-  //                           fontSize: 16,
+  //                       style: pw.TextStyle(//                           fontSize: 16,
   //                           fontWeight: pw.FontWeight.bold,
   //                           color: PdfColors.indigo)),
   //                 ],
@@ -533,11 +527,9 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
         children: [
           pw.Text(
             'Account Summary',
-            style: pw.TextStyle(
-              fontSize: 18,
+            style: pw.TextStyle(fontSize: 18,
               fontWeight: pw.FontWeight.bold,
-              color: PdfColors.indigo,
-            ),
+              color: PdfColors.indigo),
           ),
           pw.SizedBox(height: 15),
 
@@ -558,8 +550,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                     pw.Text('Total Wallet Balance:'.tr,
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                     pw.Text(CurrencyHelper.format(totalWalletBalance),
-                        style: pw.TextStyle(
-                            fontSize: 16,
+                        style: pw.TextStyle(fontSize: 16,
                             fontWeight: pw.FontWeight.bold,
                             color: PdfColors.indigo)),
                   ],
@@ -592,8 +583,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                     pw.Text('Available for Withdrawal:'.tr,
                         style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
                     pw.Text(CurrencyHelper.format(availableBalance),
-                        style: pw.TextStyle(
-                            fontSize: 16,
+                        style: pw.TextStyle(fontSize: 16,
                             fontWeight: pw.FontWeight.bold,
                             color: PdfColors.green)),
                   ],
@@ -611,11 +601,9 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                   child: pw.Center(
                     child: pw.Text(
                       'Available: ${totalWalletBalance.toStringAsFixed(2)} - ${codCommission.toStringAsFixed(2)} = ${availableBalance.toStringAsFixed(2)}',
-                      style: pw.TextStyle(
-                        fontSize: 12,
+                      style: pw.TextStyle(fontSize: 12,
                         color: PdfColors.blue800,
-                        fontWeight: pw.FontWeight.bold,
-                      ),
+                        fontWeight: pw.FontWeight.bold),
                     ),
                   ),
                 ),
@@ -628,11 +616,9 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
           // Transaction Summary Header
           pw.Text(
             'Withdrawal Transaction Summary',
-            style: pw.TextStyle(
-              fontSize: 16,
+            style: pw.TextStyle(fontSize: 16,
               fontWeight: pw.FontWeight.bold,
-              color: PdfColors.indigo,
-            ),
+              color: PdfColors.indigo),
           ),
           pw.SizedBox(height: 10),
 
@@ -679,11 +665,9 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                     pw.SizedBox(width: 8),
                     pw.Text(
                       'Important Information',
-                      style: pw.TextStyle(
-                        fontSize: 14,
+                      style: pw.TextStyle(fontSize: 14,
                         fontWeight: pw.FontWeight.bold,
-                        color: PdfColors.amber800,
-                      ),
+                        color: PdfColors.amber800),
                     ),
                   ],
                 ),
@@ -729,11 +713,9 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
           pw.SizedBox(height: 8),
           pw.Text(
             amount,
-            style: pw.TextStyle(
-              fontSize: 16,
+            style: pw.TextStyle(fontSize: 16,
               fontWeight: pw.FontWeight.bold,
-              color: color,
-            ),
+              color: color),
             textAlign: pw.TextAlign.center,
           ),
         ],
@@ -756,11 +738,9 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
           pw.SizedBox(width: 8),
           pw.Text(
             'Filtered Period: ${_dateFormatter.format(_startDate!)} to ${_dateFormatter.format(_endDate!)}',
-            style: pw.TextStyle(
-              fontSize: 12,
+            style: pw.TextStyle(fontSize: 12,
               color: PdfColors.blue800,
-              fontWeight: pw.FontWeight.bold,
-            ),
+              fontWeight: pw.FontWeight.bold),
           ),
         ],
       ),
@@ -821,11 +801,9 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
       padding: const pw.EdgeInsets.all(8),
       child: pw.Text(
         text,
-        style: pw.TextStyle(
-          fontSize: isHeader ? 10 : 9,
+        style: pw.TextStyle(fontSize: isHeader ? 10 : 9,
           fontWeight: isHeader ? pw.FontWeight.bold : pw.FontWeight.normal,
-          color: isHeader ? PdfColors.white : PdfColors.black,
-        ),
+          color: isHeader ? PdfColors.white : PdfColors.black),
         textAlign: pw.TextAlign.center,
       ),
     );
@@ -848,8 +826,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                 children: [
                   pw.Text(
                     'Important Notes:',
-                    style: pw.TextStyle(
-                        fontWeight: pw.FontWeight.bold, fontSize: 12),
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12),
                   ),
                   pw.SizedBox(height: 4),
                   pw.Text('1. Platform fee of 5% is applied to all withdrawals'.tr,
@@ -865,8 +842,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                 children: [
                   pw.Text(
                     'Support Contact:',
-                    style: pw.TextStyle(
-                        fontWeight: pw.FontWeight.bold, fontSize: 12),
+                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 12),
                   ),
                   pw.SizedBox(height: 4),
                   pw.Text('Email: Support@papabear4u.com',
@@ -885,8 +861,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
           pw.Center(
             child: pw.Text(
               'This is a computer-generated report. No signature required.',
-              style: pw.TextStyle(
-                  fontSize: 8,
+              style: pw.TextStyle(fontSize: 8,
                   fontStyle: pw.FontStyle.italic,
                   color: PdfColors.grey600),
             ),
@@ -931,6 +906,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
               const SizedBox(width: 12),
               Text('Filter by Date Range'.tr,
                 style: TextStyle(
+                  fontFamily: 'semibold',
                   color: Color(0xFF1E293B),
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
@@ -1031,6 +1007,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                     child: Text(
                       'Showing results from ${_dateFormatter.format(_startDate!)} to ${_dateFormatter.format(_endDate!)}',
                       style: const TextStyle(
+                        fontFamily: 'medium',
                         color: Color(0xFF6366F1),
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -1085,6 +1062,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
             Text(
               label,
               style: const TextStyle(
+                fontFamily: 'medium',
                 color: Color(0xFF64748B),
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
@@ -1107,6 +1085,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                         ? _dateFormatter.format(selectedDate)
                         : 'Select date',
                     style: TextStyle(
+                      fontFamily: 'medium',
                       color: selectedDate != null
                           ? const Color(0xFF1E293B)
                           : const Color(0xFF64748B),
@@ -1146,7 +1125,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
               ),
               const SizedBox(width: 12),
               Text("PDF Export".tr,
-                style: TextStyle(fontWeight: FontWeight.w600),
+                style: TextStyle(fontFamily: 'semibold', fontWeight: FontWeight.w600),
               ),
             ],
           ),
@@ -1322,6 +1301,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
               children: [
                 Text('Wallet Balance'.tr,
                   style: TextStyle(
+                    fontFamily: 'medium',
                     color: Colors.white70,
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -1345,6 +1325,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
             Text(
               CurrencyHelper.format(totalWalletBalance),
               style: const TextStyle(
+                fontFamily: 'bold',
                 color: Colors.white,
                 fontSize: 28,
                 fontWeight: FontWeight.w800,
@@ -1377,6 +1358,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                   Text(
                     'Available: ${CurrencyHelper.format(totalWalletBalance)} - ${CurrencyHelper.format(cod)} = ${CurrencyHelper.format(availableForWithdrawal)}',
                     style: TextStyle(
+                      fontFamily: 'medium',
                       color: Colors.white.withOpacity(0.7),
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
@@ -1404,6 +1386,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
         Text(
           label,
           style: TextStyle(
+            fontFamily: 'regular',
             color: Colors.white.withOpacity(0.9),
             fontSize: isMain ? 16 : 14,
             fontWeight: isMain ? FontWeight.w600 : FontWeight.w500,
@@ -1412,6 +1395,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
         Text(
           amount,
           style: TextStyle(
+            fontFamily: 'bold',
             color: Colors.white,
             fontSize: isMain ? 18 : 16,
             fontWeight: FontWeight.w700,
@@ -1502,6 +1486,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
             SizedBox(width: 8),
             Text('Withdraw Funds'.tr,
               style: TextStyle(
+                fontFamily: 'semibold',
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 0.5,
@@ -1541,6 +1526,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
               const SizedBox(height: 16),
               Text('No withdrawal history'.tr,
                 style: TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: Color(0xFF1E293B),
@@ -1552,6 +1538,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                     ? 'No withdrawals found for the selected date range'
                     : 'Your withdrawal requests will appear here',
                 style: const TextStyle(
+                  fontFamily: 'regular',
                   fontSize: 14,
                   color: Color(0xFF64748B),
                 ),
@@ -1594,6 +1581,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                     Text(
                       'ID: ${request.id}',
                       style: const TextStyle(
+                        fontFamily: 'medium',
                         color: Color(0xFF64748B),
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
@@ -1610,6 +1598,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                       children: [
                         Text('Requested Amount'.tr,
                           style: TextStyle(
+                            fontFamily: 'medium',
                             color: Color(0xFF64748B),
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
@@ -1619,6 +1608,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                         Text(
                           CurrencyHelper.format(request.amount),
                           style: const TextStyle(
+                            fontFamily: 'bold',
                             color: Color(0xFF1E293B),
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
@@ -1631,6 +1621,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                       children: [
                         Text('You Received'.tr,
                           style: TextStyle(
+                            fontFamily: 'medium',
                             color: Color(0xFF64748B),
                             fontSize: 12,
                             fontWeight: FontWeight.w500,
@@ -1640,6 +1631,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                         Text(
                           CurrencyHelper.format(request.amount - (request.amount * 0.05)),
                           style: const TextStyle(
+                            fontFamily: 'bold',
                             color: Color(0xFF10B981),
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
@@ -1662,6 +1654,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                       Text(
                         'Platform Fee (5%): ${CurrencyHelper.format(request.amount * 0.05)}',
                         style: const TextStyle(
+                          fontFamily: 'medium',
                           color: Color(0xFF64748B),
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -1670,6 +1663,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                       Text(
                         request.withdrawalDate,
                         style: const TextStyle(
+                          fontFamily: 'medium',
                           color: Color(0xFF64748B),
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -1722,6 +1716,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
           Text(
             status,
             style: TextStyle(
+              fontFamily: 'semibold',
               color: textColor,
               fontSize: 12,
               fontWeight: FontWeight.w600,
@@ -2105,6 +2100,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                           Expanded(
                             child: Text('Withdraw Funds'.tr,
                               style: const TextStyle(
+                                fontFamily: 'bold',
                                 fontSize: 24,
                                 fontWeight: FontWeight.w700,
                                 color: Color(0xFF1E293B),
@@ -2131,6 +2127,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                               children: [
                                 Text('Total Wallet Balance'.tr,
                                   style: TextStyle(
+                                    fontFamily: 'medium',
                                     color: Color(0xFF64748B),
                                     fontSize: 13,
                                     fontWeight: FontWeight.w500,
@@ -2139,6 +2136,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                                 Text(
                                   CurrencyHelper.format(totalWalletBalance),
                                   style: const TextStyle(
+                                    fontFamily: 'semibold',
                                     color: Color(0xFF1E293B),
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
@@ -2152,6 +2150,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                               children: [
                                 Text('COD Commission'.tr,
                                   style: TextStyle(
+                                    fontFamily: 'medium',
                                     color: Color(0xFF64748B),
                                     fontSize: 13,
                                     fontWeight: FontWeight.w500,
@@ -2160,6 +2159,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                                 Text(
                                   '- ${CurrencyHelper.format(controller.codCommission)}',
                                   style: const TextStyle(
+                                    fontFamily: 'semibold',
                                     color: Color(0xFFEF4444),
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
@@ -2178,6 +2178,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                               children: [
                                 Text('Available Withdrawal'.tr,
                                   style: TextStyle(
+                                    fontFamily: 'semibold',
                                     color: Color(0xFF10B981),
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
@@ -2186,6 +2187,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                                 Text(
                                   CurrencyHelper.format(availableBalance),
                                   style: const TextStyle(
+                                    fontFamily: 'bold',
                                     color: Color(0xFF10B981),
                                     fontSize: 15,
                                     fontWeight: FontWeight.w700,
@@ -2215,6 +2217,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                                 children: [
                                   Text('Platform Fee (5%)'.tr,
                                     style: TextStyle(
+                                      fontFamily: 'medium',
                                       color: Color(0xFF64748B),
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
@@ -2224,6 +2227,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                                   Text(
                                     CurrencyHelper.format(commission),
                                     style: const TextStyle(
+                                      fontFamily: 'semibold',
                                       color: Color(0xFFEF4444),
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
@@ -2236,6 +2240,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                                 children: [
                                   Text('You\'.trll Receive',
                                     style: TextStyle(
+                                      fontFamily: 'medium',
                                       color: Color(0xFF64748B),
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
@@ -2245,6 +2250,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                                   Text(
                                     CurrencyHelper.format(finalAmount),
                                     style: const TextStyle(
+                                      fontFamily: 'bold',
                                       color: Color(0xFF10B981),
                                       fontSize: 18,
                                       fontWeight: FontWeight.w700,
@@ -2291,6 +2297,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                         controller: amountController,
                         keyboardType: TextInputType.number,
                         style: const TextStyle(
+                          fontFamily: 'semibold',
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF1E293B),
@@ -2299,6 +2306,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                           hintText: "0.00",
                           labelText: "Withdrawal Amount".tr,
                           labelStyle: const TextStyle(
+                            fontFamily: 'medium',
                             color: Color(0xFF64748B),
                             fontSize: 16,
                             fontWeight: FontWeight.w500,
@@ -2340,11 +2348,13 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                           ),
                           suffixText: CurrencyHelper.code(),
                           suffixStyle: const TextStyle(
+                            fontFamily: 'medium',
                             color: Color(0xFF64748B),
                             fontWeight: FontWeight.w500,
                           ),
                           helperText: helperText,
                           helperStyle: TextStyle(
+                            fontFamily: 'medium',
                             color: isAmountValid
                                 ? const Color(0xFF10B981)
                                 : const Color(0xFFEF4444),
@@ -2375,6 +2385,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                               ),
                               child: Text('Cancel'.tr,
                                 style: TextStyle(
+                                  fontFamily: 'semibold',
                                   color: Color(0xFF64748B),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -2426,6 +2437,7 @@ class _WithdrawalsScreenState extends State<WithdrawalsScreen>
                               ),
                               child: Text('Withdraw'.tr,
                                 style: TextStyle(
+                                  fontFamily: 'semibold',
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
                                 ),

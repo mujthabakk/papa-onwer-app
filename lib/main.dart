@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:adapty_flutter/adapty_flutter.dart';
 
@@ -70,6 +69,9 @@ class _AppStarterState extends State<AppStarter> {
   Future<void> _initServices() async {
     try {
       await MainBinding().dependencies();
+      EasyLoading.instance
+        ..textStyle = AppTextStyle.body.copyWith(color: ThemeProvider.whiteColor)
+        ..userInteractions = false;
       if (mounted) {
         setState(() {
           _isInitialized = true;
@@ -92,12 +94,14 @@ class _AppStarterState extends State<AppStarter> {
     } catch (e) {
       debugPrint('Firebase init failed: $e');
     }
-    unawaited(initializeAdapty());
-    unawaited(requestTrackingPermission());
+    if (!kIsWeb) {
+      unawaited(initializeAdapty());
+      unawaited(requestTrackingPermission());
+    }
   }
 
   Future<void> requestTrackingPermission() async {
-    if (!Platform.isIOS) {
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.iOS) {
       return;
     }
 
@@ -148,6 +152,9 @@ class MyApp extends StatelessWidget {
       title: AppConstants.appName,
       color: ThemeProvider.appColor,
       debugShowCheckedModeBanner: false,
+      theme: light,
+      darkTheme: dark,
+      themeMode: ThemeMode.light,
       navigatorKey: Get.key,
       initialRoute: AppRouter.splash,
       getPages: AppRouter.routes,
@@ -162,7 +169,12 @@ class MyApp extends StatelessWidget {
           EasyLoading.dismiss();
         }
       },
-      builder: EasyLoading.init(),
+      builder: EasyLoading.init(builder: (context, child) {
+        return DefaultTextStyle(
+          style: AppTextStyle.body,
+          child: child ?? const SizedBox.shrink(),
+        );
+      }),
     );
   }
 }

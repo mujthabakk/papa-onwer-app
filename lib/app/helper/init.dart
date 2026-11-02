@@ -25,7 +25,7 @@ import 'package:ultimate_salon_owner_flutter/app/backend/services/connectivity_s
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/premium_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/upgrade_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/previous_appointments_parse.dart';
-import 'package:ultimate_salon_owner_flutter/app/backend/parse/product_order_details_parse.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/api/product_order_details_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/register_categories_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/salon_categories_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/add_packages_parse.dart';
@@ -35,10 +35,10 @@ import 'package:ultimate_salon_owner_flutter/app/backend/parse/appointment_parse
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/calendar_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/chat_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/contact_us_parse.dart';
-import 'package:ultimate_salon_owner_flutter/app/backend/parse/create_products_parse.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/api/create_products_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/profile_categories_parser.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/gallary_parse.dart';
-import 'package:ultimate_salon_owner_flutter/app/backend/parse/history_parse.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/api/history_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/inbox_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/locale_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/languages_parse.dart';
@@ -46,7 +46,8 @@ import 'package:ultimate_salon_owner_flutter/app/controller/locale_controller.da
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/login_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/order_details_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/packages_parse.dart';
-import 'package:ultimate_salon_owner_flutter/app/backend/parse/products_parse.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/api/product_auth_parse.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/api/products_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/profile_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/review_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/packages_categories.dart';
@@ -56,8 +57,8 @@ import 'package:ultimate_salon_owner_flutter/app/backend/parse/services_parse.da
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/slot_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/splash_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/stylist_categories_parse.dart';
-import 'package:ultimate_salon_owner_flutter/app/backend/parse/shop_categories_parse.dart';
-import 'package:ultimate_salon_owner_flutter/app/backend/parse/shop_subcategories_parse.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/api/shop_categories_parse.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/api/shop_subcategories_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/signup_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/stylist_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/tabs_parse.dart';
@@ -130,6 +131,11 @@ class MainBinding extends Bindings {
 
     Get.lazyPut(
         () => SignUpParser(
+            apiService: Get.find(), sharedPreferencesManager: Get.find()),
+        fenix: true);
+
+    Get.lazyPut(
+        () => ProductAuthParser(
             apiService: Get.find(), sharedPreferencesManager: Get.find()),
         fenix: true);
 

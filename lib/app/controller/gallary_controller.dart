@@ -1,6 +1,5 @@
 /*Papabear*/
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -91,8 +90,7 @@ class GallaryController extends GetxController implements GetxService {
         imageQuality: 25);
     update();
     if (_selectedImage != null) {
-      final file = File(_selectedImage!.path);
-      final fileSize = await file.length();
+      final fileSize = await _selectedImage!.length();
       if (fileSize > 1048576) {
         Get.dialog(
           SimpleDialog(

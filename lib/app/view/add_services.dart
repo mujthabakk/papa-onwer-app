@@ -30,6 +30,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
             title: Text(
               value.editType == 0 ? 'Add Service'.tr : 'Update Service'.tr,
               style: const TextStyle(
+                fontFamily: 'semibold',
                 color: ThemeProvider.whiteColor,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -257,6 +258,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
                           Text(
                             'Photo'.tr,
                             style: const TextStyle(
+                              fontFamily: 'medium',
                               color: Colors.white,
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
@@ -274,6 +276,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
           Text(
             'Recommended Size - 512x512'.tr,
             style: TextStyle(
+              fontFamily: 'regular',
               fontSize: 12,
               color: Colors.grey[600],
               fontStyle: FontStyle.italic,
@@ -305,6 +308,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
             Text(
               'Service Information'.tr,
               style: const TextStyle(
+                fontFamily: 'bold',
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -372,6 +376,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
                 Text(
                   'Service Duration'.tr,
                   style: TextStyle(
+                    fontFamily: 'semibold',
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Colors.grey[800],
@@ -482,6 +487,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
             child: Text(
               '${'Final amount (incl. tax ${value.tax}%) -'.tr} ${value.currencySymbol}${value.finalPriceWithTax}',
               style: TextStyle(
+                fontFamily: 'medium',
                 fontSize: 14,
                 color: Colors.grey[600],
                 fontWeight: FontWeight.w500,
@@ -516,6 +522,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
               Text(
                 'Service Gallery'.tr,
                 style: const TextStyle(
+                  fontFamily: 'bold',
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -530,6 +537,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
                 child: Text(
                   '${value.gallery.length} Images'.tr,
                   style: TextStyle(
+                    fontFamily: 'medium',
                     color: ThemeProvider.appColor,
                     fontWeight: FontWeight.w500,
                     fontSize: 12,
@@ -637,6 +645,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
                 child: Text(
                   'CREATE SERVICE'.tr,
                   style: const TextStyle(
+                    fontFamily: 'bold',
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -656,6 +665,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
                 child: Text(
                   'UPDATE SERVICE'.tr,
                   style: const TextStyle(
+                    fontFamily: 'bold',
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -686,6 +696,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
         Text(
           title,
           style: TextStyle(
+            fontFamily: 'semibold',
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: Colors.grey[800],
@@ -702,7 +713,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
             controller: controller,
             decoration: InputDecoration(
               hintText: hintText,
-              hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+              hintStyle: TextStyle(fontFamily: 'regular', color: Colors.grey[400], fontSize: 14),
               border: InputBorder.none,
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
@@ -713,6 +724,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
               ),
               prefixText: prefixText,
               prefixStyle: const TextStyle(
+                fontFamily: 'bold',
                 fontSize: 15,
                 fontWeight: FontWeight.w700,
                 color: Colors.black87,
@@ -726,6 +738,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
             inputFormatters: inputFormatters,
             onChanged: onChanged,
             style: TextStyle(
+              fontFamily: 'regular',
               color: enabled ? Colors.black : Colors.grey[700],
               fontSize: 15,
             ),
@@ -747,6 +760,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
         Text(
           title,
           style: TextStyle(
+            fontFamily: 'semibold',
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: Colors.grey[800],
@@ -770,6 +784,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
                 Text(
                   value,
                   style: TextStyle(
+                    fontFamily: 'regular',
                     fontSize: 15,
                     color: iconColor ?? Colors.black,
                   ),
@@ -811,6 +826,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
         title: Text(
           'Choose From'.tr,
           style: const TextStyle(
+            fontFamily: 'bold',
             fontWeight: FontWeight.bold,
             fontSize: 16,
           ),
@@ -830,6 +846,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
                 Text(
                   'Camera'.tr,
                   style: const TextStyle(
+                    fontFamily: 'regular',
                     color: ThemeProvider.appColor,
                     fontSize: 16,
                   ),
@@ -850,6 +867,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
                 Text(
                   'Gallery'.tr,
                   style: const TextStyle(
+                    fontFamily: 'regular',
                     color: ThemeProvider.appColor,
                     fontSize: 16,
                   ),
@@ -877,6 +895,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
         title: Text(
           'Choose From'.tr,
           style: const TextStyle(
+            fontFamily: 'bold',
             fontWeight: FontWeight.bold,
             fontSize: 16,
           ),
@@ -896,6 +915,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
                 Text(
                   'Camera'.tr,
                   style: const TextStyle(
+                    fontFamily: 'regular',
                     color: ThemeProvider.appColor,
                     fontSize: 16,
                   ),
@@ -916,6 +936,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
                 Text(
                   'Gallery'.tr,
                   style: const TextStyle(
+                    fontFamily: 'regular',
                     color: ThemeProvider.appColor,
                     fontSize: 16,
                   ),
@@ -943,6 +964,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
         title: Text(
           'Select Type'.tr,
           style: const TextStyle(
+            fontFamily: 'bold',
             fontWeight: FontWeight.bold,
             fontSize: 16,
           ),
@@ -985,6 +1007,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
           Text(
             label,
             style: const TextStyle(
+              fontFamily: 'regular',
               color: ThemeProvider.appColor,
               fontSize: 16,
             ),
@@ -1001,6 +1024,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
         title: Text(
           'Choose Status'.tr,
           style: const TextStyle(
+            fontFamily: 'bold',
             fontWeight: FontWeight.bold,
             fontSize: 16,
           ),
@@ -1019,6 +1043,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
                 Text(
                   'Available'.tr,
                   style: const TextStyle(
+                    fontFamily: 'regular',
                     color: ThemeProvider.greenColor,
                     fontSize: 16,
                   ),
@@ -1039,6 +1064,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
                 Text(
                   'Hidden'.tr,
                   style: const TextStyle(
+                    fontFamily: 'regular',
                     color: Colors.grey,
                     fontSize: 16,
                   ),
@@ -1069,6 +1095,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
           title: Text(
             'Service Information'.tr,
             style: const TextStyle(
+              fontFamily: 'bold',
               fontWeight: FontWeight.bold,
               color: ThemeProvider.appColor,
             ),
@@ -1101,6 +1128,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
               child: Text(
                 'Got it'.tr,
                 style: const TextStyle(
+                  fontFamily: 'bold',
                   color: ThemeProvider.appColor,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1125,7 +1153,7 @@ class _AddServicesScreenState extends State<AddServicesScreen> {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(fontSize: 14),
+            style: const TextStyle(fontFamily: 'regular', fontSize: 14),
           ),
         ),
       ],

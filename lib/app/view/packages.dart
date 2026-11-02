@@ -192,6 +192,7 @@ class _PackagesScreenState extends State<PackagesScreen>
             title: Text(
               'Packages'.tr,
               style: const TextStyle(
+                fontFamily: 'semibold',
                 color: ThemeProvider.whiteColor,
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
@@ -212,7 +213,7 @@ class _PackagesScreenState extends State<PackagesScreen>
             ),
             label: Text(
               'Add Package'.tr,
-              style: const TextStyle(color: ThemeProvider.whiteColor),
+              style: const TextStyle(fontFamily: 'regular', color: ThemeProvider.whiteColor),
             ),
           ),
           body: value.apiCalled == false
@@ -248,6 +249,7 @@ class _PackagesScreenState extends State<PackagesScreen>
             child: Text(
               'Sorted by: ${_getSortDisplayName(_currentSort)}',
               style: const TextStyle(
+                fontFamily: 'medium',
                 color: ThemeProvider.appColor,
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
@@ -263,6 +265,7 @@ class _PackagesScreenState extends State<PackagesScreen>
             child: Text(
               'Clear Sort'.tr,
               style: const TextStyle(
+                fontFamily: 'regular',
                 color: ThemeProvider.appColor,
                 fontSize: 12,
               ),
@@ -343,6 +346,7 @@ class _PackagesScreenState extends State<PackagesScreen>
                     Text(
                       'Sort Packages'.tr,
                       style: const TextStyle(
+                        fontFamily: 'bold',
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -406,6 +410,7 @@ class _PackagesScreenState extends State<PackagesScreen>
                     child: Text(
                       'Apply Sort'.tr,
                       style: const TextStyle(
+                        fontFamily: 'bold',
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
@@ -457,6 +462,7 @@ class _PackagesScreenState extends State<PackagesScreen>
       title: Text(
         title,
         style: TextStyle(
+          fontFamily: 'regular',
           color: isSelected ? ThemeProvider.appColor : Colors.black,
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         ),
@@ -571,6 +577,7 @@ class _PackagesScreenState extends State<PackagesScreen>
           Text(
             'No Packages Found'.tr,
             style: const TextStyle(
+              fontFamily: 'bold',
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -580,6 +587,7 @@ class _PackagesScreenState extends State<PackagesScreen>
             'Create your first package by tapping the button below'.tr,
             textAlign: TextAlign.center,
             style: TextStyle(
+              fontFamily: 'regular',
               fontSize: 14,
               color: Colors.grey[600],
             ),
@@ -596,7 +604,7 @@ class _PackagesScreenState extends State<PackagesScreen>
             ),
             icon: const Icon(Icons.add, color: Colors.white),
             label: Text('Add Package'.tr,
-                style: const TextStyle(color: Colors.white)),
+                style: const TextStyle(fontFamily: 'regular', color: Colors.white)),
           ),
         ],
       ),
@@ -623,7 +631,7 @@ class _PackagesScreenState extends State<PackagesScreen>
               indicatorSize: TabBarIndicatorSize.label,
               labelColor: Colors.white,
               unselectedLabelColor: Colors.white70,
-              labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+              labelStyle: const TextStyle(fontFamily: 'bold', fontWeight: FontWeight.bold),
               tabs: _filters.map((filter) => Tab(text: filter.tr)).toList(),
             ),
           ),
@@ -674,6 +682,7 @@ class _PackagesScreenState extends State<PackagesScreen>
                 Text(
                   'No packages in this category'.tr,
                   style: TextStyle(
+                    fontFamily: 'medium',
                     fontSize: 16,
                     color: Colors.grey[600],
                     fontWeight: FontWeight.w500,
@@ -744,6 +753,7 @@ class _PackagesScreenState extends State<PackagesScreen>
                     child: Text(
                       item.status == 1 ? 'Active'.tr : 'Inactive'.tr,
                       style: const TextStyle(
+                        fontFamily: 'bold',
                         color: Colors.white,
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
@@ -769,6 +779,7 @@ class _PackagesScreenState extends State<PackagesScreen>
                       child: Text(
                         item.name?.toString() ?? 'Unknown Package',
                         style: const TextStyle(
+                          fontFamily: 'bold',
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                         ),
@@ -792,6 +803,7 @@ class _PackagesScreenState extends State<PackagesScreen>
                             Text(
                               CurrencyHelper.format(item.price ?? 0),
                               style: TextStyle(
+                                fontFamily: 'regular',
                                 decoration: TextDecoration.lineThrough,
                                 fontSize: 14,
                                 color: Colors.grey[600],
@@ -802,6 +814,7 @@ class _PackagesScreenState extends State<PackagesScreen>
                           Text(
                             CurrencyHelper.format(item.off ?? 0),
                             style: const TextStyle(
+                              fontFamily: 'bold',
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
                               color: ThemeProvider.appColor,
@@ -831,6 +844,7 @@ class _PackagesScreenState extends State<PackagesScreen>
                           Text(
                             'Included Services (${item.services!.length})'.tr,
                             style: TextStyle(
+                              fontFamily: 'medium',
                               fontWeight: FontWeight.w500,
                               fontSize: 14,
                               color: Colors.grey[700],
@@ -854,6 +868,7 @@ class _PackagesScreenState extends State<PackagesScreen>
                             child: Text(
                               service.name?.toString() ?? 'Service',
                               style: TextStyle(
+                                fontFamily: 'regular',
                                 fontSize: 12,
                                 color: Colors.grey[800],
                               ),
@@ -884,6 +899,7 @@ class _PackagesScreenState extends State<PackagesScreen>
                             Text(
                               'Specialists'.tr,
                               style: TextStyle(
+                                fontFamily: 'medium',
                                 fontWeight: FontWeight.w500,
                                 fontSize: 14,
                                 color: Colors.grey[700],
@@ -950,6 +966,7 @@ class _PackagesScreenState extends State<PackagesScreen>
                                       child: Text(
                                         '+${item.specialist!.length - 5}',
                                         style: const TextStyle(
+                                          fontFamily: 'bold',
                                           color: Colors.white,
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold,
@@ -1029,6 +1046,7 @@ class _PackagesScreenState extends State<PackagesScreen>
               Text(
                 label,
                 style: TextStyle(
+                  fontFamily: 'medium',
                   color: color,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
@@ -1063,6 +1081,7 @@ class _PackagesScreenState extends State<PackagesScreen>
               Text(
                 'Delete Package?'.tr,
                 style: const TextStyle(
+                  fontFamily: 'bold',
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1075,6 +1094,7 @@ class _PackagesScreenState extends State<PackagesScreen>
                       .tr,
                   textAlign: TextAlign.center,
                   style: TextStyle(
+                    fontFamily: 'regular',
                     fontSize: 14,
                     color: Colors.grey[600],
                   ),
@@ -1094,7 +1114,7 @@ class _PackagesScreenState extends State<PackagesScreen>
                         ),
                         child: Text(
                           'Cancel'.tr,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontFamily: 'bold', fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -1112,7 +1132,7 @@ class _PackagesScreenState extends State<PackagesScreen>
                         ),
                         child: Text(
                           'Delete'.tr,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontFamily: 'bold', fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
@@ -1200,6 +1220,7 @@ class PackageSearchDelegate extends SearchDelegate<String> {
                 Text(
                   'No packages found'.tr,
                   style: const TextStyle(
+                    fontFamily: 'medium',
                     fontSize: 18,
                     fontWeight: FontWeight.w500,
                   ),
@@ -1229,11 +1250,12 @@ class PackageSearchDelegate extends SearchDelegate<String> {
                 ),
                 title: Text(
                   item.name?.toString() ?? 'Unknown Package',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontFamily: 'bold', fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
                   CurrencyHelper.format(item.off ?? 0),
                   style: const TextStyle(
+                    fontFamily: 'medium',
                     color: ThemeProvider.appColor,
                     fontWeight: FontWeight.w500,
                   ),
@@ -1250,6 +1272,7 @@ class PackageSearchDelegate extends SearchDelegate<String> {
                   child: Text(
                     item.status == 1 ? 'Active'.tr : 'Inactive'.tr,
                     style: TextStyle(
+                      fontFamily: 'medium',
                       color: item.status == 1
                           ? ThemeProvider.greenColor
                           : Colors.grey,

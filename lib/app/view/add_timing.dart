@@ -60,7 +60,7 @@ class _AddTimingScreenState extends State<AddTimingScreen> {
                         isExpanded: true,
                         icon: const Icon(Icons.expand_more),
                         elevation: 16,
-                        style: const TextStyle(color: ThemeProvider.appColor),
+                        style: const TextStyle(fontFamily: 'regular', color: ThemeProvider.appColor),
                         underline: const SizedBox(),
                         onChanged: (String? newValue) {
                           debugPrint(newValue);

@@ -170,14 +170,14 @@ class _UpgradePaymentScreenState extends State<UpgradePaymentScreen> {
           foregroundColor: Colors.white,
           title: Text(
             widget.planName.isEmpty ? 'Complete Payment' : widget.planName,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            style: const TextStyle(fontFamily: 'bold', fontWeight: FontWeight.bold, fontSize: 16),
           ),
           actions: [
             TextButton(
               onPressed: isVerifying ? null : _closeAndVerify,
               child: const Text(
                 'Done',
-                style: TextStyle(color: ThemeProvider.golden),
+                style: TextStyle(fontFamily: 'regular', color: ThemeProvider.golden),
               ),
             ),
           ],
@@ -214,7 +214,7 @@ class _UpgradePaymentScreenState extends State<UpgradePaymentScreen> {
                       SizedBox(width: 12),
                       Text(
                         'Checking payment status...',
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(fontFamily: 'regular', color: Colors.white),
                       ),
                     ],
                   ),

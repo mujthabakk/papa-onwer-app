@@ -41,6 +41,7 @@ class ContactUsController extends GetxController implements GetxService {
           content: Text(
             message,
             style: const TextStyle(
+              fontFamily: 'regular',
               fontSize: 16,
               color: Colors.black54,
             ),

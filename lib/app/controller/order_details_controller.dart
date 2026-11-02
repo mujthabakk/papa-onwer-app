@@ -599,6 +599,7 @@ class OrderDetailsController extends GetxController implements GetxService {
                                 label: Text(
                                   employee['name'],
                                   style: TextStyle(
+                                    fontFamily: 'regular',
                                     color: selectedEmployeeId == employee['id']
                                         ? Colors.white
                                         : Colors.black87,
@@ -695,6 +696,7 @@ class OrderDetailsController extends GetxController implements GetxService {
         const Text(
           'Complete Appointment',
           style: TextStyle(
+            fontFamily: 'bold',
             fontSize: 20,
             fontWeight: FontWeight.bold,
             color: Colors.black87,
@@ -713,6 +715,7 @@ class OrderDetailsController extends GetxController implements GetxService {
     return Text(
       title,
       style: const TextStyle(
+        fontFamily: 'semibold',
         fontSize: 16,
         fontWeight: FontWeight.w600,
         color: Colors.black87,
@@ -763,6 +766,7 @@ class OrderDetailsController extends GetxController implements GetxService {
             Text(
               'Date: $selectedDateStr',
               style: const TextStyle(
+                fontFamily: 'medium',
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
                 color: Colors.black87,
@@ -786,7 +790,7 @@ class OrderDetailsController extends GetxController implements GetxService {
       maxLines: maxLines,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Colors.grey),
+        labelStyle: const TextStyle(fontFamily: 'regular', color: Colors.grey),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
         ),
@@ -819,7 +823,7 @@ class OrderDetailsController extends GetxController implements GetxService {
           ),
           child: const Text(
             'Cancel',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+            style: TextStyle(fontFamily: 'medium', fontSize: 14, fontWeight: FontWeight.w500),
           ),
         ),
         const SizedBox(width: 10),
@@ -862,7 +866,7 @@ class OrderDetailsController extends GetxController implements GetxService {
           ),
           child: const Text(
             'Submit',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+            style: TextStyle(fontFamily: 'semibold', fontSize: 14, fontWeight: FontWeight.w600),
           ),
         ),
       ],
@@ -989,6 +993,7 @@ class OrderDetailsController extends GetxController implements GetxService {
               Text(
                 'Warning!'.tr,
                 style: const TextStyle(
+                  fontFamily: 'bold',
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
@@ -1002,6 +1007,7 @@ class OrderDetailsController extends GetxController implements GetxService {
                 'Appointment date has not reached'.tr,
                 textAlign: TextAlign.center,
                 style: TextStyle(
+                  fontFamily: 'regular',
                   fontSize: 16,
                   color: Colors.grey[700],
                   height: 1.4,
@@ -1027,6 +1033,7 @@ class OrderDetailsController extends GetxController implements GetxService {
                       .tr,
                   maxLines: 3,
                   style: const TextStyle(
+                    fontFamily: 'medium',
                     fontSize: 14,
                     color: ThemeProvider.appColor,
                     fontWeight: FontWeight.w500,
@@ -1060,6 +1067,7 @@ class OrderDetailsController extends GetxController implements GetxService {
                       child: Text(
                         'Done'.tr,
                         style: const TextStyle(
+                          fontFamily: 'semibold',
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.3,
@@ -1135,7 +1143,7 @@ class OrderDetailsController extends GetxController implements GetxService {
           CupertinoActionSheetAction(
             child: Text(
               'Chat'.tr,
-              style: const TextStyle(color: ThemeProvider.appColor),
+              style: const TextStyle(fontFamily: 'regular', color: ThemeProvider.appColor),
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -1149,7 +1157,7 @@ class OrderDetailsController extends GetxController implements GetxService {
           CupertinoActionSheetAction(
             child: Text(
               'Complaints'.tr,
-              style: const TextStyle(color: ThemeProvider.appColor),
+              style: const TextStyle(fontFamily: 'regular', color: ThemeProvider.appColor),
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -1184,7 +1192,7 @@ class OrderDetailsController extends GetxController implements GetxService {
           CupertinoActionSheetAction(
             child: Text(
               'Chat'.tr,
-              style: const TextStyle(color: ThemeProvider.appColor),
+              style: const TextStyle(fontFamily: 'regular', color: ThemeProvider.appColor),
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -1195,7 +1203,7 @@ class OrderDetailsController extends GetxController implements GetxService {
           CupertinoActionSheetAction(
             child: Text(
               'Call'.tr,
-              style: const TextStyle(color: ThemeProvider.appColor),
+              style: const TextStyle(fontFamily: 'regular', color: ThemeProvider.appColor),
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -1205,7 +1213,7 @@ class OrderDetailsController extends GetxController implements GetxService {
           CupertinoActionSheetAction(
             child: Text(
               'Email'.tr,
-              style: const TextStyle(color: ThemeProvider.appColor),
+              style: const TextStyle(fontFamily: 'regular', color: ThemeProvider.appColor),
             ),
             onPressed: () {
               Navigator.pop(context);
@@ -1326,6 +1334,7 @@ class _PremiumBillSelectionDialogState extends State<PremiumBillSelectionDialog>
                               Text(
                                 'View Bills',
                                 style: TextStyle(
+                                  fontFamily: 'semibold',
                                   fontSize: 20,
                                   fontWeight: FontWeight.w600,
                                   color: Colors.white.withOpacity(0.9),
@@ -1467,6 +1476,7 @@ class _PremiumBillSelectionDialogState extends State<PremiumBillSelectionDialog>
                                   Text(
                                     title,
                                     style: TextStyle(
+                                      fontFamily: 'semibold',
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                       color: Colors.white.withOpacity(0.9),
@@ -1476,6 +1486,7 @@ class _PremiumBillSelectionDialogState extends State<PremiumBillSelectionDialog>
                                   Text(
                                     subtitle,
                                     style: TextStyle(
+                                      fontFamily: 'regular',
                                       fontSize: 12,
                                       fontWeight: FontWeight.w400,
                                       color: Colors.white.withOpacity(0.6),
@@ -1511,7 +1522,7 @@ class _PremiumBillSelectionDialogState extends State<PremiumBillSelectionDialog>
             Icon(Icons.error_outline_rounded, color: Colors.white, size: 18),
             const SizedBox(width: 8),
             Expanded(
-                child: Text(message, style: const TextStyle(fontSize: 13))),
+                child: Text(message, style: const TextStyle(fontFamily: 'regular', fontSize: 13))),
           ],
         ),
         backgroundColor: const Color(0xFFEF4444),

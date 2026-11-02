@@ -285,12 +285,14 @@ class AddSlotController extends GetxController implements GetxService {
     Get.defaultDialog(
       title: title,
       titleStyle: TextStyle(
+        fontFamily: 'bold',
         fontSize: 18,
         fontWeight: FontWeight.bold,
         color: Colors.black,
       ),
       middleText: message,
       middleTextStyle: TextStyle(
+        fontFamily: 'regular',
         fontSize: 16,
         color: Colors.grey[700],
       ),
@@ -311,7 +313,7 @@ class AddSlotController extends GetxController implements GetxService {
           ),
           child: const Text(
             'OK',
-            style: TextStyle(fontSize: 16, color: Colors.white),
+            style: TextStyle(fontFamily: 'regular', fontSize: 16, color: Colors.white),
           ),
         ),
       ],

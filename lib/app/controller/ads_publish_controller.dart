@@ -13,6 +13,7 @@ import 'package:ultimate_salon_owner_flutter/app/controller/services_categories_
 import 'package:ultimate_salon_owner_flutter/app/controller/services_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/services_names_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/router.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/app_country.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/toast.dart';
 
@@ -106,10 +107,23 @@ class AdsPublishController extends GetxController implements GetxService {
   bool linkTextField = false;
   AdsPublishController({required this.parser});
 
+  List<Map<String, dynamic>> get durationPlans {
+    if (isSearchPage) {
+      return const [
+        {'title': 'Home Page Ad 1 Week', 'price': 14.99, 'key': '1'},
+        {'title': 'Home Page Ad 2 Weeks', 'price': 24.99, 'key': '2'},
+        {'title': 'Home Page Ad 4 Weeks', 'price': 44.99, 'key': '4'},
+      ];
+    }
+    return const [
+      {'title': 'Search Page Ad 1 Week', 'price': 19.99, 'key': '1'},
+      {'title': 'Search Page Ad 2 Weeks', 'price': 29.99, 'key': '2'},
+      {'title': 'Search Page Ad 4 Weeks', 'price': 49.99, 'key': '4'},
+    ];
+  }
+
   @override
   void onInit() {
-    getOfferingsHome();
-    getOfferingsSearch();
     super.onInit();
     if (Get.arguments[0] == 'edit') {
       action = 'edit';
@@ -163,12 +177,17 @@ class AdsPublishController extends GetxController implements GetxService {
   }
 
   Future<void> onSubmit() async {
-    if (parser.getUID == '' ||
+    if (parser.getUID() == '' ||
         selectedDurationValue == '' ||
         textControllerTitle.text.isEmpty ||
         cover == '' ||
         cover.isEmpty) {
       showToast('All fields are required!');
+      return;
+    }
+    if ((selectedTypeValue == 5 || linkTextField) &&
+        textControllerLink.text.trim().isEmpty) {
+      showToast('Please enter the link URL');
       return;
     }
 
@@ -207,15 +226,25 @@ class AdsPublishController extends GetxController implements GetxService {
       adsDays = 28;
     }
     debugPrint('adDays $adsDays');
+    final isLinkAd = selectedTypeValue == 5 || linkTextField;
+    final isSalon = parser.getType();
+    final adType = isLinkAd ? 5 : (isSalon ? 2 : 1);
+    final uid = int.tryParse(parser.getUID()) ?? 0;
+    final country = AppCountry.headerValue(parser.sharedPreferencesManager);
+    final cityId = await parser.resolveCityId();
     var body = {
-      "uid": parser.getUID(),
+      "uid": uid,
+      "title": textControllerTitle.text.trim(),
       "cover": cover,
       "days": adsDays,
+      if (country.isNotEmpty) "country": country,
+      if (cityId != null) "city_id": cityId,
       "position": selectedPagePositionValue! - 1,
-      "title": textControllerTitle.text,
       "price": adPrice,
-      "link": textControllerLink.text,
-      // "type": selectedTypeValue,
+      "type": adType,
+      "click_action": isLinkAd ? 'link' : 'profile',
+      "value": isLinkAd ? textControllerLink.text.trim() : uid.toString(),
+      "link": isLinkAd ? textControllerLink.text.trim() : '',
     };
 
     debugPrint(body.toString());
@@ -293,6 +322,7 @@ class AdsPublishController extends GetxController implements GetxService {
               Text(
                 'Success!'.tr,
                 style: const TextStyle(
+                  fontFamily: 'bold',
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
@@ -306,6 +336,7 @@ class AdsPublishController extends GetxController implements GetxService {
                 'Your Ad has been successfully submitted!'.tr,
                 textAlign: TextAlign.center,
                 style: TextStyle(
+                  fontFamily: 'regular',
                   fontSize: 16,
                   color: Colors.grey[700],
                   height: 1.4,
@@ -339,6 +370,7 @@ class AdsPublishController extends GetxController implements GetxService {
                       'Your ad will be visible for\n${adsDays.toString()} days.'
                           .tr,
                       style: TextStyle(
+                        fontFamily: 'medium',
                         fontSize: 12,
                         color: ThemeProvider.appColor,
                         fontWeight: FontWeight.w500,
@@ -375,6 +407,7 @@ class AdsPublishController extends GetxController implements GetxService {
                       child: Text(
                         'Done'.tr,
                         style: const TextStyle(
+                          fontFamily: 'semibold',
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
                           letterSpacing: 0.3,
@@ -613,6 +646,7 @@ class AdsPublishController extends GetxController implements GetxService {
               Text(
                 'Fields Required ',
                 style: TextStyle(
+                  fontFamily: 'bold',
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                   color: ThemeProvider.appColor,
@@ -622,7 +656,7 @@ class AdsPublishController extends GetxController implements GetxService {
           ),
           content: Text(
             message,
-            style: const TextStyle(fontSize: 16, color: Colors.black87),
+            style: const TextStyle(fontFamily: 'regular', fontSize: 16, color: Colors.black87),
           ),
           actions: [
             TextButton(
@@ -637,7 +671,7 @@ class AdsPublishController extends GetxController implements GetxService {
               ),
               child: const Text(
                 'OK',
-                style: TextStyle(color: ThemeProvider.whiteColor),
+                style: TextStyle(fontFamily: 'regular', color: ThemeProvider.whiteColor),
               ),
             ),
           ],

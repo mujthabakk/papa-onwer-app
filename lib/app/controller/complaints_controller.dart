@@ -6,7 +6,7 @@ import 'package:ultimate_salon_owner_flutter/app/backend/api/handler.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/complaint_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/complaint_parse.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/order_details_controller.dart';
-import 'package:ultimate_salon_owner_flutter/app/controller/product_order_details_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/controller/product_order_details_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/helper/router.dart';
 
 class ComplaintsController extends GetxController implements GetxService {

@@ -1027,6 +1027,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                 selectedColor: ThemeProvider.appColor.withOpacity(0.2),
                 checkmarkColor: ThemeProvider.appColor,
                 labelStyle: TextStyle(
+                  fontFamily: 'regular',
                   color: isSelected ? ThemeProvider.appColor : Colors.grey[600],
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
                 ),
@@ -1058,6 +1059,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
               selectedColor: value.statusColors[statusIndex]?.withOpacity(0.2),
               checkmarkColor: value.statusColors[statusIndex],
               labelStyle: TextStyle(
+                fontFamily: 'regular',
                 color: isSelected
                     ? value.statusColors[statusIndex]
                     : Colors.grey[600],
@@ -1089,12 +1091,13 @@ class _AppointmentScreenState extends State<AppointmentScreen>
     return RefreshIndicator(
       onRefresh: () async {
         value.getList();
+        await value.getBannerData();
       },
       color: ThemeProvider.appColor,
       child: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-            child: _buildModernBanner(value),
+            child: _buildAdSlider(value.partnerAdList, value),
           ),
 
           // Status Filter Chips
@@ -1111,6 +1114,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                 child: Text(
                   '${filteredAppointments.length} appointment${filteredAppointments.length != 1 ? 's' : ''} found',
                   style: TextStyle(
+                    fontFamily: 'medium',
                     fontSize: 14,
                     color: Colors.grey[600],
                     fontWeight: FontWeight.w500,
@@ -1148,33 +1152,11 @@ class _AppointmentScreenState extends State<AppointmentScreen>
     );
   }
 
-  Widget _buildModernBanner(AppointmentController value) {
-    if (value.bannerList.isEmpty) {
-      return SizedBox(
-        width: double.infinity,
-        height: 180,
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Colors.blue[400]!, Colors.purple[400]!],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: Center(
-            child: Text(
-              'Welcome to Salon Owner'.tr,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
-      );
+  Widget _buildAdSlider(
+      List<dynamic> items, AppointmentController value) {
+    if (items.isEmpty) {
+      return const SizedBox.shrink();
     }
-
     return SizedBox(
       width: double.infinity,
       height: 180,
@@ -1184,21 +1166,21 @@ class _AppointmentScreenState extends State<AppointmentScreen>
           viewportFraction: 1.0,
           padEnds: false,
           disableCenter: true,
-          autoPlay: value.bannerList.length > 1,
+          autoPlay: items.length > 1,
           autoPlayInterval: const Duration(seconds: 6),
           autoPlayAnimationDuration: const Duration(milliseconds: 800),
           enlargeCenterPage: false,
-          enableInfiniteScroll: value.bannerList.length > 1,
+          enableInfiniteScroll: items.length > 1,
           pauseAutoPlayOnTouch: true,
         ),
-        items: value.bannerList.map((banner) {
+        items: items.map((banner) {
           return GestureDetector(
-            onTap: () => value.onBanner(banner.link.toString()),
+            onTap: () => value.onPartnerAdTap(banner),
             child: SizedBox(
               width: double.infinity,
               height: 180,
               child: AppNetImage(
-               path: banner.cover,
+                path: banner.cover,
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: 180,
@@ -1293,6 +1275,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
               Text(
                 '${appointment.userInfo?.firstName ?? ''} ${appointment.userInfo?.lastName ?? ''}',
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -1303,6 +1286,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
               Text(
                 'ID #${appointment.id}',
                 style: TextStyle(
+                  fontFamily: 'medium',
                   fontSize: 12,
                   color: Colors.grey[600],
                   fontWeight: FontWeight.w500,
@@ -1333,6 +1317,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
       child: Text(
         statusText,
         style: TextStyle(
+          fontFamily: 'semibold',
           fontSize: 11,
           fontWeight: FontWeight.w600,
           color: statusColor,
@@ -1365,6 +1350,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                             .trim()
                         : 'At Business'.tr,
                     style: const TextStyle(
+                        fontFamily: 'medium',
                         fontSize: 12, fontWeight: FontWeight.w500),
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -1389,7 +1375,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                 '${appointment.saveDate ?? ''}\n${appointment.slot ?? ''}',
                 textAlign: TextAlign.right,
                 style:
-                    const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+                    const TextStyle(fontFamily: 'medium', fontSize: 11, fontWeight: FontWeight.w500),
                 overflow: TextOverflow.ellipsis,
               ),
             ],
@@ -1427,6 +1413,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                 Text(
                   'Services'.tr + ' (${appointment.items.services.length})',
                   style: const TextStyle(
+                      fontFamily: 'semibold',
                       fontSize: 12, fontWeight: FontWeight.w600),
                 ),
               ],
@@ -1439,7 +1426,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
             if (appointment.items.services.length > 2)
               Text(
                 '+${appointment.items.services.length - 2} ' + 'and more'.tr,
-                style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                style: TextStyle(fontFamily: 'regular', fontSize: 11, color: Colors.grey[600]),
               ),
           ],
 
@@ -1462,6 +1449,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                 Text(
                   'Packages'.tr + ' (${appointment.items.packages.length})',
                   style: const TextStyle(
+                      fontFamily: 'semibold',
                       fontSize: 12, fontWeight: FontWeight.w600),
                 ),
               ],
@@ -1474,7 +1462,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
             if (appointment.items.packages.length > 2)
               Text(
                 '+${appointment.items.packages.length - 2} ' + 'and more'.tr,
-                style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                style: TextStyle(fontFamily: 'regular', fontSize: 11, color: Colors.grey[600]),
               ),
           ],
         ],
@@ -1491,7 +1479,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
           Expanded(
             child: Text(
               service.name?.toString() ?? '',
-              style: const TextStyle(fontSize: 11),
+              style: const TextStyle(fontFamily: 'regular', fontSize: 11),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -1512,7 +1500,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
           Expanded(
             child: Text(
               package.name?.toString() ?? '',
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500),
+              style: const TextStyle(fontFamily: 'medium', fontSize: 11, fontWeight: FontWeight.w500),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -1558,6 +1546,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                 ? '${value.currencySymbol}${originalPrice}'
                 : '${originalPrice}${value.currencySymbol}',
             style: const TextStyle(
+              fontFamily: 'regular',
               fontSize: 9,
               decoration: TextDecoration.lineThrough,
               color: Colors.grey,
@@ -1568,6 +1557,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
               ? '${value.currencySymbol}${discountedPrice}'
               : '${discountedPrice}${value.currencySymbol}',
           style: const TextStyle(
+            fontFamily: 'semibold',
             fontSize: 11,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
@@ -1590,6 +1580,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
           Text(
             'Total Amount'.tr,
             style: const TextStyle(
+              fontFamily: 'semibold',
               fontSize: 14,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
@@ -1600,6 +1591,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
                 ? '${value.currencySymbol}${appointment.grandTotal}'
                 : '${appointment.grandTotal}${value.currencySymbol}',
             style: const TextStyle(
+              fontFamily: 'bold',
               fontSize: 16,
               fontWeight: FontWeight.bold,
               color: Colors.blue,
@@ -1634,6 +1626,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
               message,
               textAlign: TextAlign.center,
               style: const TextStyle(
+                fontFamily: 'semibold',
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Colors.black54,
@@ -1644,6 +1637,7 @@ class _AppointmentScreenState extends State<AppointmentScreen>
               'Your appointments will appear here'.tr,
               textAlign: TextAlign.center,
               style: TextStyle(
+                fontFamily: 'regular',
                 fontSize: 14,
                 color: Colors.grey[600],
               ),

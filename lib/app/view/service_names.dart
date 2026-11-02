@@ -34,6 +34,7 @@ class _ServiceNamesScreenState extends State<ServiceNamesScreen> {
             title: Text(
               'Select Service'.tr,
               style: const TextStyle(
+                fontFamily: 'semibold',
                 color: ThemeProvider.whiteColor,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -146,6 +147,7 @@ class _ServiceNamesScreenState extends State<ServiceNamesScreen> {
             Text(
               'No Services Available'.tr,
               style: const TextStyle(
+                fontFamily: 'bold',
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -158,6 +160,7 @@ class _ServiceNamesScreenState extends State<ServiceNamesScreen> {
                     .tr,
                 textAlign: TextAlign.center,
                 style: TextStyle(
+                  fontFamily: 'regular',
                   fontSize: 14,
                   color: Colors.grey[600],
                 ),
@@ -202,6 +205,7 @@ class _ServiceNamesScreenState extends State<ServiceNamesScreen> {
                 Text(
                   'Select a Service'.tr,
                   style: const TextStyle(
+                    fontFamily: 'bold',
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
                   ),
@@ -216,6 +220,7 @@ class _ServiceNamesScreenState extends State<ServiceNamesScreen> {
                   child: Text(
                     '${filtered.length} ${'Services'.tr}',
                     style: const TextStyle(
+                      fontFamily: 'semibold',
                       color: ThemeProvider.appColor,
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
@@ -235,7 +240,7 @@ class _ServiceNamesScreenState extends State<ServiceNamesScreen> {
                 ? Center(
                     child: Text(
                       'No services found'.tr,
-                      style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                      style: TextStyle(fontFamily: 'regular', color: Colors.grey[600], fontSize: 16),
                     ),
                   )
                 : ListView.builder(
@@ -303,6 +308,7 @@ class _ServiceNamesScreenState extends State<ServiceNamesScreen> {
                     Text(
                       service.name.toString(),
                       style: TextStyle(
+                        fontFamily: 'regular',
                         fontSize: 16,
                         fontWeight:
                             isSelected ? FontWeight.bold : FontWeight.normal,
@@ -365,6 +371,7 @@ class _ServiceNamesScreenState extends State<ServiceNamesScreen> {
                 child: Text(
                   'Cancel'.tr,
                   style: const TextStyle(
+                    fontFamily: 'bold',
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),
@@ -387,6 +394,7 @@ class _ServiceNamesScreenState extends State<ServiceNamesScreen> {
                 child: Text(
                   'Save'.tr,
                   style: const TextStyle(
+                    fontFamily: 'bold',
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),

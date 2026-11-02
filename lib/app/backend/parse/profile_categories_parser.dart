@@ -29,6 +29,18 @@ class ProfileCategoriesParse {
     sharedPreferencesManager.putString('id', id);
   }
 
+  void saveLocation({dynamic cid, dynamic lat, dynamic lng}) {
+    if (cid != null) {
+      sharedPreferencesManager.putString('cid', cid.toString());
+    }
+    if (lat != null) {
+      sharedPreferencesManager.putString('lat', lat.toString());
+    }
+    if (lng != null) {
+      sharedPreferencesManager.putString('lng', lng.toString());
+    }
+  }
+
   Future<Response> uploadImage(XFile data) async {
     return await apiService
         .uploadFiles(AppConstants.uploadImage, [MultipartBody('image', data)]);

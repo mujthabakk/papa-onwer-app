@@ -185,7 +185,7 @@ class ConnectLinksScreen extends StatelessWidget {
           Text(
             'These links appear on your public shop profile for customers.'
                 .tr,
-            style: const TextStyle(color: Colors.white70, fontSize: 13),
+            style: const TextStyle(fontFamily: 'regular', color: Colors.white70, fontSize: 13),
           ),
         ],
       ),
@@ -202,7 +202,7 @@ class ConnectLinksScreen extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(color: Colors.white70, fontSize: 13),
+              style: const TextStyle(fontFamily: 'regular', color: Colors.white70, fontSize: 13),
             ),
           ),
         ],
@@ -262,6 +262,7 @@ class ConnectLinksScreen extends StatelessWidget {
           Text(
             label,
             style: const TextStyle(
+              fontFamily: 'semibold',
               fontSize: 13,
               color: ThemeProvider.greyColor,
               fontWeight: FontWeight.w600,
@@ -307,7 +308,7 @@ class ConnectLinksScreen extends StatelessWidget {
       ),
       subtitle: Text(
         subtitle,
-        style: const TextStyle(fontSize: 12, color: ThemeProvider.greyColor),
+        style: const TextStyle(fontFamily: 'regular', fontSize: 12, color: ThemeProvider.greyColor),
       ),
       value: value,
       activeColor: ThemeProvider.appColor,

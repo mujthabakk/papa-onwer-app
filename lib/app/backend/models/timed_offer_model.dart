@@ -166,23 +166,55 @@ class TimedOfferItemModel {
     TimedOfferLocation? location,
   }) : location = location ?? TimedOfferLocation();
 
-  num get displayPrice => offerPrice != 0 ? offerPrice : amount;
+  num get displayPrice {
+    if (offerPrice > 0) return offerPrice;
+    if (amount > 0) return amount;
+    final base = originalPrice > 0 ? originalPrice : 0;
+    if (base > 0 && discount > 0) {
+      if (type == 2) {
+        final flat = base - discount;
+        return flat > 0 ? flat : 0;
+      }
+      final pct = base - (base * discount / 100);
+      return pct > 0 ? pct : 0;
+    }
+    return base;
+  }
 
   factory TimedOfferItemModel.fromJson(Map<String, dynamic> json) {
+    final original = _toNum(
+      json['original_price'] ?? json['price'] ?? json['amount'],
+    );
+    final offer = _toNum(
+      json['offer_price'] ?? json['off'] ?? json['selling_price'],
+    );
+    final parsedAmount = _toNum(json['amount']);
+    final amount =
+        parsedAmount > 0 ? parsedAmount : (offer > 0 ? offer : original);
+    final type = _discountTypeToInt(json['type'] ?? json['offer_type']);
+    final discount = _toNum(json['discount'] ?? json['discount_value']);
+    var discountText = json['discount_text']?.toString() ?? '';
+    if (discountText.isEmpty && discount > 0) {
+      discountText = type == 2
+          ? 'FLAT ${discount % 1 == 0 ? discount.toInt() : discount}'
+          : '${discount % 1 == 0 ? discount.toInt() : discount}%';
+    }
     return TimedOfferItemModel(
-      id: _toInt(json['id']),
+      id: _toInt(
+        json['id'] ?? json['product_id'] ?? json['service_id'],
+      ),
       name: json['name']?.toString() ?? '',
       image: _mediaUrl(json['image'], json['cover']),
       duration: _toInt(json['duration']),
-      amount: _toNum(json['amount']),
-      offerPrice: _toNum(json['offer_price']),
-      originalPrice: _toNum(json['original_price']),
-      stock: _toInt(json['stock']),
+      amount: amount,
+      offerPrice: offer,
+      originalPrice: original,
+      stock: _toInt(json['stock'] ?? json['quantity'] ?? json['qty']),
       isSoldOut: _toBool(json['is_sold_out']),
       canBuy: _toBool(json['can_buy'], true),
-      type: _discountTypeToInt(json['type'] ?? json['offer_type']),
-      discount: _toNum(json['discount']),
-      discountText: json['discount_text']?.toString() ?? '',
+      type: type,
+      discount: discount,
+      discountText: discountText,
       startDate: _dateOnly(json['start_date'] ?? json['startDate']),
       expire: _dateOnly(
         json['expire'] ?? json['expire_date'] ?? json['end_date'],

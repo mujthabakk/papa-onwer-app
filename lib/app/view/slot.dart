@@ -37,7 +37,7 @@ class _SlotScreenState extends State<SlotScreen> {
                   style: TextButton.styleFrom(
                     foregroundColor: ThemeProvider.blackColor,
                     backgroundColor: ThemeProvider.greenColor,
-                    textStyle: const TextStyle(fontSize: 10),
+                    textStyle: const TextStyle(fontFamily: 'regular', fontSize: 10),
                   ),
                   onPressed: () {
                     value.onAddNew();
@@ -166,6 +166,7 @@ class _SlotScreenState extends State<SlotScreen> {
                                                                   'Cancel'.tr,
                                                                   style:
                                                                       const TextStyle(
+                                                                    fontFamily: 'regular',
                                                                     color: ThemeProvider
                                                                         .whiteColor,
                                                                     fontSize:
@@ -211,6 +212,7 @@ class _SlotScreenState extends State<SlotScreen> {
                                                                   'Delete'.tr,
                                                                   style:
                                                                       const TextStyle(
+                                                                    fontFamily: 'regular',
                                                                     color: ThemeProvider
                                                                         .whiteColor,
                                                                     fontSize:
@@ -338,6 +340,7 @@ class _SlotScreenState extends State<SlotScreen> {
                                                                               .tr,
                                                                           style:
                                                                               const TextStyle(
+                                                                            fontFamily: 'regular',
                                                                             color:
                                                                                 ThemeProvider.whiteColor,
                                                                             fontSize:
@@ -381,6 +384,7 @@ class _SlotScreenState extends State<SlotScreen> {
                                                                               .tr,
                                                                           style:
                                                                               const TextStyle(
+                                                                            fontFamily: 'regular',
                                                                             color:
                                                                                 ThemeProvider.whiteColor,
                                                                             fontSize:

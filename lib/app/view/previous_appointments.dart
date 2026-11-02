@@ -80,6 +80,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
           const SizedBox(width: 12),
           Text('Previous Appointments'.tr,
             style: TextStyle(
+              fontFamily: 'semibold',
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
@@ -132,6 +133,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
               const SizedBox(width: 12),
               Text('Search Customer History'.tr,
                 style: TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -152,10 +154,11 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
                   child: TextField(
                     controller: _searchController,
                     keyboardType: TextInputType.number,
-                    style: const TextStyle(fontSize: 16),
+                    style: const TextStyle(fontFamily: 'regular', fontSize: 16),
                     decoration: InputDecoration(
                       hintText: 'Enter Customer ID'.tr,
                       hintStyle: TextStyle(
+                        fontFamily: 'regular',
                         color: Colors.grey[500],
                         fontSize: 15,
                       ),
@@ -208,6 +211,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
                           SizedBox(width: 8),
                           Text('Search'.tr,
                             style: TextStyle(
+                              fontFamily: 'semibold',
                               color: Colors.white,
                               fontWeight: FontWeight.w600,
                               fontSize: 15,
@@ -263,6 +267,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
           const SizedBox(height: 16),
           Text('Searching appointments...'.tr,
             style: TextStyle(
+              fontFamily: 'medium',
               fontSize: 16,
               color: Colors.black54,
               fontWeight: FontWeight.w500,
@@ -293,6 +298,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
           const SizedBox(height: 24),
           Text('No Appointments Found'.tr,
             style: TextStyle(
+              fontFamily: 'semibold',
               fontSize: 20,
               fontWeight: FontWeight.w600,
               color: Colors.black54,
@@ -301,6 +307,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
           const SizedBox(height: 8),
           Text('Try searching with a different customer ID'.tr,
             style: TextStyle(
+              fontFamily: 'regular',
               fontSize: 14,
               color: Colors.grey[600],
             ),
@@ -421,6 +428,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
                 Text(
                   appointment.name,
                   style: const TextStyle(
+                    fontFamily: 'bold',
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
@@ -428,6 +436,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
                 ),
                 Text('Appointment ID'.tr,
                   style: TextStyle(
+                    fontFamily: 'medium',
                     fontSize: 12,
                     color: Colors.black54,
                     fontWeight: FontWeight.w500,
@@ -437,6 +446,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
                 Text(
                   '#${appointment.id}',
                   style: const TextStyle(
+                    fontFamily: 'bold',
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
@@ -455,6 +465,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
             child: Text(
               statusText,
               style: TextStyle(
+                fontFamily: 'semibold',
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: statusColor,
@@ -558,6 +569,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
                 Text(
                   label,
                   style: TextStyle(
+                    fontFamily: 'medium',
                     fontSize: 12,
                     color: Colors.grey[600],
                     fontWeight: FontWeight.w500,
@@ -567,6 +579,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
                 Text(
                   value,
                   style: TextStyle(
+                    fontFamily: 'regular',
                     fontSize: 14,
                     fontWeight: isBold ? FontWeight.bold : FontWeight.w600,
                     color: Colors.black87,
@@ -598,6 +611,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
               const SizedBox(width: 8),
               Text('Remarks'.tr,
                 style: TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Colors.orange[700],
@@ -609,6 +623,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
           Text(
             remarks,
             style: const TextStyle(
+              fontFamily: 'regular',
               fontSize: 14,
               color: Colors.black87,
               height: 1.4,
@@ -638,6 +653,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
               const SizedBox(width: 8),
               Text('Reminder'.tr,
                 style: TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: Colors.purple[700],
@@ -654,6 +670,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
                 Text(
                   appointment.reminderDate!,
                   style: const TextStyle(
+                    fontFamily: 'semibold',
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
@@ -667,6 +684,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
             Text(
               appointment.reminderDescription!,
               style: const TextStyle(
+                fontFamily: 'regular',
                 fontSize: 13,
                 color: Colors.black87,
                 height: 1.4,
@@ -696,6 +714,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
             const SizedBox(width: 12),
             Text('No services or packages available'.tr,
               style: TextStyle(
+                fontFamily: 'medium',
                 fontSize: 14,
                 color: Colors.black87,
                 fontWeight: FontWeight.w500,
@@ -732,6 +751,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
                 const SizedBox(width: 8),
                 Text('Services & Packages'.tr,
                   style: TextStyle(
+                    fontFamily: 'semibold',
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
@@ -802,6 +822,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
             child: Text(
               name,
               style: const TextStyle(
+                fontFamily: 'medium',
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
                 color: Colors.black87,
@@ -817,6 +838,7 @@ class _PreviousAppointmentsScreenState extends State<PreviousAppointmentsScreen>
             child: Text(
               type,
               style: TextStyle(
+                fontFamily: 'semibold',
                 fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: color,

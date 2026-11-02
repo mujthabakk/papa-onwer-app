@@ -33,6 +33,12 @@ class LoginParser {
     sharedPreferencesManager.putString('cover', cover);
     sharedPreferencesManager.putString('phone', mobile);
     sharedPreferencesManager.putString('type', type);
+    sharedPreferencesManager.putBool(
+        'is_product_user', type.toLowerCase() == 'product');
+  }
+
+  void saveProductUser(bool value) {
+    sharedPreferencesManager.putBool('is_product_user', value);
   }
 
   void saveOtherInfo(String name, String cover, String background,
@@ -42,6 +48,13 @@ class LoginParser {
     sharedPreferencesManager.putString('background', background);
     sharedPreferencesManager.putDouble('rating', rating);
     sharedPreferencesManager.putString('totalRating', totalRating);
+  }
+
+  void saveCityId(dynamic cid) {
+    final raw = cid?.toString().trim() ?? '';
+    if (raw.isEmpty || raw == 'null') return;
+    sharedPreferencesManager.putString('cid', raw);
+    sharedPreferencesManager.putString('city_id', raw);
   }
 
   String smsName() {

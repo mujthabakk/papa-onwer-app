@@ -30,6 +30,7 @@ class _AddPackagesScreenState extends State<AddPackagesScreen> {
               title: Text(
                 value.editType == 0 ? 'Add Package' : 'Update Package',
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   color: ThemeProvider.whiteColor,
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -56,6 +57,7 @@ class _AddPackagesScreenState extends State<AddPackagesScreen> {
                             children: [
                               Text('Package Creation Tips'.tr,
                                 style: TextStyle(
+                                    fontFamily: 'bold',
                                     fontSize: 18, fontWeight: FontWeight.bold),
                               ),
                               const SizedBox(height: 16),
@@ -152,6 +154,7 @@ class _AddPackagesScreenState extends State<AddPackagesScreen> {
                                           Text(
                                             'Add Image'.tr,
                                             style: TextStyle(
+                                              fontFamily: 'regular',
                                               color: Colors.grey[600],
                                               fontSize: 12,
                                             ),
@@ -191,6 +194,7 @@ class _AddPackagesScreenState extends State<AddPackagesScreen> {
                           padding: const EdgeInsets.only(top: 8.0),
                           child: Text('Recommended Size - 512x512'.tr,
                             style: TextStyle(
+                              fontFamily: 'regular',
                               fontSize: 12,
                               color: Colors.grey[600],
                             ),
@@ -291,6 +295,7 @@ class _AddPackagesScreenState extends State<AddPackagesScreen> {
                           child: Text(
                             '${'Final amount (incl. tax ${value.tax}%) -'.tr} ${value.currencySymbol}${value.finalPriceWithTax}',
                             style: TextStyle(
+                              fontFamily: 'medium',
                               fontSize: 14,
                               color: Colors.grey[600],
                               fontWeight: FontWeight.w500,
@@ -339,6 +344,7 @@ class _AddPackagesScreenState extends State<AddPackagesScreen> {
                         children: [
                           Text('Description'.tr,
                             style: TextStyle(
+                              fontFamily: 'medium',
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                               color: Colors.grey[700],
@@ -357,6 +363,7 @@ class _AddPackagesScreenState extends State<AddPackagesScreen> {
                               decoration: InputDecoration(
                                 hintText: 'Describe what\'.trs included in this package...',
                                 hintStyle: TextStyle(
+                                  fontFamily: 'regular',
                                   color: Colors.grey[400],
                                   fontSize: 14,
                                 ),
@@ -405,6 +412,7 @@ class _AddPackagesScreenState extends State<AddPackagesScreen> {
                   child: Text(
                     value.action == 'new' ? 'CREATE PACKAGE' : 'UPDATE PACKAGE',
                     style: const TextStyle(
+                      fontFamily: 'semibold',
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -424,6 +432,7 @@ class _AddPackagesScreenState extends State<AddPackagesScreen> {
     return Text(
       title,
       style: const TextStyle(
+        fontFamily: 'bold',
         fontSize: 18,
         fontWeight: FontWeight.bold,
         color: ThemeProvider.appColor,
@@ -461,11 +470,13 @@ class _AddPackagesScreenState extends State<AddPackagesScreen> {
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: TextStyle(
+            fontFamily: 'regular',
             color: Colors.grey[400],
             fontSize: 14,
           ),
           prefixText: prefixText,
           prefixStyle: TextStyle(
+            fontFamily: 'bold',
             fontSize: 15,
             fontWeight: FontWeight.w700,
             color: labelColor ?? Colors.black87,
@@ -521,6 +532,7 @@ class _AddPackagesScreenState extends State<AddPackagesScreen> {
                   Text(
                     title,
                     style: const TextStyle(
+                      fontFamily: 'medium',
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
@@ -529,6 +541,7 @@ class _AddPackagesScreenState extends State<AddPackagesScreen> {
                   Text(
                     value ?? subtitle,
                     style: TextStyle(
+                      fontFamily: 'regular',
                       fontSize: 13,
                       color: value != null ? Colors.black87 : Colors.grey[500],
                     ),
@@ -579,6 +592,7 @@ class _AddPackagesScreenState extends State<AddPackagesScreen> {
           children: [
             Text('Select Image Source'.tr,
               style: TextStyle(
+                fontFamily: 'bold',
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
@@ -657,7 +671,7 @@ class _AddPackagesScreenState extends State<AddPackagesScreen> {
           const SizedBox(height: 8),
           Text(
             title,
-            style: const TextStyle(fontSize: 14),
+            style: const TextStyle(fontFamily: 'regular', fontSize: 14),
           ),
         ],
       ),
@@ -678,6 +692,7 @@ class _AddPackagesScreenState extends State<AddPackagesScreen> {
           children: [
             Text('Select Service Type'.tr,
               style: TextStyle(
+                fontFamily: 'bold',
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),

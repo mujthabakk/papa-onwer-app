@@ -72,4 +72,28 @@ class SignUpParser {
         await apiService.postPublic(AppConstants.saveMyRequest, body);
     return response;
   }
+
+  Future<Response> getRegisterTypes({String? country}) async {
+    final body = <String, dynamic>{
+      if (country != null && country.isNotEmpty) 'country': country,
+    };
+    const paths = [
+      AppConstants.registerGetTypes,
+      AppConstants.registerGetTypesAlias,
+      AppConstants.authGetUserTypes,
+    ];
+    Response? last;
+    for (final path in paths) {
+      last = await apiService.postPublic(path, body);
+      if (last.statusCode == 200) return last;
+    }
+    for (final path in paths) {
+      final qs = (country != null && country.isNotEmpty)
+          ? '$path?country=$country'
+          : path;
+      last = await apiService.getPublic(qs);
+      if (last.statusCode == 200) return last;
+    }
+    return last ?? Response(statusCode: 404);
+  }
 }

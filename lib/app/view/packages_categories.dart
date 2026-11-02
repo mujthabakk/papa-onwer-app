@@ -45,6 +45,7 @@ class _PackagesCategoriesScreen extends State<PackagesCategoriesScreen> {
           const Text(
             'Select Package Services',
             style: TextStyle(
+              fontFamily: 'semibold',
               color: Colors.white,
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -54,6 +55,7 @@ class _PackagesCategoriesScreen extends State<PackagesCategoriesScreen> {
             Text(
               '$selectedCount selected',
               style: const TextStyle(
+                fontFamily: 'regular',
                 color: Colors.white70,
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
@@ -68,6 +70,7 @@ class _PackagesCategoriesScreen extends State<PackagesCategoriesScreen> {
             child: const Text(
               'Clear All',
               style: TextStyle(
+                fontFamily: 'medium',
                 color: Colors.white,
                 fontWeight: FontWeight.w500,
               ),
@@ -163,6 +166,7 @@ class _PackagesCategoriesScreen extends State<PackagesCategoriesScreen> {
                 const Text(
                   'Available Services',
                   style: TextStyle(
+                    fontFamily: 'semibold',
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
                   ),
@@ -170,6 +174,7 @@ class _PackagesCategoriesScreen extends State<PackagesCategoriesScreen> {
                 Text(
                   '$selectedServices of $totalServices services selected',
                   style: TextStyle(
+                    fontFamily: 'regular',
                     color: Colors.grey[600],
                     fontSize: 14,
                   ),
@@ -187,6 +192,7 @@ class _PackagesCategoriesScreen extends State<PackagesCategoriesScreen> {
               child: Text(
                 '$selectedServices',
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
                   fontSize: 12,
@@ -290,6 +296,7 @@ class _PackagesCategoriesScreen extends State<PackagesCategoriesScreen> {
               child: Text(
                 '${service.discount}% OFF',
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   color: Colors.white,
                   fontSize: 10,
                   fontWeight: FontWeight.w600,
@@ -308,6 +315,7 @@ class _PackagesCategoriesScreen extends State<PackagesCategoriesScreen> {
         Text(
           service.name.toString(),
           style: const TextStyle(
+            fontFamily: 'semibold',
             fontWeight: FontWeight.w600,
             fontSize: 16,
             color: Colors.black87,
@@ -319,6 +327,7 @@ class _PackagesCategoriesScreen extends State<PackagesCategoriesScreen> {
         Text(
           service.webCatesData?.name?.toString() ?? '',
           style: TextStyle(
+            fontFamily: 'regular',
             color: Colors.grey[600],
             fontSize: 14,
           ),
@@ -350,6 +359,7 @@ class _PackagesCategoriesScreen extends State<PackagesCategoriesScreen> {
           Text(
             CurrencyHelper.format(service.price),
             style: const TextStyle(
+              fontFamily: 'regular',
               fontSize: 14,
               color: Colors.grey,
               decoration: TextDecoration.lineThrough,
@@ -360,6 +370,7 @@ class _PackagesCategoriesScreen extends State<PackagesCategoriesScreen> {
         Text(
           CurrencyHelper.format(service.off),
           style: const TextStyle(
+            fontFamily: 'bold',
             fontSize: 16,
             fontWeight: FontWeight.w700,
             color: ThemeProvider.greenColor,
@@ -388,6 +399,7 @@ class _PackagesCategoriesScreen extends State<PackagesCategoriesScreen> {
           Text(
             label,
             style: TextStyle(
+              fontFamily: 'medium',
               color: color,
               fontSize: 12,
               fontWeight: FontWeight.w500,
@@ -473,6 +485,7 @@ class _PackagesCategoriesScreen extends State<PackagesCategoriesScreen> {
           Text(
             'No Services Available',
             style: TextStyle(
+              fontFamily: 'semibold',
               fontSize: 18,
               fontWeight: FontWeight.w600,
               color: Colors.grey[700],
@@ -482,6 +495,7 @@ class _PackagesCategoriesScreen extends State<PackagesCategoriesScreen> {
           Text(
             'There are no services to select at the moment.',
             style: TextStyle(
+              fontFamily: 'regular',
               fontSize: 14,
               color: Colors.grey[600],
             ),
@@ -530,6 +544,7 @@ class _PackagesCategoriesScreen extends State<PackagesCategoriesScreen> {
                       ? 'Add ($selectedCount)'
                       : 'Select Services',
                   style: TextStyle(
+                    fontFamily: 'semibold',
                     color: selectedCount > 0 ? Colors.white : Colors.grey[600],
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
@@ -551,6 +566,7 @@ class _PackagesCategoriesScreen extends State<PackagesCategoriesScreen> {
                 child: const Text(
                   'Cancel',
                   style: TextStyle(
+                    fontFamily: 'semibold',
                     color: ThemeProvider.redColor,
                     fontWeight: FontWeight.w600,
                     fontSize: 16,

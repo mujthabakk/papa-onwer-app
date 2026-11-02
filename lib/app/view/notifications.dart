@@ -32,6 +32,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             title: Text(
               'Notifications'.tr,
               style: const TextStyle(
+                fontFamily: 'bold',
                 color: ThemeProvider.appColor,
                 fontSize: 24,
                 fontWeight: FontWeight.w700,
@@ -85,6 +86,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           Text(
             "No notifications yet".tr,
             style: TextStyle(
+              fontFamily: 'semibold',
               fontSize: 22,
               color: Colors.grey[800],
               fontWeight: FontWeight.w600,
@@ -94,6 +96,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           Text(
             "You're all caught up!".tr,
             style: TextStyle(
+              fontFamily: 'regular',
               fontSize: 16,
               color: Colors.grey[600],
             ),
@@ -163,6 +166,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           Text(
                             _getIdDisplay(notification),
                             style: TextStyle(
+                              fontFamily: 'semibold',
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                               color: Colors.grey[800],
@@ -176,6 +180,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           Text(
                             notification.data.date,
                             style: TextStyle(
+                              fontFamily: 'regular',
                               color: Colors.grey[600],
                               fontSize: 12,
                             ),
@@ -225,6 +230,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             Text(
                               notification.title,
                               style: TextStyle(
+                                fontFamily: 'bold',
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
                                 color: Colors.grey[900],
@@ -236,6 +242,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             Text(
                               notification.data.businessName,
                               style: TextStyle(
+                                fontFamily: 'medium',
                                 fontWeight: FontWeight.w500,
                                 fontSize: 14,
                                 color: ThemeProvider.appColor,
@@ -245,6 +252,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                             Text(
                               notification.message,
                               style: TextStyle(
+                                fontFamily: 'regular',
                                 color: Colors.grey[700],
                                 fontSize: 14,
                               ),
@@ -277,6 +285,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           : Text(
                               CurrencyHelper.format(notification.data.price),
                               style: TextStyle(
+                                fontFamily: 'bold',
                                 color: ThemeProvider.appColor,
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -309,6 +318,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           _getActionButtonText(
                               notification.type, notification.data.status),
                           style: const TextStyle(
+                            fontFamily: 'semibold',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),

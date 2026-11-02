@@ -61,11 +61,15 @@ class OfferServiceModel {
 
   factory OfferServiceModel.fromJson(Map<String, dynamic> json) {
     return OfferServiceModel(
-      id: _toInt(json['id']),
+      id: _toInt(json['id'] ?? json['product_id'] ?? json['service_id']),
       uid: _toInt(json['uid']),
-      serviceId: _toInt(json['service_id']),
+      serviceId: _toInt(
+        json['service_id'] ?? json['product_id'] ?? json['id'],
+      ),
       name: json['name']?.toString() ?? '',
-      price: _toDouble(json['original_price'] ?? json['price']),
+      price: _toDouble(
+        json['original_price'] ?? json['price'] ?? json['amount'],
+      ),
       off: _toDouble(json['offer_price'] ?? json['off']),
       duration: _toDouble(json['duration']),
       discount: _toDouble(json['discount']),

@@ -48,6 +48,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                 title: Text(
                   'Offers'.tr,
                   style: const TextStyle(
+                    fontFamily: 'bold',
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
@@ -119,6 +120,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
               children: [
                 Text('Active Offers'.tr,
                   style: TextStyle(
+                    fontFamily: 'regular',
                     color: Colors.white70,
                     fontSize: 16,
                   ),
@@ -126,6 +128,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                 const SizedBox(height: 8),
                 Text('$activeCoupons'.tr,
                   style: const TextStyle(
+                    fontFamily: 'bold',
                     color: Colors.white,
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
@@ -150,6 +153,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                 const SizedBox(height: 8),
                 Text('$totalCoupons'.tr,
                   style: const TextStyle(
+                    fontFamily: 'medium',
                     color: Colors.white,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -254,6 +258,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                             Text(
                               coupon.name,
                               style: const TextStyle(
+                                fontFamily: 'bold',
                                 fontSize: 22,
                                 fontWeight: FontWeight.w700,
                                 color: Color(0xFF111827),
@@ -264,6 +269,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                             Text(
                               coupon.shortDescription,
                               style: const TextStyle(
+                                fontFamily: 'regular',
                                 color: Color(0xFF6B7280),
                                 fontSize: 15,
                                 height: 1.5,
@@ -314,6 +320,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                             children: [
                               Text('Coupon Code'.tr,
                                 style: TextStyle(
+                                  fontFamily: 'medium',
                                   color: Color(0xFF6B7280),
                                   fontSize: 12,
                                   fontWeight: FontWeight.w500,
@@ -324,6 +331,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                               Text(
                                 coupon.code,
                                 style: const TextStyle(
+                                  fontFamily: 'semibold',
                                   color: Color(0xFF111827),
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
@@ -449,6 +457,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                             child: Text(
                               expiryInfo,
                               style: TextStyle(
+                                fontFamily: 'medium',
                                 color:
                                     _getExpiryTextColor(isExpired, expiryDate),
                                 fontSize: 14,
@@ -471,6 +480,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                             child: Text(
                               'Starts ${coupon.startDate}',
                               style: const TextStyle(
+                                fontFamily: 'medium',
                                 color: Color(0xFF6B7280),
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
@@ -488,6 +498,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                             child: Text(
                               coupon.couponScope,
                               style: const TextStyle(
+                                fontFamily: 'semibold',
                                 color: Color(0xFF4338CA),
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -509,7 +520,13 @@ class _CouponsScreenState extends State<CouponsScreen> {
                         runSpacing: 8,
                         children: [
                           if (coupon.applyAllServices)
-                            _buildServiceChip('All services')
+                            _buildServiceChip(
+                                Get.isRegistered<CouponsController>() &&
+                                        Get.find<CouponsController>()
+                                            .parser
+                                            .isProductUser
+                                    ? 'All products'
+                                    : 'All services')
                           else if (coupon.services.isNotEmpty)
                             ...coupon.services.map(
                                 (service) => _buildServiceChip(service.name))
@@ -526,6 +543,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                     children: [
                       Text('Active'.tr,
                         style: TextStyle(
+                          fontFamily: 'semibold',
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF374151),
                         ),
@@ -562,6 +580,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             textStyle: const TextStyle(
+                              fontFamily: 'semibold',
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                             ),
@@ -586,6 +605,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             textStyle: const TextStyle(
+                              fontFamily: 'semibold',
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                             ),
@@ -633,6 +653,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
           Text(
             statusText,
             style: TextStyle(
+              fontFamily: 'semibold',
               color: statusColor,
               fontWeight: FontWeight.w600,
               fontSize: 12,
@@ -683,6 +704,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
                 child: Text(
                   label,
                   style: TextStyle(
+                    fontFamily: 'medium',
                     color: color.withOpacity(0.8),
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
@@ -696,6 +718,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
           Text(
             value,
             style: TextStyle(
+              fontFamily: 'bold',
               color: color,
               fontSize: 18,
               fontWeight: FontWeight.w700,
@@ -781,6 +804,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
           Text(
             label,
             style: TextStyle(
+              fontFamily: 'semibold',
               color: color,
               fontSize: 12,
               fontWeight: FontWeight.w600,
@@ -814,6 +838,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
           const SizedBox(height: 24),
           Text('No Offers Yet'.tr,
             style: TextStyle(
+              fontFamily: 'bold',
               fontSize: 24,
               fontWeight: FontWeight.bold,
               color: Colors.black87,
@@ -823,6 +848,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
           Text('Create your first offer to start giving discounts to your customers'.tr,
             textAlign: TextAlign.center,
             style: TextStyle(
+              fontFamily: 'regular',
               fontSize: 16,
               color: Colors.grey[600],
               height: 1.4,
@@ -859,6 +885,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
       child: Text(
         label,
         style: const TextStyle(
+          fontFamily: 'semibold',
           fontSize: 12,
           fontWeight: FontWeight.w600,
           color: Color(0xFF374151),
@@ -885,7 +912,7 @@ class _CouponsScreenState extends State<CouponsScreen> {
           ),
           content: Text(
             "Are you sure you want to delete the offer '${coupon.name}'? This action cannot be undone.",
-            style: const TextStyle(fontSize: 16),
+            style: const TextStyle(fontFamily: 'regular', fontSize: 16),
           ),
           actions: <Widget>[
             TextButton(
@@ -1030,6 +1057,7 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
         title: Text(
           widget.coupon == null ? 'Create Offer' : 'Update Offer',
           style: const TextStyle(
+            fontFamily: 'bold',
             fontWeight: FontWeight.bold,
             fontSize: 20,
           ),
@@ -1185,6 +1213,7 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
               child: Text(
                 widget.coupon == null ? 'Create Offer' : 'Update Offer',
                 style: const TextStyle(
+                  fontFamily: 'bold',
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1231,20 +1260,29 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
         children: [
           Text('Apply to services'.tr,
             style: TextStyle(
+              fontFamily: 'bold',
               fontSize: 16,
               fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 4),
-          Text('Required. Choose ALL or select partner services.'.tr,
+          Text(
+            (_controller.parser.isProductUser
+                    ? 'Required. Choose ALL or select partner products.'
+                    : 'Required. Choose ALL or select partner services.')
+                .tr,
             style: TextStyle(
+              fontFamily: 'regular',
               fontSize: 12,
               color: Color(0xFF6B7280),
             ),
           ),
           SwitchListTile(
             contentPadding: EdgeInsets.zero,
-            title: Text('All services'.tr),
+            title: Text((_controller.parser.isProductUser
+                    ? 'All products'
+                    : 'All services')
+                .tr),
             value: applyAllServices,
             activeThumbColor: const Color(0xFF6C5CE7),
             activeTrackColor: const Color(0xFF6C5CE7).withOpacity(0.45),
@@ -1266,8 +1304,12 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
           if (services.isEmpty)
             Padding(
               padding: const EdgeInsets.only(bottom: 8),
-              child: Text('No active services found for this partner.'.tr,
-                style: const TextStyle(color: Colors.red),
+              child: Text(
+                (_controller.parser.isProductUser
+                        ? 'No active products found for this partner.'
+                        : 'No active services found for this partner.')
+                    .tr,
+                style: const TextStyle(fontFamily: 'regular', color: Colors.red),
               ),
             )
           else
@@ -1279,7 +1321,7 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
                 value: selected,
                 title: Text(
                   service.name,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                  style: const TextStyle(fontFamily: 'semibold', fontWeight: FontWeight.w600),
                 ),
                 subtitle: _servicePriceSubtitle(service, selected: selected),
                 controlAffinity: ListTileControlAffinity.leading,
@@ -1306,6 +1348,7 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
 
   Widget _servicePriceSubtitle(OfferServiceModel service,
       {required bool selected}) {
+    final isProduct = _controller.parser.isProductUser;
     final original = CurrencyHelper.format(service.price, decimals: 2);
     final offer = CurrencyHelper.format(service.offerPrice, decimals: 2);
     final mins = service.duration % 1 == 0
@@ -1326,6 +1369,7 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
                 Text(
                   original,
                   style: const TextStyle(
+                    fontFamily: 'regular',
                     fontSize: 12,
                     color: Color(0xFF9CA3AF),
                     decoration: TextDecoration.lineThrough,
@@ -1334,6 +1378,7 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
                 Text(
                   offer,
                   style: const TextStyle(
+                    fontFamily: 'bold',
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: Color(0xFF059669),
@@ -1350,6 +1395,7 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
                     child: Text(
                       '${service.discount % 1 == 0 ? service.discount.toInt() : service.discount}% OFF',
                       style: const TextStyle(
+                        fontFamily: 'bold',
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFFB45309),
@@ -1360,15 +1406,20 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
                 Text(
                   original,
                   style: const TextStyle(
+                    fontFamily: 'semibold',
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF374151),
                   ),
                 ),
-              Text(
-                '• $mins min',
-                style: const TextStyle(fontSize: 12, color: Color(0xFF6B7280)),
-              ),
+              if (!isProduct)
+                Text(
+                  '• $mins min',
+                  style: const TextStyle(
+                      fontFamily: 'regular',
+                      fontSize: 12,
+                      color: Color(0xFF6B7280)),
+                ),
             ],
           ),
         ],
@@ -1501,7 +1552,9 @@ class _CouponFormScreenState extends State<CouponFormScreen> {
     if (_formKey.currentState!.validate()) {
       if (!applyAllServices && selectedServiceIds.isEmpty) {
         Get.snackbar(
-          'Services required',
+          _controller.parser.isProductUser
+              ? 'Products required'
+              : 'Services required',
           'Select ALL or at least one partner service',
           backgroundColor: Colors.red,
           colorText: Colors.white,

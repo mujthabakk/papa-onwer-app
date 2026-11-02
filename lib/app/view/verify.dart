@@ -60,6 +60,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                                   Text(
                                     'Forgot Password ?'.tr,
                                     style: const TextStyle(
+                                        fontFamily: 'regular',
                                         color: ThemeProvider.blackColor,
                                         fontSize: 17),
                                   ),
@@ -77,6 +78,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                                     fillColor: ThemeProvider.whiteColor,
                                     hintText: 'Email ID'.tr,
                                     hintStyle: const TextStyle(
+                                        fontFamily: 'regular',
                                         color: ThemeProvider.greyColor,
                                         fontSize: 12),
                                     contentPadding: const EdgeInsets.only(
@@ -114,6 +116,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                                             Text(
                                               'Send OTP'.tr,
                                               style: const TextStyle(
+                                                  fontFamily: 'regular',
                                                   color:
                                                       ThemeProvider.whiteColor,
                                                   fontSize: 17),
@@ -149,6 +152,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                                   Text(
                                     'Create Password'.tr,
                                     style: const TextStyle(
+                                        fontFamily: 'regular',
                                         color: ThemeProvider.blackColor,
                                         fontSize: 17),
                                   ),
@@ -171,6 +175,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                                     fillColor: ThemeProvider.whiteColor,
                                     labelText: 'New Password'.tr,
                                     hintStyle: const TextStyle(
+                                        fontFamily: 'regular',
                                         color: ThemeProvider.greyColor,
                                         fontSize: 12),
                                     contentPadding: const EdgeInsets.only(
@@ -216,6 +221,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                                     fillColor: ThemeProvider.whiteColor,
                                     labelText: 'Confirm Password'.tr,
                                     hintStyle: const TextStyle(
+                                        fontFamily: 'regular',
                                         color: ThemeProvider.greyColor,
                                         fontSize: 12),
                                     contentPadding: const EdgeInsets.only(
@@ -264,6 +270,7 @@ class _VerifyScreenState extends State<VerifyScreen> {
                                             Text(
                                               'Update Password'.tr,
                                               style: const TextStyle(
+                                                  fontFamily: 'regular',
                                                   color:
                                                       ThemeProvider.whiteColor,
                                                   fontSize: 17),

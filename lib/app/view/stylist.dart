@@ -38,7 +38,7 @@ class _StylistScreenState extends State<StylistScreen> {
                   style: TextButton.styleFrom(
                     foregroundColor: ThemeProvider.blackColor,
                     backgroundColor: ThemeProvider.greenColor,
-                    textStyle: const TextStyle(fontSize: 10),
+                    textStyle: const TextStyle(fontFamily: 'regular', fontSize: 10),
                   ),
                   onPressed: () {
                     value.onAddStylist();
@@ -212,6 +212,7 @@ class _StylistScreenState extends State<StylistScreen> {
                                                                               .tr,
                                                                           style:
                                                                               const TextStyle(
+                                                                            fontFamily: 'regular',
                                                                             color:
                                                                                 ThemeProvider.whiteColor,
                                                                             fontSize:
@@ -254,6 +255,7 @@ class _StylistScreenState extends State<StylistScreen> {
                                                                               .tr,
                                                                           style:
                                                                               const TextStyle(
+                                                                            fontFamily: 'regular',
                                                                             color:
                                                                                 ThemeProvider.whiteColor,
                                                                             fontSize:

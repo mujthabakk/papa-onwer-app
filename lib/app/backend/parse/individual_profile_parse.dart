@@ -32,6 +32,18 @@ class IndividualProfileParser {
     sharedPreferencesManager.putString('id', id);
   }
 
+  void saveLocation({dynamic cid, dynamic lat, dynamic lng}) {
+    if (cid != null) {
+      sharedPreferencesManager.putString('cid', cid.toString());
+    }
+    if (lat != null) {
+      sharedPreferencesManager.putString('lat', lat.toString());
+    }
+    if (lng != null) {
+      sharedPreferencesManager.putString('lng', lng.toString());
+    }
+  }
+
   Future<Response> updateIndividual(var body) async {
     var response = await apiService.postPrivate(AppConstants.updateIndividual,
         body, sharedPreferencesManager.getString('token') ?? '');

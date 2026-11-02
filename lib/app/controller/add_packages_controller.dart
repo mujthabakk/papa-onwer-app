@@ -129,6 +129,7 @@ class AddPackagesController extends GetxController implements GetxService {
               Text(
                 'Fields Required',
                 style: TextStyle(
+                  fontFamily: 'bold',
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                   color: ThemeProvider.appColor,
@@ -138,7 +139,7 @@ class AddPackagesController extends GetxController implements GetxService {
           ),
           content: Text(
             message,
-            style: const TextStyle(fontSize: 16, color: Colors.black87),
+            style: const TextStyle(fontFamily: 'regular', fontSize: 16, color: Colors.black87),
           ),
           actions: [
             TextButton(
@@ -153,7 +154,7 @@ class AddPackagesController extends GetxController implements GetxService {
               ),
               child: const Text(
                 'OK',
-                style: TextStyle(color: ThemeProvider.whiteColor),
+                style: TextStyle(fontFamily: 'regular', color: ThemeProvider.whiteColor),
               ),
             ),
           ],
@@ -271,6 +272,7 @@ class AddPackagesController extends GetxController implements GetxService {
               Text(
                 'Success',
                 style: TextStyle(
+                  fontFamily: 'bold',
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                   color: ThemeProvider.appColor,
@@ -280,7 +282,7 @@ class AddPackagesController extends GetxController implements GetxService {
           ),
           content: const Text(
             'Package saved successfully!',
-            style: TextStyle(fontSize: 16, color: Colors.black87),
+            style: TextStyle(fontFamily: 'regular', fontSize: 16, color: Colors.black87),
           ),
           actions: [
             TextButton(
@@ -296,7 +298,7 @@ class AddPackagesController extends GetxController implements GetxService {
               ),
               child: const Text(
                 'OK',
-                style: TextStyle(color: ThemeProvider.whiteColor),
+                style: TextStyle(fontFamily: 'regular', color: ThemeProvider.whiteColor),
               ),
             ),
           ],

@@ -844,6 +844,7 @@ import 'package:ultimate_salon_owner_flutter/app/controller/premium_controller.d
 import 'package:ultimate_salon_owner_flutter/app/helper/router.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/constants.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/toast.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../backend/models/banner_model.dart';
@@ -896,6 +897,8 @@ class AppointmentController extends GetxController
 
   List<BannerModel> _bannerList = <BannerModel>[];
   List<BannerModel> get bannerList => _bannerList;
+  List<BannerModel> _partnerAdList = <BannerModel>[];
+  List<BannerModel> get partnerAdList => _partnerAdList;
 
   AppointmentController({required this.parser});
   // Play Store / App Store (Adapty) billing disabled — use API payment WebView.
@@ -1254,13 +1257,14 @@ class AppointmentController extends GetxController
                 const SizedBox(width: 10),
                 Text(title,
                     style: const TextStyle(
+                        fontFamily: 'bold',
                         fontSize: 16.5,
                         color: Colors.black,
                         fontWeight: FontWeight.bold)),
                 const SizedBox(height: 18),
                 Text(
                   message,
-                  style: const TextStyle(fontSize: 16, color: Colors.black),
+                  style: const TextStyle(fontFamily: 'regular', fontSize: 16, color: Colors.black),
                 ),
               ],
             ),
@@ -1270,6 +1274,7 @@ class AppointmentController extends GetxController
               child: const Text(
                 'OK',
                 style: TextStyle(
+                  fontFamily: 'bold',
                   color: Colors.blue,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1284,10 +1289,64 @@ class AppointmentController extends GetxController
     );
   }
 
-  void onBanner(String value) {
-    debugPrint(value);
-    debugPrint('external links');
-    launchInBrowser(value);
+  void onBanner(dynamic value) {
+    if (value is BannerModel) {
+      onPartnerAdTap(value);
+      return;
+    }
+    launchInBrowser(value.toString());
+  }
+
+  Future<void> onPartnerAdTap(BannerModel ad) async {
+    try {
+      if (ad.isLinkAd) {
+        final url = ad.openUrl;
+        if (url.isEmpty || url.toLowerCase() == 'null') return;
+        await launchInBrowser(url);
+        return;
+      }
+      final id = int.tryParse((ad.value ?? '').trim());
+      if (id == null || id <= 0) {
+        showToast('Profile not found');
+        return;
+      }
+      if (ad.isSalonProfile) {
+        await _openAdProfile(
+          id: id,
+          response: await parser.salonDetails(id),
+          ownRoute: AppRouter.getProfileRoute(),
+        );
+        return;
+      }
+      if (ad.isFreelancerProfile) {
+        await _openAdProfile(
+          id: id,
+          response: await parser.individualDetails(id),
+          ownRoute: AppRouter.getIndividualProfileRoute(),
+        );
+      }
+    } catch (e) {
+      showToast('Profile not found');
+    }
+  }
+
+  Future<void> _openAdProfile({
+    required int id,
+    required Response response,
+    required String ownRoute,
+  }) async {
+    if (response.statusCode == 404 || response.body['success'] == false) {
+      showToast('Profile not found');
+      return;
+    }
+    if (response.statusCode != 200) {
+      showToast('Profile not found');
+      return;
+    }
+    final ownId = int.tryParse(parser.getUID()) ?? 0;
+    if (ownId == id) {
+      Get.toNamed(ownRoute);
+    }
   }
 
   Future<void> getBannerData() async {
@@ -1295,20 +1354,24 @@ class AppointmentController extends GetxController
 
     if (response.statusCode == 200) {
       Map<String, dynamic> myMap = Map<String, dynamic>.from(response.body);
-      var bannerData = myMap['data'];
       _bannerList = [];
-
-      bannerData.forEach((data) {
-        BannerModel banner = BannerModel.fromJson(data);
-        _bannerList.add(banner);
-      });
-      bannerList.removeWhere((element) => element.status == 0);
-      debugPrint(bannerList.length.toString());
+      _partnerAdList =
+          _parseAdRows(myMap['partner_ads'] ?? myMap['data']);
       update();
     } else {
       ApiChecker.checkApi(response);
     }
     update();
+  }
+
+  List<BannerModel> _parseAdRows(dynamic raw) {
+    if (raw is! List) return <BannerModel>[];
+    return raw
+        .whereType<Map>()
+        .map((item) =>
+            BannerModel.fromJson(Map<String, dynamic>.from(item)))
+        .where((item) => item.status != 0)
+        .toList();
   }
 
   Future<void> getSalonAppointmentById() async {

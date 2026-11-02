@@ -16,7 +16,7 @@ import 'package:ultimate_salon_owner_flutter/app/backend/binding/notification_bi
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/packages_specialist_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/premium_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/previous_appointments_binding.dart';
-import 'package:ultimate_salon_owner_flutter/app/backend/binding/product_order_details_binding.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/binding/product_order_details_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/register_categories_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/salon_categories_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/add_packages_binding.dart';
@@ -26,16 +26,17 @@ import 'package:ultimate_salon_owner_flutter/app/backend/binding/appointment_bin
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/calendar_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/chat_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/contact_us_binding.dart';
-import 'package:ultimate_salon_owner_flutter/app/backend/binding/create_products_binding.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/binding/create_products_binding.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/binding/product_detail_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/profile_categories_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/gallary_binding.dart';
-import 'package:ultimate_salon_owner_flutter/app/backend/binding/history_binding.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/binding/history_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/inbox_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/languages_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/login_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/order_details_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/packages_binding.dart';
-import 'package:ultimate_salon_owner_flutter/app/backend/binding/products_binding.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/binding/products_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/profile_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/review_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/packages_categories_binding.dart';
@@ -45,8 +46,9 @@ import 'package:ultimate_salon_owner_flutter/app/backend/binding/services_names_
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/slot_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/splash_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/stylist_categories_binding.dart';
-import 'package:ultimate_salon_owner_flutter/app/backend/binding/shop_categories_binding.dart';
-import 'package:ultimate_salon_owner_flutter/app/backend/binding/shop_subcategories_binding.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/binding/shop_categories_binding.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/binding/shop_subcategories_binding.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/binding/product_signup_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/signup_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/stylist_binding.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/binding/stylist_services_binding.dart';
@@ -75,7 +77,7 @@ import 'package:ultimate_salon_owner_flutter/app/view/notifications.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/packages_specialist.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/premium.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/previous_appointments.dart';
-import 'package:ultimate_salon_owner_flutter/app/view/product_order_details.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/view/product_order_details.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/register_categories.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/salon_categories.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/add_packages.dart';
@@ -85,16 +87,17 @@ import 'package:ultimate_salon_owner_flutter/app/view/appointment.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/calendar.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/chat.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/contact_us.dart';
-import 'package:ultimate_salon_owner_flutter/app/view/create_product.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/view/create_product.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/view/product_detail.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/profile_business.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/gallary.dart';
-import 'package:ultimate_salon_owner_flutter/app/view/product_order_listing.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/view/product_order_listing.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/inbox.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/languages.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/login.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/order_details.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/packages.dart';
-import 'package:ultimate_salon_owner_flutter/app/view/products.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/view/products.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/profile_menu.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/review.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/packages_categories.dart';
@@ -104,12 +107,13 @@ import 'package:ultimate_salon_owner_flutter/app/view/services.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/slot.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/splash.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/stylist_categories.dart';
-import 'package:ultimate_salon_owner_flutter/app/view/shop_categories.dart';
-import 'package:ultimate_salon_owner_flutter/app/view/shop_subcategories.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/view/shop_categories.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/view/shop_subcategories.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/signup.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/stylist.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/stylist_services.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/tabs.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/view/product_signup.dart';
 import 'package:ultimate_salon_owner_flutter/app/view/verify.dart';
 
 import '../backend/binding/coupons_binding.dart';
@@ -125,6 +129,7 @@ class AppRouter {
   static const String initial = '/';
   static const String verifyRoutes = '/verify';
   static const String signUpRoutes = '/signup';
+  static const String productSignUpRoutes = '/product_signup';
   static const String tabRoutes = '/tabs';
   static const String appointmentRoutes = '/appointment';
   static const String calendarRoutes = '/calendar';
@@ -164,6 +169,7 @@ class AppRouter {
   static const String complaintRoutes = '/complaint';
 
   static const String createProductsRoutes = '/create_products';
+  static const String productDetailRoutes = '/product_detail';
   static const String shopCategoriesRoutes = '/shop_categories';
   static const String shopSubCategoriesRoutes = '/shop_subcategories';
   static const String salonCategoriesRoutes = '/salon_categories';
@@ -198,6 +204,7 @@ class AppRouter {
   static String getNotifications() => notifications;
 
   static String getSignUpRoute() => signUpRoutes;
+  static String getProductSignUpRoute() => productSignUpRoutes;
   static String getTabRoute() => tabRoutes;
   static String getAppointmentRoute() => appointmentRoutes;
   static String getCalendarRoute() => calendarRoutes;
@@ -233,6 +240,7 @@ class AppRouter {
   static String getComplaintRoute() => complaintRoutes;
 
   static String getCreateProductsRoute() => createProductsRoutes;
+  static String getProductDetailRoute() => productDetailRoutes;
   static String getShopCategoriesRoute() => shopCategoriesRoutes;
   static String getShopSubCategoriesRoute() => shopSubCategoriesRoutes;
   static String getSalonCategoriesRoute() => salonCategoriesRoutes;
@@ -274,6 +282,10 @@ class AppRouter {
         name: signUpRoutes,
         page: () => const SignUpScreen(),
         binding: SignUpBinding()),
+    GetPage(
+        name: productSignUpRoutes,
+        page: () => const ProductSignupScreen(),
+        binding: ProductSignupBinding()),
     GetPage(
         name: tabRoutes, page: () => const TabScreen(), binding: TabsBinding()),
     GetPage(
@@ -417,6 +429,10 @@ class AppRouter {
         name: createProductsRoutes,
         page: () => const CreateProductsScreen(),
         binding: CretaeProductsBinding()),
+    GetPage(
+        name: productDetailRoutes,
+        page: () => const ProductDetailScreen(),
+        binding: ProductDetailBinding()),
     GetPage(
         name: shopCategoriesRoutes,
         page: () => const ShopCategoriesScreen(),

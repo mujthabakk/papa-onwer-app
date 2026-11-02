@@ -120,6 +120,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                                                       TextOverflow
                                                                           .ellipsis,
                                                                   style: const TextStyle(
+                                                                      fontFamily: 'regular',
                                                                       fontSize:
                                                                           15),
                                                                 ),
@@ -131,6 +132,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                                                     TextOverflow
                                                                         .ellipsis,
                                                                 style: const TextStyle(
+                                                                    fontFamily: 'regular',
                                                                     color: ThemeProvider
                                                                         .greyColor,
                                                                     fontSize:
@@ -198,6 +200,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                                                 item.notes.toString(),
                                                 textAlign: TextAlign.start,
                                                 style: const TextStyle(
+                                                    fontFamily: 'regular',
                                                     fontSize: 12),
                                               ),
                                             ),

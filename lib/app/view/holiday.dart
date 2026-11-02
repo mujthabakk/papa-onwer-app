@@ -112,6 +112,7 @@ class _HolidayScreenState extends State<HolidayScreen> {
                         width: double.infinity,
                         child: Text('๏   Holidays are marked with red color\n\n๏   Click on a date to mark as holiday'.tr,
                           style: TextStyle(
+                            fontFamily: 'bold',
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),

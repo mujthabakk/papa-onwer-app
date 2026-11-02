@@ -155,12 +155,72 @@ class TimedOffersController extends GetxController implements GetxService {
         }
       }
       await _loadPartnerOfferList(campaignId);
+      if (partnerServices.isEmpty) {
+        await fetchPartnerServices();
+      }
+      _enrichItemsFromCatalog();
     } catch (_) {
       campaignItems.clear();
     } finally {
       loadingItems.value = false;
       update();
     }
+  }
+
+  /// Fill missing price/image from partner products/services catalog.
+  void _enrichItemsFromCatalog() {
+    if (campaignItems.isEmpty || partnerServices.isEmpty) return;
+    campaignItems.value = campaignItems.map((item) {
+      OfferServiceModel? match;
+      for (final service in partnerServices) {
+        if (service.id == item.id ||
+            service.serviceId == item.id ||
+            (item.name.isNotEmpty &&
+                service.name.toLowerCase() == item.name.toLowerCase())) {
+          match = service;
+          break;
+        }
+      }
+      if (match == null) return item;
+      final original = item.originalPrice > 0
+          ? item.originalPrice
+          : match.price;
+      final offer = item.offerPrice > 0
+          ? item.offerPrice
+          : (match.off > 0 ? match.off : item.offerPrice);
+      final amount = item.amount > 0 ? item.amount : offer;
+      final discount =
+          item.discount > 0 ? item.discount : match.discount;
+      final type = item.discount > 0 || item.offerPrice > 0
+          ? item.type
+          : (match.offerType == 0 ? item.type : match.offerType);
+      var discountText = item.discountText;
+      if (discountText.isEmpty && match.discountText.isNotEmpty) {
+        discountText = match.discountText;
+      }
+      return TimedOfferItemModel(
+        id: item.id,
+        name: item.name.isNotEmpty ? item.name : match.name,
+        image: item.image.isNotEmpty ? item.image : match.cover,
+        duration: item.duration > 0
+            ? item.duration
+            : match.duration.round(),
+        amount: amount,
+        offerPrice: offer,
+        originalPrice: original,
+        stock: item.stock,
+        isSoldOut: item.isSoldOut,
+        canBuy: item.canBuy,
+        type: type,
+        discount: discount,
+        discountText: discountText,
+        startDate: item.startDate.isNotEmpty
+            ? item.startDate
+            : match.startDate,
+        expire: item.expire.isNotEmpty ? item.expire : match.expire,
+        location: item.location,
+      );
+    }).toList();
   }
 
   Future<void> _loadPartnerOfferList(int campaignId) async {

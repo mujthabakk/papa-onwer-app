@@ -190,6 +190,7 @@ class _ProfileCategoriesState extends State<ProfileCategoriesScreen> {
                                       const SizedBox(height: 12),
                                       Text('Business Profile'.tr,
                                         style: TextStyle(
+                                          fontFamily: 'bold',
                                           color: Colors.white,
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold,
@@ -424,6 +425,7 @@ class _ProfileCategoriesState extends State<ProfileCategoriesScreen> {
                                     children: [
                                       Text('Mark Holidays'.tr,
                                         style: TextStyle(
+                                          fontFamily: 'semibold',
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
                                           color: Colors.black87,
@@ -458,6 +460,7 @@ class _ProfileCategoriesState extends State<ProfileCategoriesScreen> {
                                       Text(
                                         'Opening Hours'.tr,
                                         style: const TextStyle(
+                                          fontFamily: 'semibold',
                                           fontSize: 16,
                                           fontWeight: FontWeight.w600,
                                           color: Colors.black87,
@@ -518,6 +521,7 @@ class _ProfileCategoriesState extends State<ProfileCategoriesScreen> {
                                                     .timesList[index]
                                                     .day as int),
                                                 style: const TextStyle(
+                                                  fontFamily: 'medium',
                                                   color: ThemeProvider.appColor,
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w500,
@@ -529,6 +533,7 @@ class _ProfileCategoriesState extends State<ProfileCategoriesScreen> {
                                               child: Text(
                                                 '${value.timesList[index].displayRange}',
                                                 style: const TextStyle(
+                                                  fontFamily: 'regular',
                                                   color: Colors.black87,
                                                   fontSize: 14,
                                                 ),
@@ -566,6 +571,7 @@ class _ProfileCategoriesState extends State<ProfileCategoriesScreen> {
                                               child: Text(
                                                 'Edit'.tr,
                                                 style: const TextStyle(
+                                                  fontFamily: 'semibold',
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w600,
                                                 ),
@@ -606,6 +612,7 @@ class _ProfileCategoriesState extends State<ProfileCategoriesScreen> {
                     Text(
                       'SUBMIT'.tr,
                       style: const TextStyle(
+                        fontFamily: 'bold',
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -657,6 +664,7 @@ class _ProfileCategoriesState extends State<ProfileCategoriesScreen> {
                 Text(
                   title,
                   style: const TextStyle(
+                    fontFamily: 'semibold',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
@@ -689,6 +697,7 @@ class _ProfileCategoriesState extends State<ProfileCategoriesScreen> {
         Text(
           label,
           style: const TextStyle(
+            fontFamily: 'semibold',
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
@@ -703,6 +712,7 @@ class _ProfileCategoriesState extends State<ProfileCategoriesScreen> {
             fillColor: Colors.grey.shade50,
             hintText: hint,
             hintStyle: TextStyle(
+              fontFamily: 'regular',
               color: Colors.grey.shade500,
               fontSize: 14,
             ),
@@ -740,6 +750,7 @@ class _ProfileCategoriesState extends State<ProfileCategoriesScreen> {
         Text(
           label,
           style: const TextStyle(
+            fontFamily: 'semibold',
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
@@ -757,6 +768,7 @@ class _ProfileCategoriesState extends State<ProfileCategoriesScreen> {
             fillColor: Colors.grey.shade50,
             hintText: hint,
             hintStyle: TextStyle(
+              fontFamily: 'regular',
               color: Colors.grey.shade500,
               fontSize: 14,
             ),
@@ -794,6 +806,7 @@ class _ProfileCategoriesState extends State<ProfileCategoriesScreen> {
         Text(
           label,
           style: const TextStyle(
+            fontFamily: 'semibold',
             fontSize: 14,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
@@ -818,6 +831,7 @@ class _ProfileCategoriesState extends State<ProfileCategoriesScreen> {
                   child: Text(
                     value,
                     style: TextStyle(
+                      fontFamily: 'regular',
                       fontSize: 14,
                       color: value.contains('Select') || value.contains('No ')
                           ? Colors.grey.shade500
@@ -857,6 +871,7 @@ class _ProfileCategoriesState extends State<ProfileCategoriesScreen> {
           Text(
             title,
             style: const TextStyle(
+              fontFamily: 'medium',
               fontSize: 14,
               fontWeight: FontWeight.w500,
               color: Colors.black87,

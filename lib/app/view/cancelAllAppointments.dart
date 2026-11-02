@@ -181,6 +181,7 @@ class _CancelAllAppointmentScreenState
                     padding: const EdgeInsets.only(left: 15),
                     child: Text('Cancellation History'.tr,
                       style: const TextStyle(
+                        fontFamily: 'bold',
                         color: Colors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -208,7 +209,7 @@ class _CancelAllAppointmentScreenState
                     padding: const EdgeInsets.all(20),
                     alignment: Alignment.center,
                     child: Text('No cancellation history'.tr,
-                      style: TextStyle(color: Colors.white70),
+                      style: TextStyle(fontFamily: 'regular', color: Colors.white70),
                     ),
                   )
                 : ListView.builder(
@@ -239,6 +240,7 @@ class _CancelAllAppointmentScreenState
                                   Text(
                                     'Date: ${record.date.toShortString()}',
                                     style: const TextStyle(
+                                      fontFamily: 'bold',
                                       color: ThemeProvider.golden,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
@@ -257,6 +259,7 @@ class _CancelAllAppointmentScreenState
                                     child: Text(
                                       record.cancelledAt.toShortString(),
                                       style: TextStyle(
+                                        fontFamily: 'regular',
                                         color: Colors.white.withOpacity(0.7),
                                         fontSize: 12,
                                       ),
@@ -268,6 +271,7 @@ class _CancelAllAppointmentScreenState
                               Text(
                                 'Reason: ${record.reason}',
                                 style: const TextStyle(
+                                  fontFamily: 'regular',
                                   color: Colors.white,
                                   fontSize: 14,
                                 ),
@@ -322,6 +326,7 @@ class _CancelAllAppointmentScreenState
             child: Center(
               child: Text('Tap on a date to cancel all appointments'.tr,
                 style: const TextStyle(
+                  fontFamily: 'medium',
                   fontSize: 14,
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
@@ -343,14 +348,14 @@ class _CancelAllAppointmentScreenState
           backgroundColor: Colors.black,
           title: Text(
             'Cancel Appointments on ${selectedDate.toLocal().toShortString()}',
-            style: const TextStyle(color: ThemeProvider.golden),
+            style: const TextStyle(fontFamily: 'regular', color: ThemeProvider.golden),
           ),
           content: TextField(
             controller: _reasonController,
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(fontFamily: 'regular', color: Colors.white),
             decoration: InputDecoration(
               hintText: 'Enter cancel reason'.tr,
-              hintStyle: TextStyle(color: Colors.white.withOpacity(0.5)),
+              hintStyle: TextStyle(fontFamily: 'regular', color: Colors.white.withOpacity(0.5)),
               enabledBorder: OutlineInputBorder(
                 borderSide:
                     BorderSide(color: ThemeProvider.golden.withOpacity(0.5)),

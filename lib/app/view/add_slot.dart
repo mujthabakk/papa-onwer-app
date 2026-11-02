@@ -63,6 +63,7 @@ class _AddSlotScreenState extends State<AddSlotScreen> {
                                 icon: const Icon(Icons.expand_more),
                                 elevation: 16,
                                 style: const TextStyle(
+                                    fontFamily: 'regular',
                                     color: ThemeProvider.appColor),
                                 underline: const SizedBox(),
                                 onChanged: (String? newValue) {
@@ -152,7 +153,7 @@ class _AddSlotScreenState extends State<AddSlotScreen> {
                               decoration: InputDecoration(
                                 hintText: "Available Count".tr,
                                 hintStyle:
-                                    TextStyle(fontSize: 14), // Add hint text
+                                    TextStyle(fontFamily: 'regular', fontSize: 14), // Add hint text
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(
                                       100), // Rounded edges
@@ -266,6 +267,7 @@ class _AddSlotScreenState extends State<AddSlotScreen> {
                                                                 'Cancel'.tr,
                                                                 style:
                                                                     const TextStyle(
+                                                                  fontFamily: 'regular',
                                                                   color: ThemeProvider
                                                                       .whiteColor,
                                                                   fontSize: 16,
@@ -310,6 +312,7 @@ class _AddSlotScreenState extends State<AddSlotScreen> {
                                                                 'Delete'.tr,
                                                                 style:
                                                                     const TextStyle(
+                                                                  fontFamily: 'regular',
                                                                   color: ThemeProvider
                                                                       .whiteColor,
                                                                   fontSize: 16,

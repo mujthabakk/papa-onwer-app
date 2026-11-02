@@ -46,8 +46,9 @@ class VerifyController extends GetxController implements GetxService {
     if (response.statusCode == 200) {
       isLogin.value = !isLogin.value;
       Map<String, dynamic> myMap = Map<String, dynamic>.from(response.body);
-      if (myMap['data'] != '' && myMap['data'] == true) {
-        smsId = myMap['otp_id'];
+      final otpId = int.tryParse(myMap['otp_id']?.toString() ?? '');
+      if ((myMap['data'] != '' && myMap['data'] == true) || otpId != null) {
+        smsId = otpId ?? smsId;
         FocusManager.instance.primaryFocus?.unfocus();
         onEmailModal();
       } else {
@@ -198,9 +199,11 @@ class VerifyController extends GetxController implements GetxService {
     if (response.statusCode == 200) {
       isLogin.value = !isLogin.value;
       Map<String, dynamic> myMap = Map<String, dynamic>.from(response.body);
-      if (myMap['data'] != '' && myMap['success'] == true) {
+      final temp = myMap['temp']?.toString() ?? myMap['token']?.toString() ?? '';
+      if ((myMap['data'] != '' && myMap['success'] == true) ||
+          (temp.isNotEmpty && temp != 'true')) {
         Navigator.of(context).pop(true);
-        tempToken = myMap['temp'];
+        if (temp.isNotEmpty && temp != 'true') tempToken = temp;
         debugPrint(tempToken);
         divNumber = 2;
         debugPrint(divNumber.toString());
@@ -262,7 +265,9 @@ class VerifyController extends GetxController implements GetxService {
     if (response.statusCode == 200) {
       isLogin.value = !isLogin.value;
       Map<String, dynamic> myMap = Map<String, dynamic>.from(response.body);
-      if (myMap['data'] != '' && myMap['data'] == true) {
+      if ((myMap['data'] != '' && myMap['data'] == true) ||
+          myMap['success'] == true ||
+          myMap['status'] == 200) {
         successToast('Password Updated'.tr);
         onBack();
       } else {

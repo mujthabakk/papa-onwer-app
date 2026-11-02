@@ -204,13 +204,18 @@ class AdsManagingController extends GetxController implements GetxService {
   }
 
   Future<void> getServiceById() async {
-    var response = await parser.getListAds({"uid": parser.getUID()});
+    final uid = int.tryParse(parser.getUID()) ?? parser.getUID();
+    var response = await parser.getListAds({
+      "uid": uid,
+    });
     apiCalled = true;
     if (response.statusCode == 200) {
-      var adListingsData = response.body['data'] as List;
-      adListingsData = adListingsData.reversed.toList();
+      final raw = response.body['partner_ads'] ?? response.body['data'];
+      final adListingsData = raw is List ? List.from(raw.reversed) : [];
       adListings.value = adListingsData
-          .map((json) => AdsManagingModel.fromJson(json))
+          .whereType<Map>()
+          .map((json) =>
+              AdsManagingModel.fromJson(Map<String, dynamic>.from(json)))
           .toList();
       isLoading.value = false;
     } else {
@@ -236,14 +241,26 @@ class AdsManagingController extends GetxController implements GetxService {
   }
 
   Future<void> updateAdListing(
-      int id, String title, String cover, String? link) async {
+    int id,
+    String title,
+    String cover,
+    String? link, {
+    int? position,
+    int? type,
+    String? clickAction,
+    String? value,
+  }) async {
     try {
-      // Prepare data for API call
+      final isLinkAd = clickAction == 'link' || type == 5;
       Map<String, dynamic> payload = {
         'id': id.toString(),
         'title': title,
         'cover': cover,
-        if (link != null && link.isNotEmpty) 'link': link,
+        if (position != null) 'position': position,
+        if (type != null) 'type': type,
+        if (clickAction != null) 'click_action': clickAction,
+        'value': isLinkAd ? (link ?? value ?? '') : (value ?? parser.getUID()),
+        'link': isLinkAd ? (link ?? '') : '',
       };
 
       // Set loading state
@@ -257,6 +274,7 @@ class AdsManagingController extends GetxController implements GetxService {
         bool success = response.body['success'] ?? false;
         if (success) {
           successToast('Your Ad is successfully updated!');
+          await getServiceById();
         } else {
           showToast(
               'Failed to update ad: ${response.body['message'] ?? 'Unknown error'}');

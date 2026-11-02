@@ -85,6 +85,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
                             placeholder: Text(
                               complaint.userInfo.firstName[0].toUpperCase(),
                               style: TextStyle(
+                                fontFamily: 'bold',
                                 color: ThemeProvider.appColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 18,
@@ -95,6 +96,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
                       : Text(
                           complaint.userInfo.firstName[0].toUpperCase(),
                           style: TextStyle(
+                            fontFamily: 'bold',
                             color: ThemeProvider.appColor,
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
@@ -109,6 +111,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
                       Text(
                         complaint.userInfo.fullName,
                         style: const TextStyle(
+                          fontFamily: 'bold',
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
@@ -119,6 +122,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
                       Text(
                         complaint.userInfo.email,
                         style: TextStyle(
+                          fontFamily: 'regular',
                           color: Colors.grey[600],
                           fontSize: 12,
                         ),
@@ -140,6 +144,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
                   child: Text(
                     controller.getStatusText(complaint.status),
                     style: const TextStyle(
+                      fontFamily: 'bold',
                       color: Colors.white,
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
@@ -174,6 +179,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
                         child: Text(
                           complaint.title,
                           style: const TextStyle(
+                            fontFamily: 'bold',
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -187,6 +193,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
                   Text(
                     complaint.shortMessage,
                     style: TextStyle(
+                      fontFamily: 'regular',
                       fontSize: 14,
                       color: Colors.grey[700],
                       height: 1.4,
@@ -334,6 +341,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
                               const SizedBox(width: 4),
                               Text('Item'.tr,
                                 style: TextStyle(
+                                  fontFamily: 'medium',
                                   fontSize: 12,
                                   color: Colors.blue[700],
                                   fontWeight: FontWeight.w500,
@@ -345,6 +353,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
                           Text(
                             complaint.productInfo!.name,
                             style: const TextStyle(
+                              fontFamily: 'semibold',
                               fontWeight: FontWeight.w600,
                               fontSize: 14,
                             ),
@@ -378,6 +387,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
                         Text(
                           'Attachments (${complaint.imagesList.length})',
                           style: TextStyle(
+                            fontFamily: 'medium',
                             fontSize: 12,
                             color: Colors.grey[600],
                             fontWeight: FontWeight.w500,
@@ -486,7 +496,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
                             )
                           : const Icon(Icons.check_circle_outline, size: 18),
                       label: Text('Mark as Resolved'.tr,
-                        style: TextStyle(fontSize: 13),
+                        style: TextStyle(fontFamily: 'regular', fontSize: 13),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.green,
@@ -517,7 +527,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
                             )
                           : const Icon(Icons.cancel_outlined, size: 18),
                       label: Text('Reject'.tr,
-                        style: TextStyle(fontSize: 13),
+                        style: TextStyle(fontFamily: 'regular', fontSize: 13),
                       ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
@@ -603,6 +613,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
                 child: Text(
                   label,
                   style: TextStyle(
+                    fontFamily: 'semibold',
                     fontSize: 13,
                     color: color.withOpacity(0.9),
                     fontWeight: FontWeight.w600,
@@ -674,6 +685,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
           const SizedBox(height: 16),
           Text('No Complaints Found'.tr,
             style: TextStyle(
+              fontFamily: 'bold',
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.grey[600],
@@ -682,6 +694,7 @@ class _ComplaintsScreenState extends State<ComplaintsScreen> {
           const SizedBox(height: 8),
           Text('No complaints have been submitted yet.'.tr,
             style: TextStyle(
+              fontFamily: 'regular',
               fontSize: 14,
               color: Colors.grey[500],
             ),

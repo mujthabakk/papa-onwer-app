@@ -83,12 +83,14 @@ class _InboxScreenState extends State<InboxScreen> {
                           controller: value.searchController,
                           onChanged: (query) => value.searchChat(query),
                           style: const TextStyle(
+                            fontFamily: 'regular',
                             fontSize: 15,
                             color: Color(0xFF1A1F36),
                           ),
                           decoration: InputDecoration(
                             hintText: 'Search conversations...'.tr,
                             hintStyle: TextStyle(
+                              fontFamily: 'regular',
                               fontSize: 15,
                               color: const Color(0xFF6B7280).withOpacity(0.7),
                             ),

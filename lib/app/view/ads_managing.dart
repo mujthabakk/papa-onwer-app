@@ -5,6 +5,7 @@ import 'package:ultimate_salon_owner_flutter/app/controller/ads_managing_control
 import 'package:ultimate_salon_owner_flutter/app/util/app_image.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/currency_helper.dart';
 import 'package:ultimate_salon_owner_flutter/app/util/theme.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/toast.dart';
 import 'package:intl/intl.dart';
 
 import '../backend/models/ad_managing_model.dart';
@@ -68,6 +69,7 @@ class _AdsManageScreenState extends State<AdsManageScreen> {
           const SizedBox(height: 16),
           Text('No advertisements yet'.tr,
             style: TextStyle(
+              fontFamily: 'bold',
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: Colors.grey[600],
@@ -181,6 +183,7 @@ class _AdsManageScreenState extends State<AdsManageScreen> {
                       child: Text(
                         isExpired ? 'Expired' : 'Expiring Soon',
                         style: const TextStyle(
+                          fontFamily: 'bold',
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
@@ -204,6 +207,7 @@ class _AdsManageScreenState extends State<AdsManageScreen> {
                     child: Text(
                       ad.position == 0 ? 'Home' : 'Search',
                       style: const TextStyle(
+                        fontFamily: 'bold',
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
@@ -225,6 +229,7 @@ class _AdsManageScreenState extends State<AdsManageScreen> {
                         child: Text(
                           ad.title.toString(),
                           style: const TextStyle(
+                            fontFamily: 'bold',
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
@@ -242,6 +247,7 @@ class _AdsManageScreenState extends State<AdsManageScreen> {
                         child: Text(
                           CurrencyHelper.format(ad.price),
                           style: TextStyle(
+                            fontFamily: 'bold',
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
                             color: Colors.green[700],
@@ -259,6 +265,7 @@ class _AdsManageScreenState extends State<AdsManageScreen> {
                       Text(
                         'Expires: ${expiryDate != null ? DateFormat('dd MMM, yyyy').format(expiryDate) : 'N/A'}',
                         style: TextStyle(
+                          fontFamily: 'regular',
                           fontSize: 14,
                           color: isExpired ? Colors.red : Colors.grey[600],
                         ),
@@ -341,7 +348,7 @@ class _AdsManageScreenState extends State<AdsManageScreen> {
                 ),
               ),
               child:
-                  Text("Delete".tr, style: TextStyle(color: Colors.white)),
+                  Text("Delete".tr, style: TextStyle(fontFamily: 'regular', color: Colors.white)),
               onPressed: () {
                 controller.deleteAds(ad.id);
                 Navigator.of(context).pop();
@@ -357,12 +364,23 @@ class _AdsManageScreenState extends State<AdsManageScreen> {
       AdsManagingController controller, int position) {
     TextEditingController titleController =
         TextEditingController(text: ad.title.value);
-    TextEditingController priceController =
-        TextEditingController(text: ad.price.toString());
     TextEditingController linkController =
         TextEditingController(text: ad.link ?? '');
 
-    int selectedPosition = ad.position ?? 0;
+    int selectedPosition = (ad.position ?? 0) == 0 ? 0 : 1;
+    final isLinkAd =
+        (ad.clickAction ?? '').toLowerCase() == 'link' || ad.type == 5;
+    int selectedType = isLinkAd ? 5 : 6;
+
+    InputDecoration fieldDecoration(String label, IconData icon) {
+      return InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        prefixIcon: Icon(icon),
+      );
+    }
 
     showDialog(
       context: context,
@@ -378,130 +396,49 @@ class _AdsManageScreenState extends State<AdsManageScreen> {
                 children: [
                   TextField(
                     controller: titleController,
-                    decoration: InputDecoration(
-                      labelText: 'Title'.tr,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      prefixIcon: const Icon(Icons.title),
-                    ),
+                    decoration: fieldDecoration('Title'.tr, Icons.title),
                   ),
                   const SizedBox(height: 16),
-                  // Uncomment and use the price TextField if needed
-                  // TextField(
-                  //   controller: priceController,
-                  //   keyboardType: TextInputType.number,
-                  //   decoration: InputDecoration(
-                  //     labelText: 'Price (INR)'.tr,
-                  //     border: OutlineInputBorder(
-                  //       borderRadius: BorderRadius.circular(12),
-                  //     ),
-                  //     prefixIcon: const Icon(Icons.currency_rupee),
-                  //   ),
-                  // ),
-                  // const SizedBox(height: 16),
-                  // Uncomment and use the position selection if needed
-                  // Column(
-                  //   crossAxisAlignment: CrossAxisAlignment.start,
-                  //   children: [
-                  //     Text('Position'.tr,
-                  //         style: TextStyle(
-                  //             fontSize: 16, fontWeight: FontWeight.w500)),
-                  //     const SizedBox(height: 8),
-                  //     Row(
-                  //       children: [
-                  //         Expanded(
-                  //           child: GestureDetector(
-                  //             onTap: () {
-                  //               setState(() {
-                  //                 selectedPosition = 0;
-                  //               });
-                  //             },
-                  //             child: Container(
-                  //               padding: const EdgeInsets.all(12),
-                  //               decoration: BoxDecoration(
-                  //                 color: selectedPosition == 0
-                  //                     ? Colors.blue.withOpacity(0.1)
-                  //                     : Colors.grey.withOpacity(0.1),
-                  //                 borderRadius: BorderRadius.circular(12),
-                  //                 border: Border.all(
-                  //                   color: selectedPosition == 0
-                  //                       ? Colors.blue
-                  //                       : Colors.grey.withOpacity(0.5),
-                  //                 ),
-                  //               ),
-                  //               child: Column(
-                  //                 children: [
-                  //                   Icon(
-                  //                     Icons.home,
-                  //                     color: selectedPosition == 0
-                  //                         ? Colors.blue
-                  //                         : Colors.grey,
-                  //                   ),
-                  //                   const SizedBox(height: 4),
-                  //                   Text('Home'.tr),
-                  //                 ],
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //         const SizedBox(width: 12),
-                  //         Expanded(
-                  //           child: GestureDetector(
-                  //             onTap: () {
-                  //               setState(() {
-                  //                 selectedPosition = 1;
-                  //               });
-                  //             },
-                  //             child: Container(
-                  //               padding: const EdgeInsets.all(12),
-                  //               decoration: BoxDecoration(
-                  //                 color: selectedPosition == 1
-                  //                     ? Colors.purple.withOpacity(0.1)
-                  //                     : Colors.grey.withOpacity(0.1),
-                  //                 borderRadius: BorderRadius.circular(12),
-                  //                 border: Border.all(
-                  //                   color: selectedPosition == 1
-                  //                       ? Colors.purple
-                  //                       : Colors.grey.withOpacity(0.5),
-                  //                 ),
-                  //               ),
-                  //               child: Column(
-                  //                 children: [
-                  //                   Icon(
-                  //                     Icons.search,
-                  //                     color: selectedPosition == 1
-                  //                         ? Colors.purple
-                  //                         : Colors.grey,
-                  //                   ),
-                  //                   const SizedBox(height: 4),
-                  //                   Text('Search'.tr),
-                  //                 ],
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ],
-                  // ),
-                  if (ad.link != null && ad.link!.isNotEmpty) ...[
+                  DropdownButtonFormField<int>(
+                    value: selectedPosition == 1 ? 1 : 0,
+                    decoration: fieldDecoration(
+                        'Page Position'.tr, Icons.web_asset),
+                    items: const [
+                      DropdownMenuItem(value: 0, child: Text('Home Page')),
+                      DropdownMenuItem(value: 1, child: Text('Search Page')),
+                    ],
+                    onChanged: (value) {
+                      if (value == null) return;
+                      setState(() => selectedPosition = value);
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<int>(
+                    value: selectedType,
+                    decoration:
+                        fieldDecoration('Ad Type'.tr, Icons.category_outlined),
+                    items: const [
+                      DropdownMenuItem(
+                          value: 6, child: Text('Shop/Freelancer Page')),
+                      DropdownMenuItem(value: 5, child: Text('External Link')),
+                    ],
+                    onChanged: (value) {
+                      if (value == null) return;
+                      setState(() => selectedType = value);
+                    },
+                  ),
+                  if (selectedType == 5) ...[
                     const SizedBox(height: 16),
                     TextField(
                       controller: linkController,
-                      decoration: InputDecoration(
-                        labelText: 'Link'.tr,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        prefixIcon: const Icon(Icons.link),
-                      ),
+                      decoration: fieldDecoration(
+                          'Enter External Link Url'.tr, Icons.link),
                     ),
                   ],
                   const SizedBox(height: 20),
                   Text('Advertisement Image'.tr,
                       style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                          TextStyle(fontFamily: 'medium', fontSize: 16, fontWeight: FontWeight.w500)),
                   const SizedBox(height: 12),
                   GestureDetector(
                     onTap: () {
@@ -604,36 +541,42 @@ class _AdsManageScreenState extends State<AdsManageScreen> {
                   ),
                 ),
                 onPressed: () {
-                  ad.title = titleController.text.obs;
-                  ad.cover = ad.cover.value.toString().obs;
+                  final title = titleController.text.trim();
+                  if (title.isEmpty) {
+                    showToast('All fields are required!');
+                    return;
+                  }
+                  final isLinkAd = selectedType == 5;
+                  final link = linkController.text.trim();
+                  if (isLinkAd && link.isEmpty) {
+                    showToast('Please enter the link URL');
+                    return;
+                  }
+
+                  final isSalon = controller.parser.getType();
+                  final adType = isLinkAd ? 5 : (isSalon ? 2 : 1);
+                  final clickAction = isLinkAd ? 'link' : 'profile';
+                  final value = isLinkAd
+                      ? link
+                      : controller.parser.getUID();
+
+                  ad.title = title.obs;
                   ad.position = selectedPosition;
-                  ad.link = linkController.text.isNotEmpty
-                      ? linkController.text
-                      : null;
+                  ad.type = adType;
+                  ad.clickAction = clickAction;
+                  ad.value = value;
+                  ad.link = isLinkAd ? link : '';
 
-                  // Update with new price if price field is enabled
-                  try {
-                    double newPrice = double.parse(priceController.text);
-                    ad.price = newPrice;
-                  } catch (e) {
-                    // Fallback if price parsing fails
-                  }
-
-                  if (ad.link != null && ad.link!.isNotEmpty) {
-                    controller.updateAdListing(
-                      ad.id!,
-                      titleController.text,
-                      ad.cover.value,
-                      ad.link,
-                    );
-                  } else {
-                    controller.updateAdListing(
-                      ad.id!,
-                      titleController.text,
-                      ad.cover.value,
-                      '',
-                    );
-                  }
+                  controller.updateAdListing(
+                    ad.id!,
+                    title,
+                    ad.cover.value,
+                    isLinkAd ? link : '',
+                    position: selectedPosition,
+                    type: adType,
+                    clickAction: clickAction,
+                    value: value,
+                  );
 
                   Navigator.pop(context);
                 },

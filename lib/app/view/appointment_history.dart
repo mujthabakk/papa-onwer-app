@@ -46,6 +46,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
           Text(
             "Appointment".tr,
             style: const TextStyle(
+              fontFamily: 'semibold',
               color: Colors.white,
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -54,6 +55,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
           Text(
             "#${controller.id}",
             style: const TextStyle(
+              fontFamily: 'regular',
               color: Colors.white70,
               fontSize: 14,
               fontWeight: FontWeight.w400,
@@ -101,6 +103,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
           Text(
             'Loading appointment details...',
             style: TextStyle(
+              fontFamily: 'regular',
               fontSize: 16,
               color: Colors.grey,
             ),
@@ -193,6 +196,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
                 Text(
                   '${user.firstName} ${user.lastName}',
                   style: const TextStyle(
+                    fontFamily: 'semibold',
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
@@ -208,6 +212,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
                       child: Text(
                         user.email.toString(),
                         style: TextStyle(
+                          fontFamily: 'regular',
                           fontSize: 14,
                           color: Colors.grey[600],
                         ),
@@ -225,6 +230,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
                     Text(
                       user.mobile.toString(),
                       style: TextStyle(
+                        fontFamily: 'regular',
                         fontSize: 14,
                         color: Colors.grey[600],
                       ),
@@ -298,6 +304,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
               Text(
                 'Service Location'.tr,
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -327,6 +334,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
                         ? 'At Salon'.tr
                         : '${controller.appointmentInfo.address!.house} ${controller.appointmentInfo.address!.address} ${controller.appointmentInfo.address!.landmark} ${controller.appointmentInfo.address!.pincode}',
                     style: TextStyle(
+                      fontFamily: 'regular',
                       fontSize: 14,
                       color: Colors.grey[700],
                     ),
@@ -375,6 +383,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
               Text(
                 'Booking Details'.tr,
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -425,6 +434,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
               Text(
                 title,
                 style: TextStyle(
+                  fontFamily: 'medium',
                   fontSize: 12,
                   color: Colors.grey[600],
                   fontWeight: FontWeight.w500,
@@ -436,6 +446,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
           Text(
             value,
             style: const TextStyle(
+              fontFamily: 'semibold',
               fontSize: 14,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
@@ -481,6 +492,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
               Text(
                 'Services'.tr,
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -516,6 +528,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
                 Text(
                   service.name.toString(),
                   style: const TextStyle(
+                    fontFamily: 'semibold',
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
@@ -536,6 +549,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
                       ? '${controller.currencySymbol}${service.price}'
                       : '${service.price}${controller.currencySymbol}',
                   style: TextStyle(
+                    fontFamily: 'regular',
                     fontSize: 12,
                     color: Colors.grey[600],
                     decoration: TextDecoration.lineThrough,
@@ -548,6 +562,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
                     ? '${controller.currencySymbol}${service.off}'
                     : '${service.off}${controller.currencySymbol}',
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: ThemeProvider.appColor,
@@ -602,6 +617,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
           Text(
             text,
             style: TextStyle(
+              fontFamily: 'medium',
               fontSize: 10,
               fontWeight: FontWeight.w500,
               color: color,
@@ -647,6 +663,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
               Text(
                 'Packages'.tr,
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -682,6 +699,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
                 child: Text(
                   package.name.toString(),
                   style: const TextStyle(
+                    fontFamily: 'semibold',
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
@@ -697,6 +715,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
                           ? '${controller.currencySymbol}${package.price}'
                           : '${package.price}${controller.currencySymbol}',
                       style: TextStyle(
+                        fontFamily: 'regular',
                         fontSize: 12,
                         color: Colors.grey[600],
                         decoration: TextDecoration.lineThrough,
@@ -708,6 +727,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
                         ? '${controller.currencySymbol}${package.off}'
                         : '${package.off}${controller.currencySymbol}',
                     style: const TextStyle(
+                      fontFamily: 'semibold',
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: ThemeProvider.appColor,
@@ -737,6 +757,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
                       child: Text(
                         service.name.toString(),
                         style: TextStyle(
+                          fontFamily: 'regular',
                           fontSize: 12,
                           color: Colors.grey[700],
                         ),
@@ -789,6 +810,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
               Text(
                 'Pricing Details'.tr,
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -837,6 +859,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
           Text(
             label,
             style: TextStyle(
+              fontFamily: 'regular',
               fontSize: isTotal ? 16 : 14,
               fontWeight: isTotal ? FontWeight.w600 : FontWeight.normal,
               color: isTotal ? Colors.black87 : Colors.grey[700],
@@ -849,6 +872,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
                     ? '${controller.currencySymbol}$value'
                     : '$value${controller.currencySymbol}',
             style: TextStyle(
+              fontFamily: 'regular',
               fontSize: isTotal ? 16 : 14,
               fontWeight: isTotal ? FontWeight.w600 : FontWeight.normal,
               color: isTotal ? ThemeProvider.appColor : Colors.grey[700],
@@ -893,6 +917,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
                 child: Text(
                   '${'Appointment Status'.tr}: ${controller.orderStatus}',
                   style: TextStyle(
+                    fontFamily: 'medium',
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: Colors.grey[700],
@@ -938,6 +963,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
                 child: Text(
                   'Accept'.tr,
                   style: const TextStyle(
+                    fontFamily: 'semibold',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -960,6 +986,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
                 child: Text(
                   'Decline'.tr,
                   style: const TextStyle(
+                    fontFamily: 'semibold',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),
@@ -1012,6 +1039,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
                     child: Text(
                       value,
                       style: const TextStyle(
+                        fontFamily: 'medium',
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -1038,6 +1066,7 @@ class _AppointmentsHistoryScreenState extends State<AppointmentsHistoryScreen> {
               child: Text(
                 'Update Status'.tr,
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),

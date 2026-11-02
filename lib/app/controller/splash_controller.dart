@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/locale_controller.dart';
@@ -49,7 +49,7 @@ class SplashController extends GetxController implements GetxService {
       );
       debugPrint('FCM permission: ${settings.authorizationStatus}');
 
-      if (Platform.isIOS) {
+      if (!kIsWeb && defaultTargetPlatform == TargetPlatform.iOS) {
         String? apnsToken;
         for (var attempt = 0; attempt < 8; attempt++) {
           apnsToken = await messaging.getAPNSToken();

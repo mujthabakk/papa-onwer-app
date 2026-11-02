@@ -45,6 +45,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           Text(
             "Appointment Details".tr,
             style: const TextStyle(
+              fontFamily: 'semibold',
               color: Colors.white,
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -53,6 +54,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           Text(
             "#${controller.id}",
             style: const TextStyle(
+              fontFamily: 'regular',
               color: Colors.white70,
               fontSize: 14,
               fontWeight: FontWeight.w400,
@@ -100,6 +102,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           Text(
             'Loading order details...',
             style: TextStyle(
+              fontFamily: 'regular',
               fontSize: 16,
               color: Colors.grey,
             ),
@@ -115,7 +118,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
       return const Center(
         child: Text(
           'No order details available',
-          style: TextStyle(fontSize: 16, color: Colors.grey),
+          style: TextStyle(fontFamily: 'regular', fontSize: 16, color: Colors.grey),
         ),
       );
     }
@@ -170,7 +173,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
         child: const Center(
           child: Text(
             'Customer information not available',
-            style: TextStyle(fontSize: 14, color: Colors.grey),
+            style: TextStyle(fontFamily: 'regular', fontSize: 14, color: Colors.grey),
           ),
         ),
       );
@@ -231,6 +234,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 Text(
                   '${user.firstName ?? ''} ${user.lastName ?? ''}',
                   style: const TextStyle(
+                    fontFamily: 'semibold',
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
@@ -246,6 +250,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       child: Text(
                         user.email?.toString() ?? 'N/A',
                         style: TextStyle(
+                          fontFamily: 'regular',
                           fontSize: 14,
                           color: Colors.grey[600],
                         ),
@@ -263,6 +268,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     Text(
                       user.mobile?.toString() ?? 'N/A',
                       style: TextStyle(
+                        fontFamily: 'regular',
                         fontSize: 14,
                         color: Colors.grey[600],
                       ),
@@ -366,6 +372,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               Text(
                 'Service Location'.tr,
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -395,6 +402,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         ? 'At Salon'.tr
                         : '${controller.appointmentInfo.address?.house ?? ''} ${controller.appointmentInfo.address?.address ?? ''} ${controller.appointmentInfo.address?.landmark ?? ''} ${controller.appointmentInfo.address?.pincode ?? ''}',
                     style: TextStyle(
+                      fontFamily: 'regular',
                       fontSize: 14,
                       color: Colors.grey[700],
                     ),
@@ -443,6 +451,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               Text(
                 'Booking Details'.tr,
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -493,6 +502,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               Text(
                 title,
                 style: TextStyle(
+                  fontFamily: 'medium',
                   fontSize: 12,
                   color: Colors.grey[600],
                   fontWeight: FontWeight.w500,
@@ -504,6 +514,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           Text(
             value,
             style: const TextStyle(
+              fontFamily: 'semibold',
               fontSize: 14,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
@@ -549,6 +560,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               Text(
                 'Services'.tr,
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -584,6 +596,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 Text(
                   service.name?.toString() ?? 'Service',
                   style: const TextStyle(
+                    fontFamily: 'semibold',
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
@@ -604,6 +617,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       ? '${controller.currencySymbol}${service.price}'
                       : '${service.price}${controller.currencySymbol}',
                   style: TextStyle(
+                    fontFamily: 'regular',
                     fontSize: 12,
                     color: Colors.grey[600],
                     decoration: TextDecoration.lineThrough,
@@ -616,6 +630,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     ? '${controller.currencySymbol}${service.off}'
                     : '${service.off}${controller.currencySymbol}',
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: ThemeProvider.appColor,
@@ -670,6 +685,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           Text(
             text,
             style: TextStyle(
+              fontFamily: 'medium',
               fontSize: 10,
               fontWeight: FontWeight.w500,
               color: color,
@@ -715,6 +731,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               Text(
                 'Packages'.tr,
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -750,6 +767,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 child: Text(
                   package.name?.toString() ?? 'Package',
                   style: const TextStyle(
+                    fontFamily: 'semibold',
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
                     color: Colors.black87,
@@ -765,6 +783,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                           ? '${controller.currencySymbol}${package.price}'
                           : '${package.price}${controller.currencySymbol}',
                       style: TextStyle(
+                        fontFamily: 'regular',
                         fontSize: 12,
                         color: Colors.grey[600],
                         decoration: TextDecoration.lineThrough,
@@ -776,6 +795,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                         ? '${controller.currencySymbol}${package.off}'
                         : '${package.off}${controller.currencySymbol}',
                     style: const TextStyle(
+                      fontFamily: 'semibold',
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
                       color: ThemeProvider.appColor,
@@ -805,6 +825,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       child: Text(
                         service.name?.toString() ?? 'Service',
                         style: TextStyle(
+                          fontFamily: 'regular',
                           fontSize: 12,
                           color: Colors.grey[700],
                         ),
@@ -861,6 +882,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               Text(
                 'Customer Notes'.tr,
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -882,6 +904,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             child: Text(
               notes,
               style: TextStyle(
+                fontFamily: 'regular',
                 fontSize: 14,
                 color: hasNotes ? Colors.purple[700] : Colors.grey[600],
                 fontStyle: hasNotes ? FontStyle.normal : FontStyle.italic,
@@ -932,6 +955,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               Text(
                 'Customer Requested Staff'.tr,
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -953,6 +977,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
             child: Text(
               staff,
               style: TextStyle(
+                fontFamily: 'regular',
                 fontSize: 14,
                 color: hasNotes ? Colors.blue[700] : Colors.grey[600],
                 fontStyle: hasNotes ? FontStyle.normal : FontStyle.italic,
@@ -999,6 +1024,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               Text(
                 'Pricing Details'.tr,
                 style: const TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -1054,6 +1080,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
           Text(
             label,
             style: TextStyle(
+              fontFamily: 'regular',
               fontSize: isTotal ? 16 : 14,
               fontWeight: isTotal ? FontWeight.w600 : FontWeight.normal,
               color: isTotal ? Colors.black87 : Colors.grey[700],
@@ -1066,6 +1093,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                     ? '${controller.currencySymbol}$value'
                     : '$value${controller.currencySymbol}',
             style: TextStyle(
+              fontFamily: 'regular',
               fontSize: isTotal ? 16 : 14,
               fontWeight: isTotal ? FontWeight.w600 : FontWeight.normal,
               color: isTotal ? ThemeProvider.appColor : Colors.grey[700],
@@ -1109,6 +1137,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   child: Text(
                     '${'Order Status'.tr}: ${controller.orderStatus}',
                     style: TextStyle(
+                      fontFamily: 'medium',
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
                       color: Colors.grey[700],
@@ -1172,6 +1201,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                                 ? '${'Completed'.tr} · ${'Unpaid'.tr}'
                                 : '${'Completed'.tr} · ${'Paid'.tr}',
                             style: TextStyle(
+                              fontFamily: 'semibold',
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: unpaid
@@ -1185,6 +1215,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                               child: Text(
                                 controller.appointmentPaymentMessage,
                                 style: TextStyle(
+                                  fontFamily: 'regular',
                                   fontSize: 12,
                                   color: unpaid
                                       ? Colors.orange.shade700
@@ -1255,6 +1286,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   child: Text(
                     'Accept'.tr,
                     style: const TextStyle(
+                      fontFamily: 'semibold',
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1277,6 +1309,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                   child: Text(
                     'Decline'.tr,
                     style: const TextStyle(
+                      fontFamily: 'semibold',
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
@@ -1329,6 +1362,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                       child: Text(
                         value,
                         style: const TextStyle(
+                          fontFamily: 'medium',
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                         ),
@@ -1355,6 +1389,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
                 child: Text(
                   'Update Status'.tr,
                   style: const TextStyle(
+                    fontFamily: 'semibold',
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
                   ),

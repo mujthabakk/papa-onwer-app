@@ -11,6 +11,9 @@ class AdsManagingModel {
   DateTime? from;
   String? link = '';
   DateTime? to;
+  int? type;
+  String? clickAction;
+  String? value;
 
   AdsManagingModel({
     this.id,
@@ -23,20 +26,31 @@ class AdsManagingModel {
     this.link,
     this.from,
     this.to,
+    this.type,
+    this.clickAction,
+    this.value,
   });
 
   AdsManagingModel.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-
-    position = int.parse(json['position'].toString());
-    title.value = json['title'];
-    price = int.parse(json['price'].toString());
-    lat = double.parse(json['lat'].toString());
-    lng = double.parse(json['lng'].toString());
-    cover.value = json['cover'];
-    from = DateTime.parse(json['from']);
-    link = json['link'] ?? '';
-    to = DateTime.parse(json['to']);
+    id = int.tryParse('${json['id'] ?? ''}');
+    position = int.tryParse('${json['position'] ?? 0}') ?? 0;
+    title.value = json['title']?.toString() ?? '';
+    price = num.tryParse('${json['price'] ?? 0}') ?? 0;
+    lat = double.tryParse('${json['lat'] ?? ''}');
+    lng = double.tryParse('${json['lng'] ?? ''}');
+    cover.value = json['cover']?.toString() ?? '';
+    from = DateTime.tryParse(
+        '${json['from'] ?? json['start_date'] ?? ''}');
+    type = int.tryParse('${json['type'] ?? ''}');
+    clickAction = json['click_action']?.toString();
+    value = json['value']?.toString();
+    final rawLink = json['link']?.toString() ?? '';
+    final isLinkAd = (clickAction ?? '').toLowerCase() == 'link' || type == 5;
+    link = isLinkAd
+        ? (rawLink.isNotEmpty ? rawLink : (value ?? ''))
+        : '';
+    to = DateTime.tryParse(
+        '${json['to'] ?? json['expiry_date'] ?? ''}');
   }
 
   Map<String, dynamic> toJson() {

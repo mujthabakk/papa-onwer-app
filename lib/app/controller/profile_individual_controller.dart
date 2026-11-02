@@ -115,6 +115,11 @@ class IndividualProfileController extends GetxController
       }
 
       parser.saveId(individualInfo.id.toString());
+      parser.saveLocation(
+        cid: individualInfo.cid,
+        lat: individualInfo.lat,
+        lng: individualInfo.lng,
+      );
       update();
     } else {
       ApiChecker.checkApi(response);
@@ -195,6 +200,7 @@ class IndividualProfileController extends GetxController
           content: Text(
             message,
             style: TextStyle(
+              fontFamily: 'regular',
               fontSize: 16,
               color: Colors.black54,
             ),

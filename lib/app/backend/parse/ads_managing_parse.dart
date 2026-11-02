@@ -12,10 +12,13 @@ class AdsManagingParser {
   AdsManagingParser(
       {required this.sharedPreferencesManager, required this.apiService});
 
+  String get token => sharedPreferencesManager.getString('token') ?? '';
+
   Future<Response> onSubmit(dynamic body) async {
-    var response = await apiService.postPrivate(AppConstants.createAds, body,
-        sharedPreferencesManager.getString('token') ?? '');
-    return response;
+    var response =
+        await apiService.postPrivate(AppConstants.createAds, body, token);
+    if (response.statusCode == 200) return response;
+    return apiService.postPrivate(AppConstants.partnerAdsCreate, body, token);
   }
 
   Future<Response> getServiceByID(var body) async {
@@ -49,5 +52,9 @@ class AdsManagingParser {
 
   String getUID() {
     return sharedPreferencesManager.getString('uid') ?? '0';
+  }
+
+  bool getType() {
+    return sharedPreferencesManager.getString('type') == 'salon';
   }
 }

@@ -91,6 +91,7 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
                               child: Text(
                                 'No results found'.tr,
                                 style: const TextStyle(
+                                  fontFamily: 'regular',
                                   color: ThemeProvider.greyColor,
                                 ),
                               ),
@@ -199,6 +200,7 @@ class _LanguagesScreenState extends State<LanguagesScreen> {
           child: Text(
             language.code.toUpperCase(),
             style: TextStyle(
+              fontFamily: 'bold',
               color: selected ? Colors.white : ThemeProvider.blackColor,
               fontSize: 11,
               fontWeight: FontWeight.bold,

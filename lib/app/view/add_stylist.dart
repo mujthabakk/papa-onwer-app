@@ -98,7 +98,7 @@ class _AddStylistScreenState extends State<AddStylistScreen> {
                     ),
                     const Text(
                       'Recommended Size - 512x512',
-                      style: TextStyle(fontSize: 9),
+                      style: TextStyle(fontFamily: 'regular', fontSize: 9),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
@@ -173,7 +173,7 @@ class _AddStylistScreenState extends State<AddStylistScreen> {
                                         children: [
                                             Text(
                                               'Select Category',
-                                              style: TextStyle(fontSize: 17),
+                                              style: TextStyle(fontFamily: 'regular', fontSize: 17),
                                             ),
                                           ])
                                     : Column(
@@ -189,6 +189,7 @@ class _AddStylistScreenState extends State<AddStylistScreen> {
                                                 value.savedCategories[name]
                                                     .toString(),
                                                 style: const TextStyle(
+                                                    fontFamily: 'regular',
                                                     fontSize: 17),
                                               ),
                                             ],
@@ -288,6 +289,7 @@ class _AddStylistScreenState extends State<AddStylistScreen> {
                               Text(
                                 'SUBMIT'.tr,
                                 style: const TextStyle(
+                                    fontFamily: 'regular',
                                     color: ThemeProvider.whiteColor,
                                     fontSize: 17),
                               ),
@@ -314,6 +316,7 @@ class _AddStylistScreenState extends State<AddStylistScreen> {
                               Text(
                                 'UPDATE'.tr,
                                 style: const TextStyle(
+                                    fontFamily: 'regular',
                                     color: ThemeProvider.whiteColor,
                                     fontSize: 17),
                               ),

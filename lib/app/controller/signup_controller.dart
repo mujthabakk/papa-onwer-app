@@ -6,7 +6,9 @@ import 'package:ultimate_salon_owner_flutter/app/backend/api/handler.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/add_profile_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/city_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/country_model.dart';
+import 'package:ultimate_salon_owner_flutter/app/backend/models/register_user_type_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/signup_parse.dart';
+import 'package:ultimate_salon_owner_flutter/app/util/app_country.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/locale_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/register_categories_controller.dart';
@@ -20,7 +22,14 @@ import 'package:url_launcher/url_launcher.dart';
 class SignUpController extends GetxController implements GetxService {
   final SignUpParser parser;
   int currentView = 1;
-  int type = 1; // 1 = salon // 0 = individual
+  int type = 1; // 1 = salon // 0 = individual // 2 = product
+  String selectedUserType = 'salon';
+  List<RegisterUserType> userTypes = [];
+  bool typesLoaded = false;
+
+  bool get isSalonType => selectedUserType == 'salon';
+  bool get isProductType => selectedUserType == 'product';
+  bool get isIndividualType => selectedUserType == 'individual';
 
   final emailTextEditor = TextEditingController();
   final firstNameTextEditor = TextEditingController();
@@ -108,6 +117,7 @@ class SignUpController extends GetxController implements GetxService {
   void onInit() {
     super.onInit();
     smsName = parser.getSMSName();
+    loadRegisterTypes();
     loadActiveCountries();
     // Show user agreement dialog after a small delay
     Future.delayed(const Duration(milliseconds: 50), () {
@@ -139,6 +149,7 @@ class SignUpController extends GetxController implements GetxService {
               const Text(
                 'User Agreement',
                 style: TextStyle(
+                  fontFamily: 'bold',
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
@@ -152,6 +163,7 @@ class SignUpController extends GetxController implements GetxService {
               const Text(
                 'Terms and Conditions',
                 style: TextStyle(
+                  fontFamily: 'semibold',
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
@@ -161,6 +173,7 @@ class SignUpController extends GetxController implements GetxService {
               const Text(
                 'By continuing, you agree to the Papa Bear Partner Terms and Conditions for listing and selling services on our platform.',
                 style: TextStyle(
+                  fontFamily: 'regular',
                   fontSize: 14,
                   height: 1.4,
                   color: Colors.black87,
@@ -177,6 +190,7 @@ class SignUpController extends GetxController implements GetxService {
                 child: const Text(
                   'Read full agreement',
                   style: TextStyle(
+                    fontFamily: 'semibold',
                     fontWeight: FontWeight.w600,
                     decoration: TextDecoration.underline,
                   ),
@@ -186,7 +200,7 @@ class SignUpController extends GetxController implements GetxService {
               Obx(() => CheckboxListTile(
                     title: const Text(
                       'I agree to the Terms and Conditions',
-                      style: TextStyle(fontSize: 14),
+                      style: TextStyle(fontFamily: 'regular', fontSize: 14),
                     ),
                     value: hasAgreedToTerms.value,
                     onChanged: (value) {
@@ -208,6 +222,7 @@ class SignUpController extends GetxController implements GetxService {
               child: const Text(
                 'Decline',
                 style: TextStyle(
+                  fontFamily: 'semibold',
                   color: Colors.red,
                   fontWeight: FontWeight.w600,
                 ),
@@ -229,7 +244,7 @@ class SignUpController extends GetxController implements GetxService {
                   ),
                   child: const Text(
                     'Accept & Continue',
-                    style: TextStyle(fontWeight: FontWeight.w600),
+                    style: TextStyle(fontFamily: 'semibold', fontWeight: FontWeight.w600),
                   ),
                 )),
           ],
@@ -257,6 +272,7 @@ class SignUpController extends GetxController implements GetxService {
                     child: Text(
                       'User Agreement',
                       style: TextStyle(
+                        fontFamily: 'bold',
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -472,6 +488,7 @@ Vendor: Address as provided during registration.
 
 IN WITNESS WHEREOF, the Parties have accepted and agreed to the terms and conditionsset forth above.''',
       style: TextStyle(
+        fontFamily: 'regular',
         fontSize: 12,
         height: 1.4,
         color: Colors.black87,
@@ -574,6 +591,7 @@ IN WITNESS WHEREOF, the Parties have accepted and agreed to the terms and condit
                 child: Text(
                   'Select Country Code'.tr,
                   style: const TextStyle(
+                    fontFamily: 'bold',
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                   ),
@@ -590,7 +608,7 @@ IN WITNESS WHEREOF, the Parties have accepted and agreed to the terms and condit
                       title: Text(country.name),
                       trailing: Text(
                         country.countryCode,
-                        style: const TextStyle(fontWeight: FontWeight.w700),
+                        style: const TextStyle(fontFamily: 'bold', fontWeight: FontWeight.w700),
                       ),
                       selected: selected,
                       onTap: () {
@@ -639,9 +657,111 @@ IN WITNESS WHEREOF, the Parties have accepted and agreed to the terms and condit
     }
     if (fetchCities) {
       fetchCitiesForCountry(country.code.isNotEmpty ? country.code : 'IN');
-    } else {
-      update();
     }
+    loadRegisterTypes();
+  }
+
+  String _registerCountryName() {
+    final fromPicker = (_selectedCountry?.name ?? '').trim();
+    if (fromPicker.isNotEmpty) return fromPicker;
+    return AppCountry.headerValue(parser.sharedPreferencesManager);
+  }
+
+  List<RegisterUserType> _parseRegisterTypes(dynamic raw) {
+    final parsed = <RegisterUserType>[];
+    if (raw is List) {
+      for (final row in raw) {
+        if (row is Map) {
+          final item =
+              RegisterUserType.fromJson(Map<String, dynamic>.from(row));
+          if (item.type.isNotEmpty) parsed.add(item);
+        } else if (row is String && row.trim().isNotEmpty) {
+          parsed.add(RegisterUserType(
+            type: row.trim(),
+            label: _defaultTypeLabel(row.trim()),
+          ));
+        }
+      }
+    } else if (raw is Map) {
+      if (raw['type'] != null) {
+        parsed.add(
+            RegisterUserType.fromJson(Map<String, dynamic>.from(raw)));
+      } else {
+        raw.forEach((key, value) {
+          if (value is Map) {
+            parsed.add(
+                RegisterUserType.fromJson(Map<String, dynamic>.from(value)));
+          } else if (key is String && key.isNotEmpty) {
+            parsed.add(RegisterUserType(
+              type: key,
+              label: value?.toString().isNotEmpty == true
+                  ? value.toString()
+                  : _defaultTypeLabel(key),
+            ));
+          }
+        });
+      }
+    }
+    return parsed.where((e) => e.type.isNotEmpty).toList();
+  }
+
+  String _defaultTypeLabel(String type) {
+    switch (type) {
+      case 'salon':
+        return 'Business';
+      case 'individual':
+        return 'Freelancer';
+      case 'product':
+        return 'Product User';
+      default:
+        return type;
+    }
+  }
+
+  Future<void> loadRegisterTypes() async {
+    final response =
+        await parser.getRegisterTypes(country: _registerCountryName());
+    typesLoaded = true;
+    var fromApi = <RegisterUserType>[];
+    if (response.statusCode == 200 && response.body is Map) {
+      final body = Map<String, dynamic>.from(response.body);
+      fromApi = _parseRegisterTypes(
+        body['data'] ?? body['types'] ?? body['user_types'],
+      );
+      if (fromApi.isEmpty && body['data'] is Map) {
+        fromApi = _parseRegisterTypes(
+          (body['data'] as Map)['types'] ??
+              (body['data'] as Map)['data'],
+        );
+      }
+    }
+
+    final byType = <String, RegisterUserType>{};
+    for (final item in fromApi) {
+      byType[item.type] = item;
+    }
+    userTypes = [
+      byType['salon'] ??
+          RegisterUserType(type: 'salon', label: 'Business'),
+      byType['individual'] ??
+          RegisterUserType(type: 'individual', label: 'Freelancer'),
+      byType['product'] ??
+          RegisterUserType(type: 'product', label: 'Product User'),
+    ];
+    for (final item in fromApi) {
+      if (item.type == 'salon' ||
+          item.type == 'individual' ||
+          item.type == 'product') {
+        continue;
+      }
+      userTypes.add(item);
+    }
+
+    if (!userTypes.any((row) => row.type == selectedUserType)) {
+      selectUserType(userTypes.first.type);
+      return;
+    }
+    update();
   }
 
   Future<void> getHomeCities() async {
@@ -666,9 +786,10 @@ IN WITNESS WHEREOF, the Parties have accepted and agreed to the terms and condit
   }
 
   Map<String, dynamic> _buildRegisterBody() {
-    final shopName = type == 1
+    final shopName = isSalonType
         ? name.text.trim()
         : _textOrDummy(name.text, _textOrDummy(firstNameTextEditor.text, 'NA'));
+    final categories = _categoriesPayload();
 
     return {
       'email': emailTextEditor.text.trim(),
@@ -678,10 +799,11 @@ IN WITNESS WHEREOF, the Parties have accepted and agreed to the terms and condit
       'country_code': _textOrDummy(countryCodeMobile, '+91'),
       'country': _selectedCountry?.code ?? 'IN',
       'password': passwordTextEditor.text,
-      'categories': _categoriesPayload(),
+      if (!isProductType || categories.isNotEmpty) 'categories': categories,
       'lat': lat.text.trim().isEmpty ? '0' : lat.text.trim(),
       'lng': lng.text.trim().isEmpty ? '0' : lng.text.trim(),
-      'fee_start': _intOrZero(feeStart.text),
+      if (!isProductType || feeStart.text.trim().isNotEmpty)
+        'fee_start': _intOrZero(feeStart.text),
       'about': _textOrDummy(descriptionsTextEditor.text),
       'cid': selectedCity.id?.toString() ?? '0',
       'zipcode': _textOrDummy(zipcode.text, '000000'),
@@ -690,7 +812,7 @@ IN WITNESS WHEREOF, the Parties have accepted and agreed to the terms and condit
       'status': 1,
       'cover': cover.isEmpty ? 'uploads/images/dummy.jpg' : cover,
       'gender': selectedGender == 'Male' ? 1 : 0,
-      'type': type == 1 ? 'salon' : 'individual',
+      'type': selectedUserType,
       'name': shopName,
       'id_proof': id_proof,
       'id_proof_back':
@@ -774,12 +896,37 @@ IN WITNESS WHEREOF, the Parties have accepted and agreed to the terms and condit
     update();
   }
 
-  void updateType(int number) {
-    type = number;
+  void selectUserType(String value) {
+    selectedUserType = value;
+    if (value == 'salon') {
+      type = 1;
+    } else if (value == 'product') {
+      type = 2;
+    } else {
+      type = 0;
+    }
     update();
   }
 
+  void updateType(int number) {
+    if (number == 1) {
+      selectUserType('salon');
+    } else if (number == 2) {
+      selectUserType('product');
+    } else {
+      selectUserType('individual');
+    }
+  }
+
   void onNext() {
+    if (selectedUserType.isEmpty) {
+      showToast('Select your type'.tr);
+      return;
+    }
+    if (isProductType) {
+      Get.toNamed(AppRouter.getProductSignUpRoute());
+      return;
+    }
     currentView = currentView + 1;
     update();
   }
@@ -942,6 +1089,7 @@ IN WITNESS WHEREOF, the Parties have accepted and agreed to the terms and condit
                 way == 'mobile' ? 'Verify Mobile OTP'.tr : 'Verify OTP'.tr,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
+                  fontFamily: 'bold',
                   fontWeight: FontWeight.bold,
                   fontSize: 18,
                   color: ThemeProvider.appColor,
@@ -951,13 +1099,14 @@ IN WITNESS WHEREOF, the Parties have accepted and agreed to the terms and condit
               Text(
                 'We have sent verification code on'.tr,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 14, color: Colors.black87),
+                style: const TextStyle(fontFamily: 'regular', fontSize: 14, color: Colors.black87),
               ),
               const SizedBox(height: 6),
               Text(
                 target,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
+                  fontFamily: 'bold',
                   fontSize: 14,
                   fontWeight: FontWeight.w700,
                 ),
@@ -1273,6 +1422,7 @@ IN WITNESS WHEREOF, the Parties have accepted and agreed to the terms and condit
             Text(
               'Validation Error',
               style: TextStyle(
+                fontFamily: 'bold',
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
                 color: ThemeProvider.appColor,
@@ -1282,7 +1432,7 @@ IN WITNESS WHEREOF, the Parties have accepted and agreed to the terms and condit
         ),
         content: Text(
           message,
-          style: TextStyle(fontSize: 16, color: Colors.black87),
+          style: TextStyle(fontFamily: 'regular', fontSize: 16, color: Colors.black87),
         ),
         actions: [
           TextButton(
@@ -1297,7 +1447,7 @@ IN WITNESS WHEREOF, the Parties have accepted and agreed to the terms and condit
             ),
             child: Text(
               'OK',
-              style: TextStyle(color: ThemeProvider.whiteColor),
+              style: TextStyle(fontFamily: 'regular', color: ThemeProvider.whiteColor),
             ),
           ),
         ],
@@ -1420,7 +1570,7 @@ IN WITNESS WHEREOF, the Parties have accepted and agreed to the terms and condit
       showValidationDialog('Email is not valid'.tr);
       return;
     }
-    if (type == 1 && name.text.trim().isEmpty) {
+    if (isSalonType && name.text.trim().isEmpty) {
       showValidationDialog('Shop name is required'.tr);
       return;
     }
@@ -1462,7 +1612,7 @@ IN WITNESS WHEREOF, the Parties have accepted and agreed to the terms and condit
       return;
     }
     final hasCategory = servedCategoriesList.any((e) => e.isChecked == true);
-    if (!hasCategory) {
+    if (!isProductType && !hasCategory) {
       showValidationDialog('Please select at least one category'.tr);
       return;
     }
@@ -1627,6 +1777,7 @@ class UserAgreementPage extends StatelessWidget {
                     const Text(
                       'Terms and Conditions',
                       style: TextStyle(
+                        fontFamily: 'bold',
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -1641,7 +1792,7 @@ class UserAgreementPage extends StatelessWidget {
             Obx(() => CheckboxListTile(
                   title: const Text(
                     'I have read and agree to the Terms and Conditions',
-                    style: TextStyle(fontWeight: FontWeight.w600),
+                    style: TextStyle(fontFamily: 'semibold', fontWeight: FontWeight.w600),
                   ),
                   value: hasAgreed.value,
                   onChanged: (value) {
@@ -1663,7 +1814,7 @@ class UserAgreementPage extends StatelessWidget {
                     ),
                     child: const Text(
                       'Decline',
-                      style: TextStyle(fontWeight: FontWeight.w600),
+                      style: TextStyle(fontFamily: 'semibold', fontWeight: FontWeight.w600),
                     ),
                   ),
                 ),
@@ -1678,7 +1829,7 @@ class UserAgreementPage extends StatelessWidget {
                         ),
                         child: const Text(
                           'Accept & Continue',
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                          style: TextStyle(fontFamily: 'semibold', fontWeight: FontWeight.w600),
                         ),
                       )),
                 ),
@@ -1880,6 +2031,7 @@ Vendor: Address as provided during registration.
 IN WITNESS WHEREOF, the Parties have accepted and agreed to the terms and conditions set forth
 above.''',
       style: TextStyle(
+        fontFamily: 'regular',
         fontSize: 14,
         height: 1.5,
         color: Colors.black87,

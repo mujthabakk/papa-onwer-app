@@ -28,6 +28,7 @@ class AppConstants {
   static const String commonNotificationAll = 'api/v1/notifications/all';
   static const String readNotificationAll = 'api/v1/notifications/read';
   static const String createAds = 'api/v1/ads/create';
+  static const String partnerAdsCreate = 'api/v1/partner-ads/create';
   static const String listAds = 'api/v1/ads/getAllAdded';
   static const String deleteAds = 'api/v1/ads/destroy';
   static const String updateAds = 'api/v1/ads/update';
@@ -51,6 +52,23 @@ class AppConstants {
   static const String couponsGetListForOffers = 'api/v1/salon/getListForOffers';
   static const String couponsGetPartnerServices =
       'api/v1/offers/getPartnerServices';
+
+  // Product-user offers (same params; service_ids = product IDs)
+  static const String productCouponsCreate = 'api/v1/product_offers/create';
+  static const String productCouponsGetAll = 'api/v1/product_offers/getAll';
+  static const String productCouponsGetActive =
+      'api/v1/product_offers/getActive';
+  static const String productCouponsgetById = 'api/v1/product_offers/getById';
+  static const String productCouponsgetByUserId =
+      'api/v1/product_offers/getCouponByUserId';
+  static const String productCouponsGetStores =
+      'api/v1/product_offers/getStores';
+  static const String productCouponsUpdateStatus =
+      'api/v1/product_offers/updateStatus';
+  static const String productCouponsGetPartnerProducts =
+      'api/v1/product_offers/getPartnerProducts';
+  static const String productCouponsUpdate = 'api/v1/product_offers/update';
+  static const String productCouponsDestroy = 'api/v1/product_offers/destroy';
 
   static const String timedOffersGetPartnerCampaigns =
       'api/v1/timed_offers/getPartnerCampaigns';
@@ -106,14 +124,59 @@ class AppConstants {
   static const String uploadImage = 'api/v1/uploadImage';
   static const String getAllProductsCate =
       'api/v1/product_categories/getActive';
+  static const String productCategoriesGetAll =
+      'api/v1/product_categories/getAll';
+  static const String productsGetList = 'api/v1/products/getList';
+  static const String productsGetSellerList = 'api/v1/products/getSellerList';
+  static const String productsAddStock = 'api/v1/products/addStock';
+  static const String productsUpdateStock = 'api/v1/products/updateStock';
+  static const String productsUploadImages = 'api/v1/products/uploadImages';
+  static const String unitsGetAll = 'api/v1/units/getAll';
+  static const String productsGetUnits = 'api/v1/products/getUnits';
+  static const String productsGetPaymentMethods =
+      'api/v1/products/getPaymentMethods';
+  static const String productHistoryGetByProduct =
+      'api/v1/product_history/getByProduct';
+  static const String productHistoryGetMyList =
+      'api/v1/product_history/getMyList';
+  static const String productMeasurementsGetAll =
+      'api/v1/product_measurements/getAll';
+  static const String productMeasurementsGetActive =
+      'api/v1/product_measurements/getActive';
+  static const String measurementsGetAll = 'api/v1/measurements/getAll';
+  static const String productUserMeasurementsGetAll =
+      'api/v1/product_user/measurements/getAll';
+  static const String productsGetForm = 'api/v1/products/getForm';
+  static const String productsGetAddForm = 'api/v1/products/getAddForm';
+  static const String productsCreateManyAlias = 'api/v1/products/createMany';
+  static const String productCreate = 'api/v1/product/create';
+  static const String productUserCreate = 'api/v1/product_user/create';
+  static const String productCategoriesGetHome =
+      'api/v1/product_categories/getHome';
+  static const String productCategoriesCreate =
+      'api/v1/product_categories/create';
+  static const String productCategoriesGetById =
+      'api/v1/product_categories/getById';
+  static const String productCategoriesUpdate =
+      'api/v1/product_categories/update';
   static const String getSubCateById =
       'api/v1/product_sub_categories/getFromCateId';
+  static const String productSubCategoriesCreate =
+      'api/v1/product_sub_categories/create';
   static const String createProducts = 'api/v1/products/create';
+  static const String createProductsMany = 'api/v1/products/createMultiple';
+  static const String productsGetHome = 'api/v1/products/getHome';
+  static const String productsGetHomeAlias = 'api/v1/product/getHome';
+  static const String productUserGetHome = 'api/v1/product_user/getHome';
   static const String getProductWFreelancer =
       'api/v1/products/getWithFreelancers';
   static const String destroyProduct = 'api/v1/products/destroy';
   static const String updateProduct = 'api/v1/products/update';
   static const String getProductById = 'api/v1/products/getById';
+  static const String productsUpdateStatus = 'api/v1/products/updateStatus';
+  static const String productsUpdateHome = 'api/v1/products/updateHome';
+  static const String getFreelancerProductOrders =
+      'api/v1/product_order/getFreelancerOrder';
   static const String createTimeSlot = 'api/v1/timeslots/create';
   static const String getTimeSlotById = 'api/v1/timeslots/getByUid';
   static const String getSlotInfoById = 'api/v1/timeslots/getById';
@@ -196,6 +259,16 @@ class AppConstants {
 
   static const String getProductOrderInfo = 'api/v1/product_order/getInfoOwner';
   static const String updateProductOrder = 'api/v1/product_order/update';
+  static const String productOrderGetStatus = 'api/v1/product_order/getStatus';
+  static const String productOrderGetTracking =
+      'api/v1/product_order/getTracking';
+  static const String productOrderGetTrackingDetails =
+      'api/v1/product_order/getTrackingDetails';
+  static const String productOrderUpdateStatus =
+      'api/v1/product_order/updateStatus';
+  static const String productOrderUpdateTracking =
+      'api/v1/product_order/updateTracking';
+  static const String productOrderGetById = 'api/v1/product_order/getById';
   // static const String getAppointmentInvoice =
   //     'api/v1/appointments/orderInvoice?id=';
 
@@ -222,6 +295,9 @@ class AppConstants {
   static const String getHomeCities = 'api/v1/cities/getActiveCities';
   static const String checkPhoneExist = 'api/v1/auth/checkPhoneExist';
   static const String saveMyRequest = 'api/v1/register_request/save';
+  static const String registerGetTypes = 'api/v1/register_request/getTypes';
+  static const String registerGetTypesAlias = 'api/v1/register/getTypes';
+  static const String authGetUserTypes = 'api/v1/auth/getUserTypes';
   static const String getMyReviews = 'api/v1/owner_reviews/getMyReviews';
   static const String getDelete = 'api/v1/user/delete-account';
 
@@ -229,7 +305,11 @@ class AppConstants {
   static const String getComplaints = 'api/v1/complaints/getComplaintsByUser';
   static const String updateComplaints = 'api/v1/complaints/update';
 
+  static const String partnerGetHomeAds = 'api/v1/partner/getHomeAds';
+  static const String partnerAdsGetHome = 'api/v1/partner-ads/getHome';
   static const String getBannerData = 'api/v1/partner-ads/getAll';
+  static const String salonDetails = 'api/v1/salon/salonDetails';
+  static const String individualDetails = 'api/v1/individual/individualDetails';
 
   // API Routes
 

@@ -113,6 +113,11 @@ class ProfileCategoriesController extends GetxController
         });
       }
       parser.saveId(profileInfo.id.toString());
+      parser.saveLocation(
+        cid: profileInfo.cid,
+        lat: profileInfo.lat,
+        lng: profileInfo.lng,
+      );
       update();
     } else {
       ApiChecker.checkApi(response);
@@ -232,6 +237,7 @@ class ProfileCategoriesController extends GetxController
           content: Text(
             message,
             style: TextStyle(
+              fontFamily: 'regular',
               fontSize: 16,
               color: Colors.black54,
             ),

@@ -3,8 +3,9 @@ import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/analytics_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/appointment_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/calendar_controller.dart';
-import 'package:ultimate_salon_owner_flutter/app/controller/product_history_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/controller/product_history_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/profile_menu_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/controller/products_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/tabs_controller.dart';
 
 class TabsBinding extends Bindings {
@@ -16,5 +17,6 @@ class TabsBinding extends Bindings {
     Get.lazyPut(() => AnalyticsController(parser: Get.find()), fenix: true);
     Get.lazyPut(() => CalendarsController(parser: Get.find()), fenix: true);
     Get.lazyPut(() => ProfileController(parser: Get.find()), fenix: true);
+    Get.lazyPut(() => ProductsController(parser: Get.find()), fenix: true);
   }
 }

@@ -3,10 +3,12 @@ import 'package:get/get.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/api/handler.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/models/partner_plan_model.dart';
 import 'package:ultimate_salon_owner_flutter/app/backend/parse/login_parse.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/api/product_auth_parse.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/util/product_user.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/analytics_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/appointment_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/calendar_controller.dart';
-import 'package:ultimate_salon_owner_flutter/app/controller/product_history_controller.dart';
+import 'package:ultimate_salon_owner_flutter/app/product/controller/product_history_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/profile_menu_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/signup_controller.dart';
 import 'package:ultimate_salon_owner_flutter/app/controller/tabs_controller.dart';
@@ -98,6 +100,9 @@ class LoginController extends GetxController implements GetxService {
       user['mobile'].toString(),
       user['type'].toString(),
     );
+    final isProduct = user['type']?.toString().toLowerCase() == 'product';
+    parser.saveProductUser(isProduct);
+    ProductUser.saveSession(parser.sharedPreferencesManager, myMap);
 
     final plan = PartnerPlanModel.extract(myMap) ??
         PartnerPlanModel.extract({'plan': user['plan']});
@@ -135,6 +140,10 @@ class LoginController extends GetxController implements GetxService {
         _parseRating(individual['rating']),
         individual['total_rating']?.toString() ?? '0',
       );
+      parser.saveCityId(individual['cid'] ??
+          individual['city_id'] ??
+          user['cid'] ??
+          user['city_id']);
     } else {
       final salonRaw = myMap['salon'];
       final salon = salonRaw is Map
@@ -147,6 +156,10 @@ class LoginController extends GetxController implements GetxService {
         _parseRating(salon['rating']),
         salon['total_rating']?.toString() ?? '0',
       );
+      parser.saveCityId(salon['cid'] ??
+          salon['city_id'] ??
+          user['cid'] ??
+          user['city_id']);
     }
 
     await parser.updateProfile({
@@ -222,6 +235,7 @@ class LoginController extends GetxController implements GetxService {
             Text(
               'Fields Required',
               style: TextStyle(
+                fontFamily: 'bold',
                 fontWeight: FontWeight.bold,
                 fontSize: 18,
                 color: ThemeProvider.appColor,
@@ -231,7 +245,7 @@ class LoginController extends GetxController implements GetxService {
         ),
         content: Text(
           message,
-          style: TextStyle(fontSize: 16, color: Colors.black87),
+          style: TextStyle(fontFamily: 'regular', fontSize: 16, color: Colors.black87),
         ),
         actions: [
           TextButton(
@@ -246,12 +260,65 @@ class LoginController extends GetxController implements GetxService {
             ),
             child: const Text(
               'OK',
-              style: TextStyle(color: ThemeProvider.whiteColor),
+              style: TextStyle(fontFamily: 'regular', color: ThemeProvider.whiteColor),
             ),
           ),
         ],
       ),
     );
+  }
+
+  ProductAuthParser get _productAuth => Get.find<ProductAuthParser>();
+
+  bool _loginOk(Response response) {
+    if (response.statusCode != 200) return false;
+    try {
+      return _isValidPartnerLogin(
+          Map<String, dynamic>.from(response.body as Map));
+    } catch (_) {
+      return false;
+    }
+  }
+
+  bool _isProductTypeLogin(Response response) {
+    if (!_loginOk(response)) return false;
+    try {
+      final user = Map<String, dynamic>.from(response.body as Map)['user'];
+      return user is Map &&
+          user['type']?.toString().toLowerCase() == 'product';
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<Response> _emailLogin(Map<String, dynamic> body) async {
+    final product = await _productAuth.login(body);
+    if (_isProductTypeLogin(product)) return product;
+    return parser.onLogin({...body, 'type': 'partner'});
+  }
+
+  Future<Response> _phonePasswordLogin(Map<String, dynamic> param) async {
+    final product = await _productAuth.loginWithPhonePassword(param);
+    if (_isProductTypeLogin(product)) return product;
+    return parser.loginWithPhonePasswordPost(param);
+  }
+
+  Future<Response> _verifyPhoneFirebase(Map<String, dynamic> param) async {
+    final product = await _productAuth.verifyPhoneForFirebase(param);
+    if (product.statusCode == 200) return product;
+    return parser.verifyPhoneWithFirebase(param);
+  }
+
+  Future<Response> _verifyPhone(Map<String, dynamic> param) async {
+    final product = await _productAuth.verifyPhone(param);
+    if (product.statusCode == 200) return product;
+    return parser.verifyPhone(param);
+  }
+
+  Future<Response> _loginWithMobileOtp(Map<String, dynamic> param) async {
+    final product = await _productAuth.loginWithMobileOtp(param);
+    if (_isProductTypeLogin(product)) return product;
+    return parser.loginWithPhoneToken(param);
   }
 
   Future<void> onLogin() async {
@@ -285,7 +352,6 @@ class LoginController extends GetxController implements GetxService {
     var body = {
       "email": emailTextEditor.text,
       "password": passwordTextEditor.text,
-      "type": "partner"
     };
 
     Get.dialog(
@@ -315,7 +381,7 @@ class LoginController extends GetxController implements GetxService {
     );
 
     try {
-      var response = await parser.onLogin(body);
+      var response = await _emailLogin(body);
       _closeLoaderIfOpen();
       if (response.statusCode == 200) {
         Map<String, dynamic> myMap = Map<String, dynamic>.from(response.body);
@@ -375,7 +441,7 @@ class LoginController extends GetxController implements GetxService {
       'mobile': mobileNo.text,
       'password': passwordTextEditor.text
     };
-    Response response = await parser.loginWithPhonePasswordPost(param);
+    Response response = await _phonePasswordLogin(param);
     _closeLoaderIfOpen();
     if (response.statusCode == 200) {
       Map<String, dynamic> myMap = Map<String, dynamic>.from(response.body);
@@ -434,7 +500,7 @@ class LoginController extends GetxController implements GetxService {
 
       var param = {'country_code': countryCode, 'mobile': mobileNo.text};
 
-      Response response = await parser.verifyPhoneWithFirebase(param);
+      Response response = await _verifyPhoneFirebase(param);
       _closeLoaderIfOpen();
       if (response.statusCode == 200) {
         Map<String, dynamic> myMap = Map<String, dynamic>.from(response.body);
@@ -482,7 +548,7 @@ class LoginController extends GetxController implements GetxService {
           barrierDismissible: false);
 
       var param = {'country_code': countryCode, 'mobile': mobileNo.text};
-      Response response = await parser.verifyPhone(param);
+      Response response = await _verifyPhone(param);
       _closeLoaderIfOpen();
       if (response.statusCode == 200) {
         Map<String, dynamic> myMap = Map<String, dynamic>.from(response.body);
@@ -664,7 +730,7 @@ class LoginController extends GetxController implements GetxService {
         ),
         barrierDismissible: false);
     var param = {'country_code': countryCode, 'mobile': mobileNo.text};
-    Response response = await parser.loginWithPhoneToken(param);
+    Response response = await _loginWithMobileOtp(param);
     _closeLoaderIfOpen();
     if (response.statusCode == 200) {
       Map<String, dynamic> myMap = Map<String, dynamic>.from(response.body);

@@ -30,6 +30,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                 Text(
                   'Customer Support Working Hours: 9 AM to 5 PM'.tr,
                   style: const TextStyle(
+                    fontFamily: 'regular',
                     color: Colors.grey,
                     fontSize: 13.5,
                   ),
@@ -199,6 +200,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: const TextStyle(
+          fontFamily: 'regular',
           color: ThemeProvider.appColor,
           fontSize: 15,
         ),

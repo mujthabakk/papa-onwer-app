@@ -59,6 +59,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               Text(
                                 'Next'.tr,
                                 style: const TextStyle(
+                                    fontFamily: 'regular',
                                     color: ThemeProvider.whiteColor,
                                     fontSize: 17),
                               ),
@@ -147,135 +148,84 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           const SizedBox(
                             height: 50,
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              value.updateType(1);
-                            },
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(14),
-                                    ),
-                                    color: value.type == 1
-                                        ? ThemeProvider.appColor.withOpacity(0.08)
-                                        : Colors.white,
-                                    border: Border.all(
-                                        color: value.type == 1
-                                            ? ThemeProvider.appColor
-                                            : ThemeProvider.greyColor
-                                                .withOpacity(0.4),
-                                        width: value.type == 1 ? 2 : 1)),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(
-                                              value.type == 1
-                                                  ? Icons.check_circle
-                                                  : Icons.circle_outlined,
-                                              color: value.type == 1
-                                                  ? ThemeProvider.appColor
-                                                  : ThemeProvider.greyColor),
-                                          const SizedBox(
-                                            width: 10,
+                          if (!value.typesLoaded)
+                            const Padding(
+                              padding: EdgeInsets.all(24),
+                              child: CircularProgressIndicator(
+                                  color: ThemeProvider.appColor),
+                            )
+                          else
+                            ...value.userTypes.map((item) {
+                              final selected =
+                                  value.selectedUserType == item.type;
+                              return Padding(
+                                padding: const EdgeInsets.only(bottom: 24),
+                                child: GestureDetector(
+                                  onTap: () => value.selectUserType(item.type),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                            Radius.circular(14),
                                           ),
-                                          Text('Business'.tr,
-                                            style: TextStyle(
-                                                fontFamily: 'bold',
-                                                fontSize: 14),
-                                          )
-                                        ],
-                                      ),
-                                      Container(
-                                        height: 56,
-                                        width: 56,
-                                        decoration: const BoxDecoration(
-                                          image: DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/images/salon.png'),
-                                              fit: BoxFit.cover),
+                                          color: selected
+                                              ? ThemeProvider.appColor
+                                                  .withOpacity(0.08)
+                                              : Colors.white,
+                                          border: Border.all(
+                                              color: selected
+                                                  ? ThemeProvider.appColor
+                                                  : ThemeProvider.greyColor
+                                                      .withOpacity(0.4),
+                                              width: selected ? 2 : 1)),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Icon(
+                                                    selected
+                                                        ? Icons.check_circle
+                                                        : Icons
+                                                            .circle_outlined,
+                                                    color: selected
+                                                        ? ThemeProvider
+                                                            .appColor
+                                                        : ThemeProvider
+                                                            .greyColor),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Text(item.label.tr,
+                                                  style: const TextStyle(
+                                                      fontFamily: 'bold',
+                                                      fontSize: 14),
+                                                )
+                                              ],
+                                            ),
+                                            Container(
+                                              height: 56,
+                                              width: 56,
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                    image: AssetImage(
+                                                        _typeImage(item.type)),
+                                                    fit: BoxFit.cover),
+                                              ),
+                                            )
+                                          ],
                                         ),
-                                        child: const SizedBox(),
-                                      )
-                                    ],
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 30,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              value.updateType(0);
-                            },
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(14),
-                                    ),
-                                    color: value.type == 0
-                                        ? ThemeProvider.appColor.withOpacity(0.08)
-                                        : Colors.white,
-                                    border: Border.all(
-                                        color: value.type == 0
-                                            ? ThemeProvider.appColor
-                                            : ThemeProvider.greyColor
-                                                .withOpacity(0.4),
-                                        width: value.type == 0 ? 2 : 1)),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Icon(
-                                              value.type == 0
-                                                  ? Icons.check_circle
-                                                  : Icons.circle_outlined,
-                                              color: value.type == 0
-                                                  ? ThemeProvider.appColor
-                                                  : ThemeProvider.greyColor),
-                                          const SizedBox(
-                                            width: 10,
-                                          ),
-                                          Text('Freelancer'.tr,
-                                            style: TextStyle(
-                                                fontFamily: 'bold',
-                                                fontSize: 14),
-                                          )
-                                        ],
-                                      ),
-                                      Container(
-                                        height: 56,
-                                        width: 56,
-                                        decoration: const BoxDecoration(
-                                          image: DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/images/freelancer.png'),
-                                              fit: BoxFit.cover),
-                                        ),
-                                        child: const SizedBox(),
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                              );
+                            }),
                         ],
                       ),
                     )
@@ -323,6 +273,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                               TextInputType.emailAddress,
                                           decoration: InputDecoration(
                                             labelStyle: const TextStyle(
+                                                fontFamily: 'regular',
                                                 fontSize: 14,
                                                 color: ThemeProvider.greyColor),
                                             border: InputBorder.none,
@@ -381,6 +332,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                     ThemeProvider.appColor,
                                                 decoration: InputDecoration(
                                                   labelStyle: const TextStyle(
+                                                      fontFamily: 'regular',
                                                       fontSize: 14,
                                                       color: ThemeProvider
                                                           .greyColor),
@@ -394,7 +346,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         ),
                                       ],
                                     ),
-                                    if (value.type == 1)
+                                    if (value.isSalonType)
                                       Container(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 8),
@@ -407,6 +359,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             cursorColor: ThemeProvider.appColor,
                                             decoration: InputDecoration(
                                               labelStyle: const TextStyle(
+                                                  fontFamily: 'regular',
                                                   fontSize: 14,
                                                   color:
                                                       ThemeProvider.greyColor),
@@ -436,6 +389,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                     ThemeProvider.appColor,
                                                 decoration: InputDecoration(
                                                     labelStyle: const TextStyle(
+                                                        fontFamily: 'regular',
                                                         fontSize: 14,
                                                         color: ThemeProvider
                                                             .greyColor),
@@ -463,6 +417,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                     ThemeProvider.appColor,
                                                 decoration: InputDecoration(
                                                     labelStyle: const TextStyle(
+                                                        fontFamily: 'regular',
                                                         fontSize: 14,
                                                         color: ThemeProvider
                                                             .greyColor),
@@ -488,6 +443,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           obscureText: value.passwordVisible,
                                           decoration: InputDecoration(
                                             labelStyle: const TextStyle(
+                                                fontFamily: 'regular',
                                                 fontSize: 14,
                                                 color: ThemeProvider.greyColor),
                                             suffixIcon: IconButton(
@@ -522,6 +478,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           obscureText: value.passwordVisible,
                                           decoration: InputDecoration(
                                             labelStyle: const TextStyle(
+                                                fontFamily: 'regular',
                                                 fontSize: 14,
                                                 color: ThemeProvider.greyColor),
                                             suffixIcon: IconButton(
@@ -583,12 +540,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           keyboardType: TextInputType.number,
                                           decoration: InputDecoration(
                                             labelStyle: const TextStyle(
+                                                fontFamily: 'regular',
                                                 fontSize: 14,
                                                 color: ThemeProvider.greyColor),
                                             border: InputBorder.none,
                                             labelText: "Fee Started Price".tr,
                                             prefixText: '${value.currencySymbol} ',
                                             prefixStyle: const TextStyle(
+                                              fontFamily: 'bold',
                                               fontSize: 14,
                                               fontWeight: FontWeight.w700,
                                               color: ThemeProvider.blackColor,
@@ -613,6 +572,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           maxLines: 4,
                                           decoration: InputDecoration(
                                               labelStyle: const TextStyle(
+                                                  fontFamily: 'regular',
                                                   fontSize: 14,
                                                   color:
                                                       ThemeProvider.greyColor),
@@ -740,6 +700,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           maxLines: 4,
                                           decoration: InputDecoration(
                                               labelStyle: const TextStyle(
+                                                  fontFamily: 'regular',
                                                   fontSize: 14,
                                                   color:
                                                       ThemeProvider.greyColor),
@@ -761,6 +722,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           keyboardType: TextInputType.number,
                                           decoration: InputDecoration(
                                             labelStyle: const TextStyle(
+                                                fontFamily: 'regular',
                                                 fontSize: 14,
                                                 color: ThemeProvider.greyColor),
                                             border: InputBorder.none,
@@ -850,6 +812,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                                           .tr
                                                       : 'Lat: ${value.lat.text}  •  Lng: ${value.lng.text}',
                                                   style: const TextStyle(
+                                                    fontFamily: 'regular',
                                                     fontSize: 13,
                                                     color: ThemeProvider
                                                         .blackColor,
@@ -919,6 +882,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           keyboardType: TextInputType.text,
                                           decoration: InputDecoration(
                                             labelStyle: TextStyle(
+                                                fontFamily: 'regular',
                                                 fontSize: 14,
                                                 color: ThemeProvider.greyColor),
                                             border: InputBorder.none,
@@ -940,6 +904,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           keyboardType: TextInputType.text,
                                           decoration: InputDecoration(
                                             labelStyle: TextStyle(
+                                                fontFamily: 'regular',
                                                 fontSize: 14,
                                                 color: ThemeProvider.greyColor),
                                             border: InputBorder.none,
@@ -961,6 +926,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           keyboardType: TextInputType.text,
                                           decoration: InputDecoration(
                                             labelStyle: TextStyle(
+                                                fontFamily: 'regular',
                                                 fontSize: 14,
                                                 color: ThemeProvider.greyColor),
                                             border: InputBorder.none,
@@ -983,6 +949,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           cursorColor: ThemeProvider.appColor,
                                           decoration: InputDecoration(
                                             labelStyle: TextStyle(
+                                                fontFamily: 'regular',
                                                 fontSize: 14,
                                                 color: ThemeProvider.greyColor),
                                             border: InputBorder.none,
@@ -1004,6 +971,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           keyboardType: TextInputType.number,
                                           decoration: InputDecoration(
                                             labelStyle: TextStyle(
+                                                fontFamily: 'regular',
                                                 fontSize: 14,
                                                 color: ThemeProvider.greyColor),
                                             border: InputBorder.none,
@@ -1025,6 +993,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           cursorColor: ThemeProvider.appColor,
                                           decoration: InputDecoration(
                                             labelStyle: TextStyle(
+                                                fontFamily: 'regular',
                                                 fontSize: 14,
                                                 color: ThemeProvider.greyColor),
                                             border: InputBorder.none,
@@ -1042,6 +1011,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         decoration: textFieldDecoration(),
                                         child: Text('How do you heard about us?'.tr,
                                           style: TextStyle(
+                                              fontFamily: 'regular',
                                               fontSize: 14,
                                               color: ThemeProvider.greyColor),
                                         ),
@@ -1091,6 +1061,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                             cursorColor: ThemeProvider.appColor,
                                             decoration: InputDecoration(
                                               labelStyle: TextStyle(
+                                                  fontFamily: 'regular',
                                                   fontSize: 14,
                                                   color:
                                                       ThemeProvider.greyColor),
@@ -1114,6 +1085,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           cursorColor: ThemeProvider.appColor,
                                           decoration: InputDecoration(
                                             labelStyle: const TextStyle(
+                                                fontFamily: 'regular',
                                                 fontSize: 14,
                                                 color: ThemeProvider.greyColor),
                                             border: InputBorder.none,
@@ -1136,6 +1108,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                           cursorColor: ThemeProvider.appColor,
                                           decoration: InputDecoration(
                                             labelStyle: TextStyle(
+                                                fontFamily: 'regular',
                                                 fontSize: 14,
                                                 color: ThemeProvider.greyColor),
                                             border: InputBorder.none,
@@ -1221,6 +1194,12 @@ sectionTitle(String title) {
   );
 }
 
+String _typeImage(String type) {
+  if (type == 'salon') return 'assets/images/salon.png';
+  if (type == 'product') return 'assets/images/placeholder.jpeg';
+  return 'assets/images/freelancer.png';
+}
+
 requiredLabel(String label) {
   return '$label *';
 }
@@ -1228,14 +1207,14 @@ requiredLabel(String label) {
 smallText(val) {
   return Text(
     val,
-    style: const TextStyle(fontSize: 11, color: ThemeProvider.greyColor),
+    style: const TextStyle(fontFamily: 'regular', fontSize: 11, color: ThemeProvider.greyColor),
   );
 }
 
 bodyText1(val) {
   return Text(
     val,
-    style: const TextStyle(fontSize: 14, color: ThemeProvider.blackColor),
+    style: const TextStyle(fontFamily: 'regular', fontSize: 14, color: ThemeProvider.blackColor),
   );
 }
 
@@ -1367,6 +1346,7 @@ Widget _uploadPlaceholder(String label, String hint) {
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
+            fontFamily: 'regular',
             fontSize: 11,
             color: ThemeProvider.greyColor,
           ),
